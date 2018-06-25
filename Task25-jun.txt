@@ -1,0 +1,120 @@
+apuntar todo lo que se ve en https://blog.mapbox.com/build-an-interactive-route-planner-for-fleet-management-f259f517ee7c example
+luego pseudocode de como se puede hacerlo. 
+
+Anotaciones:
+Objeto Camion:
+    Modelo del Camion
+    Tablilla del Camion
+    Modelo del Vagon(trailer),
+    Localizacion en Longitud Latitud
+    Velocidad que transita:
+        Kilometro por Hora
+    El Peso de la Ruta:
+        Distancia
+        Tiempo esperado en terminar
+    Status del Camion:
+        Motor:
+            Colores:
+                Verde(bien)
+                Amarillo(Warning)
+                Rojo(Da~ado)
+            Descripcion de los Colores
+        Presion de gomas:
+            Colores:
+                Verde(bien)
+                Amarillo(Warning)
+                Rojo(Da~ado)
+            Descripcion de los Colores
+        Gasolina:
+            Colores:
+                Verde(Full)
+                Amarrillo(Menos de la mitad
+                Rojo(Hechar Gasolina)
+            Progression Bar
+
+        Carga:
+            Actual(lo que estaria cargando al final de ruta)
+            Maxima
+            Progress bar de la carga(Actual/Maxima)
+     Boton:
+        Overview(De la ruta Actual)
+        Follow(Persigue el camion en su ruta)
+        Reset(Remover todos los puntos marcados)
+
+Pickups Point:
+    Carga para el Camion
+    Tiempo que a~ade a la ruta:
+        Colores:
+            Verde(<= 10 min)
+            Amarrillo(Entre 10 min y 20 min)
+            Rojo(> 20 min)
+
+Depot Marker
+
+Mapa:
+    Ruta:
+        Marcada por Optimization API usando los puntos de pickups.
+        vuelve al depot al final.
+    Zoom:
+        In
+        Out
+    Buton de Zoom
+
+
+
+
+Pseudocodigo:
+
+# UI OBJECTS
+    ## MAP
+    Add Map
+
+    Add markers de waypoints GIVEN:
+        waypoints contiene localizacion, distancia, carga adicional y color de acuerdo al tiempo que a~ade a la ruta)
+    
+    Add layer de waypoints
+        contiene color: 
+            gris oscuro es carga adicional no sobre pasa la carga maxima del camion, gris casi transparente es carga adicional sobre pasa la carga maxima del 
+            camion, informacion de carga adicional, tiempo a~adido a la ruta.
+    
+    Add marker de camion(Localizacion real-time) HOW TO RECREATE
+
+    Add layer de camion
+    
+    Add layer de ruta
+    
+    ## TRUCK CARD
+    Add informacion de camion(contiene toda la informacion sobre el camion)<div>
+        contiene los botones de Overview, Follow y Reset
+
+EVENTS
+    Tener un map.on('load', function(){})
+
+    Tener un map.on('click', function(){}): //on click on waypoints
+
+        Si la carga adicional es mayor que la capacidad. rechaza el pickup
+        Cuando uno hace click a un waypoint lo a~ade a la ruta
+        Recalcula la ruta optimizada
+        Guarda y remueve el punto seleccionado de Waypoints 
+        Add punto a CurrentPoints(prompt color azul) contiene el orden para visitar(e.g Pickup #1, Pickup #2, etc)
+        Actualizar ruta
+
+
+Mapbox tiene esto implementado ya
+{       
+    tener un map.on('drag', function(){})
+        Cuando haces un drag en el mapa(click y mover a la vez), mueve el view que se ve el mapa
+
+    Tener un map.on('dobleclick', function(){})
+        Funcion hace zoom en el doble click un nivel. 
+    
+    Tener un map.on('scroll'), function{})
+        Contiene funcionalidad de zoom in and out de acuerdo en donde este localizado el mouse
+}
+
+
+    onChange~ 
+        Actualizar Layer de ruta
+    
+
+    

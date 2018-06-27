@@ -65,12 +65,16 @@
         })
         });
       }
+      // Contact Directions API to find the route from A(university) to B(Restaurants) and create a layer for that route(not efficient)
+      //Not tested 
       function DrawRoute(array){
           for (var i = 1; i <=5 ; i++){
             getRoute(array)
           }
         };
-        function RemoveRouteLayer(){
+      // Remove the previous layer of routes
+      // Not tested
+      function RemoveRouteLayer(){
           for (var i = 1; i <=5 ; i++){
             map.removeLayer(id[i])
           }

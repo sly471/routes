@@ -37,33 +37,45 @@
       var nav = new mapboxgl.NavigationControl();
       map.addControl(nav, 'top-right'); 
     
-      function getRoute(s, e, name) {
+      function getRoute(s, e, name, color) {
+        console.log('Yes')
         var start = s;
         var end = e;
-        var directionsRequest = 'https://api.mapbox.com/directions/v5/mapbox/driving-traffic/' + start[0] + ',' + start[1] + ';' + end[0] + ',' + end[1] + '?geometries=geojson&overview=full&access_token=' + mapboxgl.accessToken;
+        var directionsRequest = 'https://api.mapbox.com/directions/v5/mapbox/driving-traffic/' + start + ';' + end + '?geometries=geojson&overview=full&access_token=' + mapboxgl.accessToken;
         $.ajax({
           method: 'GET',
           url: directionsRequest,
         }).done(function(data) {
+          console.log(data.routes[0].geometry)
           var route = data.routes[0].geometry;
           map.addLayer({
-            id: name,
-            type: 'line',
-            source: {
-              type: 'geojson',
-              data: {
-                type: 'Feature',
-                geometry: route
-              }
-            },
-            paint: {
-              'line-width': 2
+          id:name,
+          type: 'line',
+          source:{
+            type:'geojson',
+            data:{
+              type:'Feature',
+              geometry: route
             }
-          });
+          },
+          paint: {
+            'line-color': color,
+            'line-width': 2
+          }
+        })
         });
       }
-
-      var upr= turf.featureCollection([
+      function DrawRoute(array){
+          for (var i = 1; i <=5 ; i++){
+            getRoute(array)
+          }
+        };
+        function RemoveRouteLayer(){
+          for (var i = 1; i <=5 ; i++){
+            map.removeLayer(id[i])
+          }
+        };
+      var upr             = turf.featureCollection([
         turf.point([-67.1369,18.4989], {name:'UPR-Aguadilla'}),
         turf.point([-66.7405,18.4680], {name:'UPR-Arecibo'}),
         turf.point([-66.1438,18.3706], {name:'UPR-Bayamón'}),
@@ -136,7 +148,7 @@
         turf.point([-66.0522, 18.4036], {name:'pizza mobile'}),
         turf.point([-66.0540, 18.4030], {name:'taqueria azteca'}),
         turf.point([-66.0546, 18.4032], {name:'rest los monkeys'}),
-        turf.point([-66.0545, 18.4032], {name:'pitanza'}),
+        turf.point([-66.0545, 18.4032], {name:'pitanza'}), 
         turf.point([-66.0432, 18.4003], {name:'el obrero'})
         ]);
       var Utuado          = turf.featureCollection([
@@ -167,7 +179,7 @@
             'circle-stroke-width': 3
           }
         })
-      })
+      })  
 
       // Layer for UPR-Aguadilla and its restaurant
       map.on('load', function() {
@@ -181,13 +193,143 @@
             'icon-image': 'fast-food-15'
           }
         });
-        getRoute([-67.1369,18.4989],[-67.1403, 18.5009], 'menta');
-        getRoute([-67.1369,18.4989],[-67.1403, 18.5009], 'tony');
-        // map.addLayer(getRoute([-67.1369,18.4989],[-67.1403, 18.5009]));
-        // map.addLayer(getRoute([-67.1369,18.4989],[-67.1373, 18.5018]));
-        // map.addLayer(getRoute([-67.1369,18.4989],[-67.1553, 18.4301]));
-        // map.addLayer(getRoute([-67.1369,18.4989],[-67.1549, 18.4344]));
-        // map.addLayer(getRoute([-67.1369,18.4989],[-67.1174, 18.5039]));
+        //{
+          // on click event
+          //   find point click
+          //   removeRouteLayer()
+          //   DrawRoute(array del sitio, blah blah blah)
+
+          // getRoute([-67.1369,18.4989],[-67.1403, 18.5009], 'id1', '#ffff66');
+          // getRoute([-67.1369,18.4989],[-67.1373, 18.5018], 'id2', '#ffff66');
+          // getRoute([-67.1369,18.4989],[-67.1553, 18.4301], 'id3', '#ffff66');
+          // getRoute([-67.1369,18.4989],[-67.1174, 18.5039], 'id4', '#ffff66');
+          // getRoute([-67.1369,18.4989],[-67.1549, 18.4344], 'id5', '#ffff66');
+
+          // getRoute([-66.7405,18.4680],[-66.7270, 18.4694], 'id1', '#ffd700');
+          // getRoute([-66.7405,18.4680],[-66.7437, 18.4735], 'id2', '#ffd700');
+          // getRoute([-66.7405,18.4680],[-66.7490, 18.4505], 'id3', '#ffd700');
+          // getRoute([-66.7405,18.4680],[-66.7309, 18.4720], 'id4', '#ffd700');
+          // getRoute([-66.7405,18.4680],[-66.7163, 18.4726], 'id5', '#ffd700');
+
+          // getRoute([-66.1438,18.3706],[-66.1743, 18.4066], 'id1', '#709d66');
+          // getRoute([-66.1438,18.3706],[-66.1408, 18.3802], 'id2', '#709d66');
+          // getRoute([-66.1438,18.3706],[-66.1514, 18.3630], 'id3', '#709d66');
+          // getRoute([-66.1438,18.3706],[-66.1417, 18.3880], 'id4', '#709d66');
+          // getRoute([-66.1438,18.3706],[-66.1520, 18.3682], 'id5', '#709d66');
+
+          // getRoute([-65.9902,18.3925],[-66.1743, 18.4066], 'id1', '#0000ff');
+          // getRoute([-65.9902,18.3925],[-65.9826, 18.3953], 'id2', '#0000ff');
+          // getRoute([-65.9902,18.3925],[-65.9929, 18.3946], 'id3', '#0000ff');
+          // getRoute([-65.9902,18.3925],[-65.9931, 18.3945], 'id4', '#0000ff');
+          // getRoute([-65.9902,18.3925],[-65.9743, 18.3879], 'id5', '#0000ff');
+
+          // getRoute([-66.1616,18.1177],[-66.1653, 18.1110], 'id1', '#125c00');
+          // getRoute([-66.1616,18.1177],[-66.1656, 18.1145], 'id2', '#ff7373');
+          // getRoute([-66.1616,18.1177],[-66.1590, 18.1167], 'id3', '#709d66');
+          // getRoute([-66.1616,18.1177],[-66.1627, 18.1052], 'id4', '#c4dcc6');
+          // getRoute([-66.1616,18.1177],[-66.1618, 18.1157], 'id5', '#125c00');
+
+          // getRoute([-65.8375,18.1470],[-65.8392, 18.1452], 'id1', '#ffff66');
+          // getRoute([-65.8375,18.1470],[-65.8371, 18.1449], 'id2', '#ff7373');
+          // getRoute([-65.8375,18.1470],[-65.8071, 18.1442], 'id3', '#709d66');
+          // getRoute([-65.8375,18.1470],[-65.8349, 18.1538], 'id4', '#c4dcc6');
+          // getRoute([-65.8375,18.1470],[-65.8317, 18.1453], 'id5', '#125c00');
+
+          // getRoute([-67.1409,18.2109],[-67.1374, 18.2012], 'id1', '#00ff00');
+          // getRoute([-67.1409,18.2109],[-67.1448, 18.2028], 'id2', '#00ff00');
+          // getRoute([-67.1409,18.2109],[-67.1530, 18.2200], 'id3', '#00ff00');
+          // getRoute([-67.1409,18.2109],[-67.1459, 18.1557], 'id4', '#00ff00');
+          // getRoute([-67.1409,18.2109],[-67.1439, 18.1741], 'id5', '#00ff00');
+
+          // getRoute([-66.6072,17.9928],[-66.6177, 17.9884], 'id1', '#ffff66');
+          // getRoute([-66.6072,17.9928],[-66.6150, 18.0120], 'id2', '#ff7373');
+          // getRoute([-66.6072,17.9928],[-66.5773, 18.0413], 'id3', '#709d66');
+          // getRoute([-66.6072,17.9928],[-66.6110, 18.0128], 'id4', '#c4dcc6');
+          // getRoute([-66.6072,17.9928],[-66.6176, 18.0102], 'id5', '#125c00');
+
+          // getRoute([-66.0500,18.4028],[-66.0522, 18.4036], 'id1', '#ff0000');
+          // getRoute([-66.0500,18.4028],[-66.0540, 18.4030], 'id2', '#ff0000');
+          // getRoute([-66.0500,18.4028],[-66.0546, 18.4032], 'id3', '#ff0000');
+          // getRoute([-66.0500,18.4028],[-66.0545, 18.4032], 'id4', '#ff0000');
+          // getRoute([-66.0500,18.4028],[-66.0432, 18.4003], 'id5', '#ff0000');
+
+          // getRoute([-66.7211,18.2536],[-66.7114, 18.2689], 'id1', '#ffff66');
+          // getRoute([-66.7211,18.2536],[-66.6986, 18.2658], 'id2', '#ff7373');
+          // getRoute([-66.7211,18.2536],[-66.7109, 18.2677], 'id3', '#709d66');
+          // getRoute([-66.7211,18.2536],[-66.7005, 18.2655], 'id4', '#c4dcc6');
+          // getRoute([-66.7211,18.2536],[-66.6562, 18.2336], 'id5', '#125c00');
+
+          // getRoute([-66.0745,18.3965],[-66.0772, 18.4105], 'id1', '#ffff66');
+          // getRoute([-66.0745,18.3965],[-66.1156, 18.4658], 'id2', '#ff7373');
+          // getRoute([-66.0745,18.3965],[-66.1133, 18.4662], 'id3', '#709d66');
+          // getRoute([-66.0745,18.3965],[-66.0720, 18.3997], 'id4', '#c4dcc6');
+          // getRoute([-66.0745,18.3965],[-66.0858, 18.3991], 'id5', '#125c00');}
+        getRoute([-67.1369,18.4989],[-67.1403, 18.5009], 'Aguadilla1', '#ffff66');
+        getRoute([-67.1369,18.4989],[-67.1373, 18.5018], 'Aguadilla2', '#ffff66');
+        getRoute([-67.1369,18.4989],[-67.1553, 18.4301], 'Aguadilla3', '#ffff66');
+        getRoute([-67.1369,18.4989],[-67.1174, 18.5039], 'Aguadilla4', '#ffff66');
+        getRoute([-67.1369,18.4989],[-67.1549, 18.4344], 'Aguadilla5', '#ffff66');
+
+        getRoute([-66.7405,18.4680],[-66.7270, 18.4694], 'Arecibo1', '#ffd700');
+        getRoute([-66.7405,18.4680],[-66.7437, 18.4735], 'Arecibo2', '#ffd700');
+        getRoute([-66.7405,18.4680],[-66.7490, 18.4505], 'Arecibo3', '#ffd700');
+        getRoute([-66.7405,18.4680],[-66.7309, 18.4720], 'Arecibo4', '#ffd700');
+        getRoute([-66.7405,18.4680],[-66.7163, 18.4726], 'Arecibo5', '#ffd700');
+
+        getRoute([-66.1438,18.3706],[-66.1743, 18.4066], 'Bayamon1', '#709d66');
+        getRoute([-66.1438,18.3706],[-66.1408, 18.3802], 'Bayamon2', '#709d66');
+        getRoute([-66.1438,18.3706],[-66.1514, 18.3630], 'Bayamon3', '#709d66');
+        getRoute([-66.1438,18.3706],[-66.1417, 18.3880], 'Bayamon4', '#709d66');
+        getRoute([-66.1438,18.3706],[-66.1520, 18.3682], 'Bayamon5', '#709d66');
+
+        getRoute([-65.9902,18.3925],[-66.1743, 18.4066], 'Carolina1', '#0000ff');
+        getRoute([-65.9902,18.3925],[-65.9826, 18.3953], 'Carolina2', '#0000ff');
+        getRoute([-65.9902,18.3925],[-65.9929, 18.3946], 'Carolina3', '#0000ff');
+        getRoute([-65.9902,18.3925],[-65.9931, 18.3945], 'Carolina4', '#0000ff');
+        getRoute([-65.9902,18.3925],[-65.9743, 18.3879], 'Carolina5', '#0000ff');
+
+        getRoute([-66.1616,18.1177],[-66.1653, 18.1110], 'Cayey1', '#125c00');
+        getRoute([-66.1616,18.1177],[-66.1656, 18.1145], 'Cayey2', '#ff7373');
+        getRoute([-66.1616,18.1177],[-66.1590, 18.1167], 'Cayey3', '#709d66');
+        getRoute([-66.1616,18.1177],[-66.1627, 18.1052], 'Cayey4', '#c4dcc6');
+        getRoute([-66.1616,18.1177],[-66.1618, 18.1157], 'Cayey5', '#125c00');
+
+        getRoute([-65.8375,18.1470],[-65.8392, 18.1452], 'Humacao1', '#ffff66');
+        getRoute([-65.8375,18.1470],[-65.8371, 18.1449], 'Humacao2', '#ff7373');
+        getRoute([-65.8375,18.1470],[-65.8071, 18.1442], 'Humacao3', '#709d66');
+        getRoute([-65.8375,18.1470],[-65.8349, 18.1538], 'Humacao4', '#c4dcc6');
+        getRoute([-65.8375,18.1470],[-65.8317, 18.1453], 'Humacao5', '#125c00');
+
+        getRoute([-67.1409,18.2109],[-67.1374, 18.2012], 'Mayaguez1', '#00ff00');
+        getRoute([-67.1409,18.2109],[-67.1448, 18.2028], 'Mayaguez2', '#00ff00');
+        getRoute([-67.1409,18.2109],[-67.1530, 18.2200], 'Mayaguez3', '#00ff00');
+        getRoute([-67.1409,18.2109],[-67.1459, 18.1557], 'Mayaguez4', '#00ff00');
+        getRoute([-67.1409,18.2109],[-67.1439, 18.1741], 'Mayaguez5', '#00ff00');
+
+        getRoute([-66.6072,17.9928],[-66.6177, 17.9884], 'Ponce1', '#ffff66');
+        getRoute([-66.6072,17.9928],[-66.6150, 18.0120], 'Ponce2', '#ff7373');
+        getRoute([-66.6072,17.9928],[-66.5773, 18.0413], 'Ponce3', '#709d66');
+        getRoute([-66.6072,17.9928],[-66.6110, 18.0128], 'Ponce4', '#c4dcc6');
+        getRoute([-66.6072,17.9928],[-66.6176, 18.0102], 'Ponce5', '#125c00');
+
+        getRoute([-66.0500,18.4028],[-66.0522, 18.4036], 'RioPiedras1', '#ff0000');
+        getRoute([-66.0500,18.4028],[-66.0540, 18.4030], 'RioPiedras2', '#ff0000');
+        getRoute([-66.0500,18.4028],[-66.0546, 18.4032], 'RioPiedras3', '#ff0000');
+        getRoute([-66.0500,18.4028],[-66.0545, 18.4032], 'RioPiedras4', '#ff0000');
+        getRoute([-66.0500,18.4028],[-66.0432, 18.4003], 'RioPiedras5', '#ff0000');
+
+        getRoute([-66.7211,18.2536],[-66.7114, 18.2689], 'Utuado1', '#ffff66');
+        getRoute([-66.7211,18.2536],[-66.6986, 18.2658], 'Utuado2', '#ff7373');
+        getRoute([-66.7211,18.2536],[-66.7109, 18.2677], 'Utuado3', '#709d66');
+        getRoute([-66.7211,18.2536],[-66.7005, 18.2655], 'Utuado4', '#c4dcc6');
+        getRoute([-66.7211,18.2536],[-66.6562, 18.2336], 'Utuado5', '#125c00');
+
+        getRoute([-66.0745,18.3965],[-66.0772, 18.4105], 'MedicalSciences1', '#ffff66');
+        getRoute([-66.0745,18.3965],[-66.1156, 18.4658], 'MedicalSciences2', '#ff7373');
+        getRoute([-66.0745,18.3965],[-66.1133, 18.4662], 'MedicalSciences3', '#709d66');
+        getRoute([-66.0745,18.3965],[-66.0720, 18.3997], 'MedicalSciences4', '#c4dcc6');
+        getRoute([-66.0745,18.3965],[-66.0858, 18.3991], 'MedicalSciences5', '#125c00');
+
       })
 
       // Layer for UPR-Arecibo and its restaurant

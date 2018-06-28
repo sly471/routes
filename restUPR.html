@@ -38,7 +38,6 @@
       map.addControl(nav, 'top-right'); 
     
       function getRoute(s, e, name, color) {
-        console.log('Yes')
         var start = s;
         var end = e;
         var directionsRequest = 'https://api.mapbox.com/directions/v5/mapbox/driving-traffic/' + start + ';' + end + '?geometries=geojson&overview=full&access_token=' + mapboxgl.accessToken;
@@ -76,10 +75,12 @@
       function RemoveRouteLayer(name){
           for (var i = 0; i < 5 ; i++){
             map.removeLayer(name+i)
+            map.removeSource(name+i)
           }
         };
-        var routeMark = false;
-        var currentRoute = '';
+      var routeMark = false;
+      var currentRoute = '';
+      var i = 0;
       var upr             = turf.featureCollection([
         turf.point([-67.1369,18.4989], {name:'UPR-Aguadilla'}),
         turf.point([-66.7405,18.4680], {name:'UPR-Arecibo'}),
@@ -189,7 +190,9 @@
 
       map.on('click', e => {
         var click = {radius: 0.00001, x: e.lngLat.lng, y: e.lngLat.lat};
-        var i = 0;
+        i = 0;
+        var rest;
+        var color = '';
         uprName.forEach(function(Upr){
           var UPR = {radius: 0.005, x: upr.features[i].geometry.coordinates[0], y: upr.features[i].geometry.coordinates[1] };
           var dx = click.x - UPR.x;
@@ -203,20 +206,20 @@
               routeMark = true;
             };
             currentRoute = Upr;
-            var rest;
-            var color = '';
-            if(Upr == 'Aguadilla'){rest = Aguadilla; color = '#ffff66'};
-            else if(Upr == 'Arecibo'){rest = Arecibo; color = '#ffff00'};
-            else if(Upr == 'Bayamon'){rest = Bayamon; color = '#0000f0'};
-            else if(Upr == 'Carolina'){rest = Carolina; color = '#0000ff'};
-            else if(Upr == 'Cayey'){rest = Cayey; color = '#009545'};
-            else if(Upr == 'Humacao'){rest = Humacao; color = '#A9A9A9'};
-            else if(Upr == 'Mayaguez'){rest = Mayaguez; color = '#00ff00'};
-            else if(Upr == 'Ponce'){rest = Ponce; color = '#000000'};
-            else if(Upr == 'RioPiedras'){rest = RioPiedras; color = '#ff0000'};
-            else if(Upr == 'Utuado'){rest = Utuado; color = '#8b4513'};
+            var x = i
+            if(Upr == 'Aguadilla'){rest = Aguadilla; color = '#ffff66'}
+            else if(Upr == 'Arecibo'){rest = Arecibo; color = '#ffff00'}
+            else if(Upr == 'Bayamon'){rest = Bayamon; color = '#0000f0'}
+            else if(Upr == 'Carolina'){rest = Carolina; color = '#0000ff'}
+            else if(Upr == 'Cayey'){rest = Cayey; color = '#009545'}
+            else if(Upr == 'Humacao'){rest = Humacao; color = '#A9A9A9'}
+            else if(Upr == 'Mayaguez'){rest = Mayaguez; color = '#00ff00'}
+            else if(Upr == 'Ponce'){rest = Ponce; color = '#000000'}
+            else if(Upr == 'RioPiedras'){rest = RioPiedras; color = '#ff0000'}
+            else if(Upr == 'Utuado'){rest = Utuado; color = '#8b4513'}
             else if(Upr == 'MedicalSciences'){rest = MedicalSciences; color = '#998F47'};
-            DrawRoute(upr.features[i].geometry.coordinates, rest, currentRoute, color);
+            setTimeout(function(){DrawRoute(upr.features[x].geometry.coordinates, rest, currentRoute, color);}, 1000)
+            
            }
           i = i+1
         })

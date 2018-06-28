@@ -195,47 +195,32 @@
           var dx = click.x - UPR.x;
           var dy = click.y - UPR.y;
           var distance = Math.sqrt(dx * dx + dy * dy);
-          upr.features[i].geometry.coordinates[0]
           if (distance < click.radius + UPR.radius) {
             if(routeMark){
-              RemoveRouteLayer(currentRoute)
-            }
+              RemoveRouteLayer(currentRoute);
+            };
             if(!routeMark){
               routeMark = true;
-            }
+            };
             currentRoute = Upr;
             var rest;
-            var color = ''
-            if(Upr == 'Aguadilla'){rest = Aguadilla; color = '#ffff66'}
-            else if(Upr == 'Arecibo'){rest = Arecibo; color = '#ffff00'}
-            else if(Upr == 'Bayamon'){rest = Bayamon; color = '#0000f0'}
-            else if(Upr == 'Carolina'){rest = Carolina; color = '#0000ff'}
-            else if(Upr == 'Cayey'){rest = Cayey; color = '#009545'}
-            else if(Upr == 'Humacao'){rest = Humacao; color = '#A9A9A9'}
-            else if(Upr == 'Mayaguez'){rest = Mayaguez; color = '#00ff00'}
-            else if(Upr == 'Ponce'){rest = Ponce; color = '#000000'}
-            else if(Upr == 'RioPiedras'){rest = RioPiedras; color = '#ff0000'}
-            else if(Upr == 'Utuado'){rest = Utuado; color = '#8b4513'}
-            else if(Upr == 'MedicalSciences'){rest = MedicalSciences; color = '#998F47'}
-            DrawRoute(upr.features[i].geometry.coordinates, rest, currentRoute, color)
-
-          }
+            var color = '';
+            if(Upr == 'Aguadilla'){rest = Aguadilla; color = '#ffff66'};
+            else if(Upr == 'Arecibo'){rest = Arecibo; color = '#ffff00'};
+            else if(Upr == 'Bayamon'){rest = Bayamon; color = '#0000f0'};
+            else if(Upr == 'Carolina'){rest = Carolina; color = '#0000ff'};
+            else if(Upr == 'Cayey'){rest = Cayey; color = '#009545'};
+            else if(Upr == 'Humacao'){rest = Humacao; color = '#A9A9A9'};
+            else if(Upr == 'Mayaguez'){rest = Mayaguez; color = '#00ff00'};
+            else if(Upr == 'Ponce'){rest = Ponce; color = '#000000'};
+            else if(Upr == 'RioPiedras'){rest = RioPiedras; color = '#ff0000'};
+            else if(Upr == 'Utuado'){rest = Utuado; color = '#8b4513'};
+            else if(Upr == 'MedicalSciences'){rest = MedicalSciences; color = '#998F47'};
+            DrawRoute(upr.features[i].geometry.coordinates, rest, currentRoute, color);
+           }
           i = i+1
         })
-          //console.log(Upr)
-          // var upr = {radius: 0.005, x: Upr.features.geometry.coordinates[0] , y: };
-
-          // var dx = click.x - upr.x;
-          // var dy = click.y - upr.y;
-          // var distance = Math.sqrt(dx * dx + dy * dy);
-
-          // if (distance < click.radius + upr.radius) {
-          //   RemoveRouteLayer('Aguadilla')
-          // }
-        })
-      // map.on('click', function(){
-      //   RemoveRouteLayer('Aguadilla')
-      // })
+      });
       // Layer for UPR-Aguadilla and its restaurant
       map.on('load', function() {
         map.addLayer({

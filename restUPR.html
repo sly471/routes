@@ -37,6 +37,8 @@
       var nav = new mapboxgl.NavigationControl();
       map.addControl(nav, 'top-right'); 
     
+      // Contact Directions API to find the route from A(university) to B(Restaurants) and create a layer for that route(not efficient)
+      // tested 
       function getRoute(s, e, name, color) {
         var start = s;
         var end = e;
@@ -58,16 +60,17 @@
           },
           paint: {
             'line-color': color,
-            'line-width': 2
+            'line-width': 4
           }
         })
         });
       }
-      // Contact Directions API to find the route from A(university) to B(Restaurants) and create a layer for that route(not efficient)
+      
+      // calls getRoute function for upr-malanga and its 5 nearest restaurants.      
       // tested 
-      function DrawRoute(s, e, name, color){
-          for (var i=0; i<e.features.length; i++){
-            getRoute(s, e.features[i].geometry.coordinates, name+i, color);
+      function DrawRoute(university, restaurants, name, color){
+          for (var i=0; i<restaurants.features.length; i++){
+            getRoute(university, restaurants.features[i].geometry.coordinates, name+i, color);
           };
         }
       // Remove the previous layer of routes
@@ -81,6 +84,7 @@
       var routeMark = false;
       var currentRoute = '';
       var i = 0;
+      
       var upr             = turf.featureCollection([
         turf.point([-67.1369,18.4989], {name:'UPR-Aguadilla'}),
         turf.point([-66.7405,18.4680], {name:'UPR-Arecibo'}),
@@ -94,7 +98,6 @@
         turf.point([-66.7211,18.2536], {name:'UPR-Utuado'}),
         turf.point([-66.0745,18.3965], {name:'UPR-Medical Sciences'})
         ])
-
       var Aguadilla       = turf.featureCollection([
         turf.point([-67.1403, 18.5009], {name:'RB Restaurant'}),
         turf.point([-67.1373, 18.5018], {name:'Blue Hawaii Rest'}),
@@ -117,7 +120,7 @@
         turf.point([-66.1520, 18.3682], {name:'burger king'})
         ]);
       var Carolina        = turf.featureCollection([
-        turf.point([-66.1743, 18.4066], {name:'a la lena pizza'}),
+        turf.point([-65.9926, 18.3944], {name:'las nanas'}),
         turf.point([-65.9826, 18.3953], {name:'gaby\'s sea food'}),
         turf.point([-65.9929, 18.3946], {name:'la shish'}),
         turf.point([-65.9931, 18.3945], {name:'ceviche 787'}),
@@ -167,25 +170,147 @@
         ]);
       var MedicalSciences = turf.featureCollection([
         turf.point([-66.0772, 18.4105], {name:'salsa brava restaurant'}),
-        turf.point([-66.1156, 18.4658], {name:'stuffed avocado'}),
-        turf.point([-66.1133, 18.4662], {name:'el asador'}),
+        turf.point([-66.0565, 18.4009], {name:'denny\'s'}),
+        turf.point([-66.0818, 18.3860], {name:'sogo'}),
         turf.point([-66.0720, 18.3997], {name:'pizzarcade & grill'}),
         turf.point([-66.0858, 18.3991], {name:'martin\'s bbq'})
         ]);
       var uprName = ['Aguadilla','Arecibo','Bayamon','Carolina','Cayey','Humacao','Mayaguez','Ponce','RioPiedras','Utuado','MedicalSciences']
+      
       //Layer for UPR locations
       map.on('load', function() {
-        map.addLayer({
-          id:'UPR-Locations',
-          type:'circle',
-          source: {data:upr, type: 'geojson'},
-          paint: {
-            'circle-radius': 5,
-            'circle-color': 'white',
-            'circle-stroke-color': '#3887be',
-            'circle-stroke-width': 3
-          }
-        })
+          map.addLayer({
+            id:'UPR-Locations',
+            type:'circle',
+            source: {data:upr, type: 'geojson'},
+            paint: {
+              'circle-radius': 5,
+              'circle-color': 'white',
+              'circle-stroke-color': '#3887be',
+              'circle-stroke-width': 3
+            }
+          })
+
+          map.addLayer({
+            id:'Aguadilla-rest',
+            type:'symbol',
+            source: {data:Aguadilla, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15'
+            }
+          });
+
+          map.addLayer({
+            id:'Arecibo-rest',
+            type:'symbol',
+            source: {data:Arecibo, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'Bayamon-rest',
+            type:'symbol',
+            source: {data:Bayamon, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'Carolina-rest',
+            type:'symbol',
+            source: {data:Carolina, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'Cayey-rest',
+            type:'symbol',
+            source: {data:Cayey, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'Humacao-rest',
+            type:'symbol',
+            source: {data:Humacao, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'Mayaguez-rest',
+            type:'symbol',
+            source: {data:Mayaguez, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'Ponce-rest',
+            type:'symbol',
+            source: {data:Ponce, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'RioPiedras-rest',
+            type:'symbol',
+            source: {data:RioPiedras, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'Utuado-rest',
+            type:'symbol',
+            source: {data:Utuado, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
+
+          map.addLayer({
+            id:'MedicalSciences-rest',
+            type:'symbol',
+            source: {data:MedicalSciences, type: 'geojson'},
+            layout: {
+              'icon-allow-overlap': true,
+              'icon-ignore-placement': true,
+              'icon-image': 'fast-food-15',
+            }
+          })
       }) 
 
       map.on('click', e => {
@@ -218,176 +343,12 @@
             else if(Upr == 'RioPiedras'){rest = RioPiedras; color = '#ff0000'}
             else if(Upr == 'Utuado'){rest = Utuado; color = '#8b4513'}
             else if(Upr == 'MedicalSciences'){rest = MedicalSciences; color = '#998F47'};
-            setTimeout(function(){DrawRoute(upr.features[x].geometry.coordinates, rest, currentRoute, color);}, 1000)
+            DrawRoute(upr.features[x].geometry.coordinates, rest, currentRoute, color);
             
            }
           i = i+1
         })
       });
-      // Layer for UPR-Aguadilla and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Aguadilla-rest',
-          type:'symbol',
-          source: {data:Aguadilla, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15'
-          }
-        });
-        //DrawRoute([-67.1369,18.4989], Aguadilla, 'Aguadilla', '#ffff66')
-      })
-
-      // Layer for UPR-Arecibo and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Arecibo-rest',
-          type:'symbol',
-          source: {data:Arecibo, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-66.7405,18.4680], Arecibo, 'Arecibo', '#ffff00')
-      })
-
-      // Layer for UPR-Bayamon and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Bayamon-rest',
-          type:'symbol',
-          source: {data:Bayamon, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-66.1438,18.3706], Bayamon, 'Bayamon', '#0000f0')
-      })
-
-      // Layer for UPR-Carolina and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Carolina-rest',
-          type:'symbol',
-          source: {data:Carolina, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-65.9902,18.3925], Carolina, 'Carolina', '#0000ff')
-      })
-
-      // Layer for UPR-Cayey and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Cayey-rest',
-          type:'symbol',
-          source: {data:Cayey, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-66.1616,18.1177], Cayey, 'Cayey', '#009545')
-      })
-
-      // Layer for UPR-Humacao and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Humacao-rest',
-          type:'symbol',
-          source: {data:Humacao, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-65.8375,18.1470], Humacao, 'Humacao', '#A9A9A9')
-      })
-
-      // Layer for UPR-Mayaguez and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Mayaguez-rest',
-          type:'symbol',
-          source: {data:Mayaguez, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-67.1409,18.2109], Mayaguez, 'Mayaguez', '#00ff00')
-      })
-
-      // Layer for UPR-Ponce and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Ponce-rest',
-          type:'symbol',
-          source: {data:Ponce, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-66.6072,17.9928], Ponce, 'Ponce', '#000000')
-      })
-
-      // Layer for UPR-Rio Piedras and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'RioPiedras-rest',
-          type:'symbol',
-          source: {data:RioPiedras, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-66.0500,18.4028], RioPiedras, 'RioPiedras', '#ff0000')
-      })
-
-      // Layer for UPR-Utuado and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'Utuado-rest',
-          type:'symbol',
-          source: {data:Utuado, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-66.7211,18.2536], Utuado, 'Utuado', '#8b4513')
-      })
-
-      // Layer for UPR-Medical Sciences and its restaurant
-      map.on('load', function() {
-        map.addLayer({
-          id:'MedicalSciences-rest',
-          type:'symbol',
-          source: {data:MedicalSciences, type: 'geojson'},
-          layout: {
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true,
-            'icon-image': 'fast-food-15',
-          }
-        })
-        //DrawRoute([-66.0745,18.3965], MedicalSciences, 'MedicalSciences', '#998F47')
-      })
 
     </script>
   </body>

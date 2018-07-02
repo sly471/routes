@@ -10,71 +10,145 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet'/>
     <style>
       
-      body {margin: 0; padding: 0;}
-      #map {
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        right: 0;
-        left: 0;
+        body {margin: 0; padding: 0;}
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
       }
+        .truck {
+            margin: -10px -10px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #fff;
+            border-radius: 50%;
+            background: #3887be;
+            pointer-events: none;
+        }
+
     </style>
 </head>
+
 <body>
-    <div id='map' class='contain'> </div>
+     <div id='map' class='contain'> </div>
     <script type="text/javascript">
 
         //JS Template
+        // *********************************************************************
         // Global Variables(if needed)
         // *********************************************************************
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2x5NDcxIiwiYSI6ImNqaWthMGZ0dzBpemwza21qM3BscTV5ZXcifQ.bdNLupProYoMvqdmNOpl-A';
-
+        // Load initial map
+        // *********************************************************************
         var map = new mapboxgl.Map({
             container: 'map', // container id
             style: 'mapbox://styles/mapbox/streets-v10', // stylesheet location
             center: [-66.4500, 18.2208], // starting position
             zoom: 9 // starting zoom
         });
-        var nav = new mapboxgl.NavigationControl();
-        map.addControl(nav, 'top-right');
-
-
+        var truckLocation = [-66.0500, 18.4028];
+        //Object Truck
+        var Truck = function(_location, _maxLoad, _model, _licensePlate, _trailer, _speed, _routeWeight, _expectedTime){
+            this.location = _location;
+            this.maxLoad = _maxLoad;
+            this.currentLoad = _maxLoad;
+            this.model = _model;
+            this.licensePlate = _licensePlate;
+            this.trailer = _trailer;
+            this.speed = _speed;
+            this.routeWeight = _routeWeight;
+            this.removeWeight = function(load){
+                if(this.currentLoad - load >= 0){
+                    this.currentLoad = this.currentLoad - load;
+                }
+                else{
+                    alert('Not enought load in truck');
+                }
+            };
+            this.routeWeight = function(routeDurability){
+                this.routeWeight = Math.round(routeDurability/60) //routeDurability will contain data.trips[0].duration which contains  
+                                                                  // the time expected in seconds
+            }
+        };
+        // Object Dropoff
+        var Dropoffs = function(_location, _load, _weight, _color){
+            this.location = _location; // Location of the dropoff
+            this.load =  _load; // load that the dropoff asked
+            this.weight= _weight; // times it add to the truck to dropoff a load
+            this.color =  _color; // Color of the weight
+            this.calculateWeight = function(durability){
+                this.weight = Math.round(durability/60) 
+                if(this.weight <= 10 && this.weight >= 0){
+                    this.color = '#00ff00';
+                }
+                else if(this.weight <= 20 && this.weight > 10){
+                    this.color = '#ffff00';
+                }
+                else{
+                    this.color = '#ff0000';
+                }
+            };
+        };
 
         // *********************************************************************
+        // Objects
+        // *********************************************************************
 
+        // var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
+        // console.log(truck)
+        // var dropoff = new Dropoffs([-66.0500, 18.4028], 5, 7, '#00000')
+        // dropoff.calculateWeight(80)
+        // console.log(dropoff)
+        // truck.removeWeight(dropoff.load) 
+        // console.log(truck)    
+        // *********************************************************************
         // Functions Declaration
         // *********************************************************************
 
 
-
+        function colorCalculator(dropoff){
+            if(dropoff.weight >= 20){
+                dropoff.color = '#ff0000';
+            }
+            else if(dropoff.weight >= 10){
+                dropoff.color = '#ffff00';
+            }
+            else if(dropoff.weight >= 0){
+                dropoff.color = '#00ff00';
+            }
+        };  
 
 
 
 
         // *********************************************************************
-
         // Mapbox 
         // ********************************************************************************
+        // Navigation Control
+        // *********************************************************************
+        var nav = new mapboxgl.NavigationControl();
+        map.addControl(nav, 'top-right');
+        // *********************************************************************
+        map.on('load', function(){
+            //Add Truck
+            var marker = document.createElement('div');
+            marker.classList = 'truck';
 
-
-            // Load initial map
-            // *********************************************************************
-
-            // Navigation Control
-            // *********************************************************************
-
-
-
-
-
+            // Create a new marker
+            truckMarker = new mapboxgl.Marker(marker)
+            .setLngLat(truckLocation)
+            .addTo(map);
+        });
             // Events/Listeners 
             // *********************************************************************
-
-
-
-
-
-
+        //for every click on dropoff
+            // - updates route with new dropoff
+            // - removes dropoff location from list
+            // - removesLoad from truck.
+            // - calculate 
+            // - forEach dropoff recalculates new weight
         // ********************************************************************************
 
 

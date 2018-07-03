@@ -73,11 +73,12 @@
             }
         };
         // Object Dropoff
-        var Dropoffs = function(_location, _load, _weight, _color){
+        var Dropoffs = function(_name, _location, _load, _weight){
+            this.name = _name;
             this.location = _location; // Location of the dropoff
             this.load =  _load; // load that the dropoff asked
             this.weight= _weight; // times it add to the truck to dropoff a load
-            this.color =  _color; // Color of the weight
+            this.color =  ''; // Color of the weight
             this.calculateWeight = function(durability){
                 this.weight = Math.round(durability/60) 
                 if(this.weight <= 10 && this.weight >= 0){
@@ -96,7 +97,7 @@
         // Objects
         // *********************************************************************
 
-        // var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
+        var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
         // console.log(truck)
         // var dropoff = new Dropoffs([-66.0500, 18.4028], 5, 7, '#00000')
         // dropoff.calculateWeight(80)
@@ -119,7 +120,18 @@
                 dropoff.color = '#00ff00';
             }
         };  
+        var dropoffs = [
+        {
+            location: []
+            load: int 
+        }
 
+
+        ...]
+        for (var x = 0; x < dropoffs.length; x++){
+
+            dropoff[x] = new Dropoffs(dropoffs[x].location, dropoffs[x].load, weightfromOptimization)
+        }
 
 
 
@@ -138,7 +150,7 @@
 
             // Create a new marker
             truckMarker = new mapboxgl.Marker(marker)
-            .setLngLat(truckLocation)
+            .setLngLat(truck.location)
             .addTo(map);
         });
             // Events/Listeners 

@@ -154,7 +154,7 @@ var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Tr
             .setLngLat(truck.location)
             .addTo(map);
 
-                map.addLayer({
+            map.addLayer({
                   id: 'dropoffs-symbol',
                   type: 'symbol',
                   source: {data: dropoffLocations,type: 'geojson'},
@@ -162,6 +162,16 @@ var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Tr
                     'icon-allow-overlap': true,
                     'icon-ignore-placement': true,
                     'icon-image': 'square-15',
+                  }
+                });
+            map.addLayer({
+                  id: 'marked-dropoff',
+                  type: 'symbol',
+                  source: {data: markedDropoff,type: 'geojson'},
+                  layout: {
+                    'icon-allow-overlap': true,
+                    'icon-ignore-placement': true,
+                    'icon-image': 'circle-15',
                   }
                 });
         });
@@ -178,18 +188,8 @@ var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Tr
                         dropoffLocations.features.splice(i, 1);
                         }  
                     }
-                map.removeLayer('dropoffs-symbol');
-                map.removeSource('dropoffs-symbol')
-                map.addLayer({
-                  id: 'dropoffs-symbol',
-                  type: 'symbol',
-                  source: {data: dropoffLocations,type: 'geojson'},
-                  layout: {
-                    'icon-allow-overlap': true,
-                    'icon-ignore-placement': true,
-                    'icon-image': 'square-15',
-                  }
-                });
+                map.getSource('dropoffs-symbol').setData(dropoffLocations);
+                map.getSource('marked-dropoff').setData(markedDropoff)
                 }   
             });
         //for every click on dropoff

@@ -50,10 +50,18 @@
         });
         var truckLocation = [-66.0500, 18.4028];
         var dropoffLocations= turf.featureCollection([
-            turf.point([-66.0522, 18.4036],{load:1, weight:10, color:'#ff0000'}),
-            turf.point([-66.0546, 18.4032],{load:2, weight:20, color:'#00ff00'}),
-            turf.point([-66.0432, 18.4003],{load:3, weight:30, color:'#0000ff'}),
+            turf.point([-66.0522, 18.4036],{load:1, weight:10}),
+            turf.point([-66.0546, 18.4032],{load:2, weight:20}),
+            turf.point([-66.0432, 18.4003],{load:3, weight:30}),
         ]);
+
+        //important loop
+        for (var i=0; i<dropoffLocations.features.length; i++){
+            pt= dropoffLocations.features[i];
+            pt.properties.color=colorCalculator(pt.properties);
+            dropoffLocations.features[i]= pt;
+        }
+        
         //Object Truck
         var Truck = function(_location, _maxLoad, _model, _licensePlate, _trailer, _speed, _routeWeight, _expectedTime){
             this.location = _location;
@@ -102,52 +110,35 @@
         // Objects
         // *********************************************************************
         // Possibly to be change
-        var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
+        // var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
+        // var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
         // console.log(truck)
-        for (var i=0; i<dropoffLocations.features.length; i++)
-        {
-            pt= dropoffLocations.features[i]
-            prop= pt.properties
-            var dropoff= new Dropoffs(pt.geometry.coordinates, prop.load, prop.weight, prop.color);
-        }
+        // for (var i=0; i<dropoffLocations.features.length; i++) {
+        //     pt= dropoffLocations.features[i]
+        //     prop= pt.properties
+        //     var dropoff= new Dropoffs(pt.geometry.coordinates, prop.load, prop.weight, prop.color);
+        // }
         // var dropoff = new Dropoffs([-66.0500, 18.4028], 5, 7, '#00000')
         // dropoff.calculateWeight(80)
         // console.log(dropoff)
         // truck.removeWeight(dropoff.load) 
-        // console.log(truck)    
+        // console.log(truck)   
+ 
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
 
         function colorCalculator(dropoff){
             if(dropoff.weight >= 20){
-                dropoff.color = '#ff0000';
+                return '#ff0000';
             }
             else if(dropoff.weight >= 10){
-                dropoff.color = '#ffff00';
+                return '#ffff00';
             }
             else if(dropoff.weight >= 0){
-                dropoff.color = '#00ff00';
+                return '#00ff00';
             }
         };  
-        var dropoffs = [
-        {
-            location: []
-            load: int 
-        }
-
-
-<<<<<<< HEAD
-        ...]
-        for (var x = 0; x < dropoffs.length; x++){
-
-            dropoff[x] = new Dropoffs(dropoffs[x].location, dropoffs[x].load, weightfromOptimization)
-        }
-
-
-
-=======
->>>>>>> Angel
         // *********************************************************************
         // Mapbox 
         // ********************************************************************************
@@ -163,10 +154,9 @@
 
             // Create a new marker
             truckMarker = new mapboxgl.Marker(marker)
-<<<<<<< HEAD
             .setLngLat(truck.location)
             .addTo(map);
-=======
+
                 .setLngLat(truck.location)
                 .addTo(map);
             map.addLayer({
@@ -179,7 +169,6 @@
                     'icon-image': 'square-15',
                   }
                 });
->>>>>>> Angel
         });
             // Events/Listeners 
             // *********************************************************************

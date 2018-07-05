@@ -3,16 +3,16 @@ luego pseudocode de como se puede hacerlo.
 
 Anotaciones:
 Objeto Camion:
-    Modelo del Camion
-    Tablilla del Camion
-    Modelo del Vagon(trailer),
-    Localizacion en Longitud Latitud
-    Velocidad que transita:
-        Kilometro por Hora
-    El Peso de la Ruta:
-        Distancia
-        Tiempo esperado en terminar
-    Status del Camion:
+    Modelo del Camion                                       Done!
+    Tablilla del Camion                                     Done!
+    Modelo del Vagon(trailer)                               Done!
+    Localizacion en Longitud Latitud                        Done!
+    Velocidad que transita:                                 Done!
+        Kilometro por Hora(this case Miles per hour)
+    El Peso de la Ruta:                                     Done!
+        Distancia 
+        Tiempo esperado en terminar 
+    Status del Camion:                                      TODO
         Motor:
             Colores:
                 Verde(bien)
@@ -32,18 +32,18 @@ Objeto Camion:
                 Rojo(Hechar Gasolina)
             Progression Bar
 
-        Carga:
+        Carga:                                              Done!(except progress bar)
             Actual(lo que estaria cargando al final de ruta)
             Maxima
             Progress bar de la carga(Actual/Maxima)
-     Boton:
-        Overview(De la ruta Actual)
+     Boton:                                                 HTML               
+        Overview(De la ruta Actual)                         
         Follow(Persigue el camion en su ruta)
         Reset(Remover todos los puntos marcados)
 
 Pickups Point:
-    Carga para el Camion
-    Tiempo que a~ade a la ruta:
+    Carga para el Camion                                    Done!
+    Tiempo que a~ade a la ruta:                             Done!
         Colores:
             Verde(<= 10 min)
             Amarrillo(Entre 10 min y 20 min)
@@ -55,6 +55,8 @@ Mapa:
     Ruta:
         Marcada por Optimization API usando los puntos de pickups.
         vuelve al depot al final.
+
+    Done!
     Zoom:
         In
         Out
@@ -79,8 +81,7 @@ Pseudocodigo:
     
     Add marker de camion(Localizacion real-time) HOW TO RECREATE
 
-    Add layer de camion
-    
+    Add layer de camion    
     Add layer de ruta
     
     ## TRUCK CARD
@@ -92,12 +93,12 @@ EVENTS
 
     Tener un map.on('click', function(){}): //on click on waypoints
 
-        Si la carga adicional es mayor que la capacidad. rechaza el pickup
-        Cuando uno hace click a un waypoint lo a~ade a la ruta
-        Recalcula la ruta optimizada
-        Guarda y remueve el punto seleccionado de Waypoints 
-        Add punto a CurrentPoints(prompt color azul) contiene el orden para visitar(e.g Pickup #1, Pickup #2, etc)
-        Actualizar ruta
+        Si la carga adicional es mayor que la capacidad. rechaza el pickup.
+        Cuando uno hace click a un waypoint lo a~ade a la ruta.
+        Recalcula la ruta optimizada.
+        Guarda y remueve el punto seleccionado de Waypoints.
+        Add punto a CurrentPoints(prompt color azul) contiene el orden para visitar(e.g Pickup #1, Pickup #2, etc).
+        Actualizar ruta.
 
 
 Mapbox tiene esto implementado ya

@@ -50,17 +50,14 @@
         });
         var truckLocation = [-66.0500, 18.4028];
         var dropoffLocations= turf.featureCollection([
-            turf.point([-66.0522, 18.4036],{load:1, weight:10}),
-            turf.point([-66.0546, 18.4032],{load:2, weight:20}),
-            turf.point([-66.0432, 18.4003],{load:3, weight:30}),
+            turf.point([-66.0522, 18.4036],{name: '1', load:1, weight:10}),
+            turf.point([-66.0546, 18.4032],{name: '2',load:2, weight:20}),
+            turf.point([-66.0432, 18.4003],{name: '3',load:3, weight:30}),
         ]);
-
+        var markedDropoff = turf.featureCollection([])
+        console.log(dropoffLocations.features[1].properties.name)
+        var removefeature = dropoffLocations.splice
         //important loop
-        for (var i=0; i<dropoffLocations.features.length; i++){
-            pt= dropoffLocations.features[i];
-            pt.properties.color=colorCalculator(pt.properties);
-            dropoffLocations.features[i]= pt;
-        }
         
         //Object Truck
         var Truck = function(_location, _maxLoad, _model, _licensePlate, _trailer, _speed, _routeWeight, _expectedTime){
@@ -110,7 +107,7 @@
         // Objects
         // *********************************************************************
         // Possibly to be change
-        // var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
+var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
         // var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)
         // console.log(truck)
         // for (var i=0; i<dropoffLocations.features.length; i++) {
@@ -157,9 +154,7 @@
             .setLngLat(truck.location)
             .addTo(map);
 
-                .setLngLat(truck.location)
-                .addTo(map);
-            map.addLayer({
+                map.addLayer({
                   id: 'dropoffs-symbol',
                   type: 'symbol',
                   source: {data: dropoffLocations,type: 'geojson'},
@@ -170,8 +165,33 @@
                   }
                 });
         });
+
             // Events/Listeners 
             // *********************************************************************
+            map.on('click', e =>{
+
+                var test = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']})
+                if (test.length){ 
+                    for(var i = 0; i < dropoffLocations.features.length; i++){
+                        if(test[0].properties.name == dropoffLocations.features[i].properties.name){
+                        markedDropoff.features.push(dropoffLocations.features[i]);
+                        dropoffLocations.features.splice(i, 1);
+                        }  
+                    }
+                map.removeLayer('dropoffs-symbol');
+                map.removeSource('dropoffs-symbol')
+                map.addLayer({
+                  id: 'dropoffs-symbol',
+                  type: 'symbol',
+                  source: {data: dropoffLocations,type: 'geojson'},
+                  layout: {
+                    'icon-allow-overlap': true,
+                    'icon-ignore-placement': true,
+                    'icon-image': 'square-15',
+                  }
+                });
+                }   
+            });
         //for every click on dropoff
             // - updates route with new dropoff
             // - removes dropoff location from list
@@ -179,7 +199,11 @@
             // - calculate 
             // - forEach dropoff recalculates new weight
         // ********************************************************************************
-
+        for (var i=0; i<dropoffLocations.features.length; i++){
+            pt= dropoffLocations.features[i];
+            pt.properties.color=colorCalculator(pt.properties);
+            dropoffLocations.features[i]= pt;
+        }
 
     </script>
 </body>

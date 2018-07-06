@@ -75,23 +75,31 @@
         
         // This function will get the markedDropoff variable and feed it to the optimization APi which will return
         // us the the optimized route for the truck.
-        function getRoute(){
+        function getRouteMarked(route){
+            console.log(route)
             var destinations = [];
-            markedDropoff.features.forEach(function(Geometry){
+            route.features.forEach(function(Geometry){
                 destinations.push(Geometry.geometry.coordinates); 
              }); 
-            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' + destinations.join(';') +  '?overview=full&steps=true&geometries=geojson&source=first&access_token=' + mapboxgl.accessToken; 
+            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token=' + mapboxgl.accessToken; 
+        };
+        function getRouteWeight(route){
+            console.log(route)
+            var destinations = [];
+            route.forEach(function(Geometry){
+                destinations.push(Geometry.geometry.coordinates); 
+             }); 
+            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token=' + mapboxgl.accessToken; 
         };
         
         // This function will get the information returned from the getRoute and use it to draw the optimized
         // truck route on the map.
         function drawRoute(){
-            
+            console.log(drawRoute)
             $.ajax({
               method: 'GET',
-              url: getRoute(),
+              url: getRouteMarked(markedDropoff),
             }).done(function(data) {
-                  currentDataRoute = data;
                   var route = (data.trips[0].geometry);
                   map.getSource('route').setData(route);
                   truck.updateRouteWeight(data.trips[0].duration);
@@ -101,23 +109,32 @@
         // This function will update the weight (re-appply the color) to the non-marked dropoff locations,
         // everytime a dropoff location is marked.
         function updateWeight(){
+            var i = 0;
+            var address = []
             dropoffLocations.features.forEach(function(drop){
+
                 var copyMarked = markedDropoff.features.slice(0);
                 copyMarked.push(drop)
                 $.ajax({
                     method: 'GET',
-                    url: getRoute(),
-                    }).done(function(data) {
-                        var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight
+                    url: getRouteWeight(copyMarked),
+                    }).done(function(timeout) {
+                        console.log(timeout);
+                        console.log(Math.round(timeout.trips[0].duration/60));
+                        console.log(truck.routeWeight);
+                        var newWeight = Math.round(timeout.trips[0].duration/60) - truck.routeWeight
+
+                        console.log("weigh for " + drop.properties.name + ": " + newWeight);
                         drop.properties.weight = newWeight;
+                        console.log(drop.properties.weight) 
                         drop.properties.color = colorCalculator(drop.properties)
                     });
             });
         };
+        function popupCreator(){
+            for (var i = 0; i < dropoffLocations.features.length; i++){
 
-        function printList(foo){
-            for (var i=0; i<foo.length; i++)
-                console.log(foo[i].properties.name);
+            }
         }
         // *********************************************************************
         // Variable & Object Declaration
@@ -125,13 +142,34 @@
 
         // List which holds all the known dropoff locations on the map.
         var dropoffLocations= turf.featureCollection([
-            turf.point([-66.0522, 18.4036],{name: '1', load:1, weight:10}),
-            turf.point([-66.0546, 18.4032],{name: '2', load:2, weight:20}),
-            turf.point([-66.0432, 18.4003],{name: '3', load:3, weight:30}),
+            turf.point([-66.0264859, 18.3939037],{name: '1', load:1, weight:10}),
+            turf.point([-66.0491875, 18.3912599],{name: '2', load:2, weight:20}),
+            turf.point([-66.0325626, 18.4221600],{name: '3', load:3, weight:30}),
+            turf.point([-66.0448384, 18.3801500],{name: '4', load:4, weight:10}),
+            turf.point([-66.0364162, 18.4249728],{name: '5', load:2, weight:20}),
+            turf.point([-66.0566923, 18.3949524],{name: '6', load:3, weight:30}),
+            turf.point([-66.0509650, 18.4134795],{name: '7', load:1, weight:10}),
+            turf.point([-66.0497187, 18.4151344],{name: '8', load:2, weight:20}),
+            turf.point([-66.0331616, 18.3826868],{name: '9', load:3, weight:30}),
+            turf.point([-66.0256296, 18.4088110],{name: '10', load:1, weight:10}),
+            turf.point([-66.0674004, 18.3943928],{name: '11', load:2, weight:20}),
+            turf.point([-66.0282124, 18.4057161],{name: '12', load:3, weight:30}),
+            turf.point([-66.0463558, 18.4099867],{name: '13', load:1, weight:10}),
+            turf.point([-66.0742350, 18.4124916],{name: '14', load:2, weight:20}),
+            turf.point([-66.0522908, 18.3763833],{name: '15', load:3, weight:30}),
+            turf.point([-66.0520926, 18.3784950],{name: '16', load:1, weight:10}),
+            turf.point([-66.0637091, 18.4001899],{name: '17', load:2, weight:20}),
+            turf.point([-66.0301777, 18.4094323],{name: '18', load:3, weight:30}),
+            turf.point([-66.0471734, 18.3795232],{name: '19', load:1, weight:10}),
+            turf.point([-66.0575418, 18.3975852],{name: '20', load:2, weight:20}),
+            turf.point([-66.0376495, 18.4078695],{name: '21', load:3, weight:30}),
+            turf.point([-66.0648457, 18.3842672],{name: '22', load:1, weight:10}),
+            turf.point([-66.0714777, 18.3880810],{name: '23', load:2, weight:20}),
+
         ]);
 
         var blank = turf.featureCollection([]);
-
+        var popup = [];
         // Empty list which will hold all the dropoff locations that were marked on the map.
         var markedDropoff = turf.featureCollection([]);
         
@@ -148,6 +186,7 @@
             this.updateLoad = function(load){
                 if(this.currentLoad - load >= 0){
                     this.currentLoad = this.currentLoad - load;
+                    
                 }
                 else{
                     alert('Not enought load in truck');
@@ -242,7 +281,6 @@
                             truck.updateLoad(dropoffLocations.features[i].properties.load);
                             // remove the dropoff from dropoffLocation, do to it now being marked.
                             dropoffLocations.features.splice(i, 1);
-                            break;
                         }  
                     }
                     // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
@@ -253,7 +291,7 @@
                     drawRoute();
 
                     // update the weight of the dropoff points in dropoffLocations.
-                    updateWeight();
+                    var hello = new updateWeight();
                 }   
             });
     </script>

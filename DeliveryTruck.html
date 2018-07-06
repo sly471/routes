@@ -78,9 +78,8 @@
         function getRoute(){
             var destinations = [];
             markedDropoff.features.forEach(function(Geometry){
-                destinations.push(Geometry.geometry.coordinates);
-            //   
-             }) 
+                destinations.push(Geometry.geometry.coordinates); 
+             }); 
             return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' + destinations.join(';') +  '?overview=full&steps=true&geometries=geojson&source=first&access_token=' + mapboxgl.accessToken; 
         };
         
@@ -94,8 +93,7 @@
             }).done(function(data) {
                   currentDataRoute = data;
                   var route = (data.trips[0].geometry);
-                  map.getSource('route');
-                  .setData(route);
+                  map.getSource('route').setData(route);
                   truck.updateRouteWeight(data.trips[0].duration);
             });
         };
@@ -104,20 +102,23 @@
         // everytime a dropoff location is marked.
         function updateWeight(){
             dropoffLocations.features.forEach(function(drop){
-                var copyMarked = markedDropoff;
-                copyMarked.features.push(drop)
+                var copyMarked = markedDropoff.features.slice(0);
+                copyMarked.push(drop)
                 $.ajax({
                     method: 'GET',
                     url: getRoute(),
                     }).done(function(data) {
                         var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight
-                        console.log(drop)
                         drop.properties.weight = newWeight;
                         drop.properties.color = colorCalculator(drop.properties)
-                        console.log(drop)
                     });
             });
         };
+
+        function printList(foo){
+            for (var i=0; i<foo.length; i++)
+                console.log(foo[i].properties.name);
+        }
         // *********************************************************************
         // Variable & Object Declaration
         // *********************************************************************
@@ -241,6 +242,7 @@
                             truck.updateLoad(dropoffLocations.features[i].properties.load);
                             // remove the dropoff from dropoffLocation, do to it now being marked.
                             dropoffLocations.features.splice(i, 1);
+                            break;
                         }  
                     }
                     // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.

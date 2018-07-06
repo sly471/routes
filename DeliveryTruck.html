@@ -72,20 +72,67 @@
                 return '#00ff00';
             }
         }; 
-
+        
+        // This function will get the markedDropoff variable and feed it to the optimization APi which will return
+        // us the the optimized route for the truck.
+        function getRoute(){
+            var destinations = [];
+            markedDropoff.features.forEach(function(Geometry){
+                destinations.push(Geometry.geometry.coordinates);
+            //   
+             }) 
+            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' + destinations.join(';') +  '?overview=full&steps=true&geometries=geojson&source=first&access_token=' + mapboxgl.accessToken; 
+        };
+        
+        // This function will get the information returned from the getRoute and use it to draw the optimized
+        // truck route on the map.
+        function drawRoute(){
+            
+            $.ajax({
+              method: 'GET',
+              url: getRoute(),
+            }).done(function(data) {
+                  currentDataRoute = data;
+                  var route = (data.trips[0].geometry);
+                  map.getSource('route');
+                  .setData(route);
+                  truck.updateRouteWeight(data.trips[0].duration);
+            });
+        };
+        
+        // This function will update the weight (re-appply the color) to the non-marked dropoff locations,
+        // everytime a dropoff location is marked.
+        function updateWeight(){
+            dropoffLocations.features.forEach(function(drop){
+                var copyMarked = markedDropoff;
+                copyMarked.features.push(drop)
+                $.ajax({
+                    method: 'GET',
+                    url: getRoute(),
+                    }).done(function(data) {
+                        var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight
+                        console.log(drop)
+                        drop.properties.weight = newWeight;
+                        drop.properties.color = colorCalculator(drop.properties)
+                        console.log(drop)
+                    });
+            });
+        };
         // *********************************************************************
         // Variable & Object Declaration
         // *********************************************************************
 
-        // list which holds all the known dropoff locations on the map.
+        // List which holds all the known dropoff locations on the map.
         var dropoffLocations= turf.featureCollection([
             turf.point([-66.0522, 18.4036],{name: '1', load:1, weight:10}),
             turf.point([-66.0546, 18.4032],{name: '2', load:2, weight:20}),
             turf.point([-66.0432, 18.4003],{name: '3', load:3, weight:30}),
         ]);
-        var blank = turf.featureCollection([])
-        // empty list which will hold all the dropoff locations that were marked on the map
-        var markedDropoff = turf.featureCollection([])
+
+        var blank = turf.featureCollection([]);
+
+        // Empty list which will hold all the dropoff locations that were marked on the map.
+        var markedDropoff = turf.featureCollection([]);
         
         //Object Truck
         var Truck = function(_location, _maxLoad, _model, _licensePlate, _trailer, _speed, _routeWeight, _expectedTime){
@@ -114,63 +161,9 @@
         // *********************************************************************
         // Objects
         // *********************************************************************
-        // Possibly to be change
-        var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)  
-        // *********************************************************************
-        // Functions Declaration
-        // *********************************************************************
 
-        function colorCalculator(dropoff){
-            if(dropoff.weight >= 20){
-                return '#ff0000';
-            }
-            else if(dropoff.weight >= 10){
-                return '#ffff00';
-            }
-            else if(dropoff.weight >= 0){
-                return '#00ff00';
-            }
-        };
-        function getRoute(){
-            var destinations = []
-            markedDropoff.features.forEach(function(Geometry){
-                destinations.push(Geometry.geometry.coordinates)
-            //   
-             }) 
-            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' + destinations.join(';') +  '?overview=full&steps=true&geometries=geojson&source=first&access_token=' + mapboxgl.accessToken; 
-        }
-        function drawRoute(){
-            
-            $.ajax({
-              method: 'GET',
-              url: getRoute(),
-            }).done(function(data) {
-                  currentDataRoute = data;
-                  var route = (data.trips[0].geometry)
-                  //console.log('Im in')
-                  map.getSource('route')
-                  .setData(route);
-                  truck.updateRouteWeight(data.trips[0].duration);
-
-
-            });
-        }
-        function updateWeight(){
-            dropoffLocations.features.forEach(function(drop){
-                var copyMarked = markedDropoff;
-                copyMarked.features.push(drop)
-                $.ajax({
-                    method: 'GET',
-                    url: getRoute(),
-                    }).done(function(data) {
-                        var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight
-                        console.log(drop)
-                        drop.properties.weight = newWeight;
-                        drop.properties.color = colorCalculator(drop.properties)
-                        console.log(drop)
-                    });
-            });
-        };
+        // initialize an object for the truck.
+        var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)          
 
         // *********************************************************************
         // Mapbox 
@@ -179,16 +172,16 @@
         // *********************************************************************
 
         map.on('load', function(){
-            //Add Truck
+            // Add Truck.
             var marker = document.createElement('div');
             marker.classList = 'truck';
 
-            // Create a new marker
+            // Create a new marker.
             truckMarker = new mapboxgl.Marker(marker)
             .setLngLat(truck.location)
             .addTo(map);
 
-            //adds layer with all dropoff locations
+            // Adds layer with all dropoff locations.
             map.addLayer({
               id: 'dropoffs-symbol',
               type: 'symbol',
@@ -200,50 +193,65 @@
               }
             });
 
-            //adds layer with all marked dropoff locations
+            // Adds layer with all marked dropoff locations.
             map.addLayer({
-                  id: 'marked-dropoff',
-                  type: 'symbol',
-                  source: {data: markedDropoff,type: 'geojson'},
-                  layout: {
-                    'icon-allow-overlap': true,
-                    'icon-ignore-placement': true,
-                    'icon-image': 'circle-15',
-                  }
-                });
+              id: 'marked-dropoff',
+              type: 'symbol',
+              source: {data: markedDropoff,type: 'geojson'},
+              layout: {
+                'icon-allow-overlap': true,
+                'icon-ignore-placement': true,
+                'icon-image': 'circle-15',
+              }
+            });
+            
             map.addSource('route', {
                 type: 'geojson',
                 data: blank
             });
+            
+            // Adds layer with the optimized truck route.
             map.addLayer({
-                  id:'route',
-                  type: 'line',
-                  source:'route',
-                  paint: {
-                    'line-color': '#0000ff',
-                    'line-width': 4
-                  }
-                })
+              id:'route',
+              type: 'line',
+              source:'route',
+              paint: {
+                'line-color': '#0000ff',
+                'line-width': 4
+              }
+            });
         });
 
             // Events/Listeners 
             // *********************************************************************
             map.on('click', e =>{
-                console.log(truck)
-                var test = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']})
-                if (test.length){ 
+
+                // returns the info of the clicked dropoff marker on map.
+                var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
+
+                // if a marker is clicked, do the following
+                if (pt.length){ 
+                    // looks for the clicked marker in dropoffLocations.
                     for(var i = 0; i < dropoffLocations.features.length; i++){
-                        if(test[0].properties.name == dropoffLocations.features[i].properties.name){
+                        // if the clicked marker is found, do the following.
+                        if(pt[0].properties.name == dropoffLocations.features[i].properties.name){
+                            // push the dropoff to markedDropoff.
                             markedDropoff.features.push(dropoffLocations.features[i]);
-                            truck.updateLoad(dropoffLocations.features[i].properties.load)
+                            // update the truck load.
+                            truck.updateLoad(dropoffLocations.features[i].properties.load);
+                            // remove the dropoff from dropoffLocation, do to it now being marked.
                             dropoffLocations.features.splice(i, 1);
                         }  
                     }
+                    // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
                     map.getSource('dropoffs-symbol').setData(dropoffLocations);
                     map.getSource('marked-dropoff').setData(markedDropoff);
-                    drawRoute()
-                    updateWeight()
-                    console.log(truck)
+                    
+                    // draw the truck route.
+                    drawRoute();
+
+                    // update the weight of the dropoff points in dropoffLocations.
+                    updateWeight();
                 }   
             });
     </script>

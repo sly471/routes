@@ -131,11 +131,17 @@
                     });
             });
         };
-        function popupCreator(){
-            for (var i = 0; i < dropoffLocations.features.length; i++){
 
+
+        function popupCreator(){
+            popups.splice(0, popups.length);
+            for(var i=0; i<dropoffLocations.features.length; i++){
+                popups[i]= new mapboxgl.Popup();
+                popups[i].setLngLat(dropoffLocations.features[i].geometry.coordinates)
+                .setHTML(dropoffLocations.features[i].properties.name)
+                .addTo(map);
             }
-        }
+        } 
         // *********************************************************************
         // Variable & Object Declaration
         // *********************************************************************
@@ -165,11 +171,10 @@
             turf.point([-66.0376495, 18.4078695],{name: '21', load:3, weight:30}),
             turf.point([-66.0648457, 18.3842672],{name: '22', load:1, weight:10}),
             turf.point([-66.0714777, 18.3880810],{name: '23', load:2, weight:20}),
-
         ]);
 
         var blank = turf.featureCollection([]);
-        var popup = [];
+        var popups= [];
         // Empty list which will hold all the dropoff locations that were marked on the map.
         var markedDropoff = turf.featureCollection([]);
         
@@ -233,6 +238,8 @@
               }
             });
 
+            popupCreator();
+
             // Adds layer with all marked dropoff locations.
             map.addLayer({
               id: 'marked-dropoff',
@@ -262,38 +269,39 @@
             });
         });
 
-            // Events/Listeners 
-            // *********************************************************************
-            map.on('click', e =>{
+        // Events/Listeners 
+        // *********************************************************************
+        map.on('click', e =>{
 
-                // returns the info of the clicked dropoff marker on map.
-                var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
+            // returns the info of the clicked dropoff marker on map.
+            var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
 
-                // if a marker is clicked, do the following
-                if (pt.length){ 
-                    // looks for the clicked marker in dropoffLocations.
-                    for(var i = 0; i < dropoffLocations.features.length; i++){
-                        // if the clicked marker is found, do the following.
-                        if(pt[0].properties.name == dropoffLocations.features[i].properties.name){
-                            // push the dropoff to markedDropoff.
-                            markedDropoff.features.push(dropoffLocations.features[i]);
-                            // update the truck load.
-                            truck.updateLoad(dropoffLocations.features[i].properties.load);
-                            // remove the dropoff from dropoffLocation, do to it now being marked.
-                            dropoffLocations.features.splice(i, 1);
-                        }  
-                    }
-                    // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
-                    map.getSource('dropoffs-symbol').setData(dropoffLocations);
-                    map.getSource('marked-dropoff').setData(markedDropoff);
-                    
-                    // draw the truck route.
-                    drawRoute();
+            // if a marker is clicked, do the following
+            if (pt.length){ 
+                // looks for the clicked marker in dropoffLocations.
+                for(var i = 0; i < dropoffLocations.features.length; i++){
+                    // if the clicked marker is found, do the following.
+                    if(pt[0].properties.name == dropoffLocations.features[i].properties.name){
+                        // push the dropoff to markedDropoff.
+                        markedDropoff.features.push(dropoffLocations.features[i]);
+                        // update the truck load.
+                        truck.updateLoad(dropoffLocations.features[i].properties.load);
+                        // remove the dropoff from dropoffLocation, do to it now being marked.
+                        dropoffLocations.features.splice(i, 1);
+                    }  
+                }
+                // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
+                map.getSource('dropoffs-symbol').setData(dropoffLocations);
+                map.getSource('marked-dropoff').setData(markedDropoff);
+                popupCreator();
+                
+                // draw the truck route.
+                drawRoute();
 
-                    // update the weight of the dropoff points in dropoffLocations.
-                    var hello = new updateWeight();
-                }   
-            });
+                // update the weight of the dropoff points in dropoffLocations.
+                var hello = new updateWeight();
+            }   
+        });
     </script>
 </body>
 </html>

@@ -83,6 +83,7 @@
              }); 
             return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token=' + mapboxgl.accessToken; 
         };
+
         function getRouteWeight(route){
             console.log(route)
             var destinations = [];
@@ -136,9 +137,14 @@
         function popupCreator(){
             popups.splice(0, popups.length);
             for(var i=0; i<dropoffLocations.features.length; i++){
+                
+                html= ''
+                html+= 'name: '+dropoffLocations.features[i].properties.name+'<br>'
+                html+= 'load time: '+dropoffLocations.features[i].properties.load+' min<br>'
+                html+= 'weight: '+dropoffLocations.features[i].properties.weight
                 popups[i]= new mapboxgl.Popup();
                 popups[i].setLngLat(dropoffLocations.features[i].geometry.coordinates)
-                .setHTML(dropoffLocations.features[i].properties.name)
+                .setHTML(html)
                 .addTo(map);
             }
         } 
@@ -293,11 +299,12 @@
                 // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
                 map.getSource('dropoffs-symbol').setData(dropoffLocations);
                 map.getSource('marked-dropoff').setData(markedDropoff);
-                popupCreator();
+                
                 
                 // draw the truck route.
                 drawRoute();
 
+                popupCreator();
                 // update the weight of the dropoff points in dropoffLocations.
                 var hello = new updateWeight();
             }   

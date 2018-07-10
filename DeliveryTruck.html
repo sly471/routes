@@ -129,7 +129,7 @@
                         drop.properties.color = colorCalculator(drop.properties)
                     });
             });
-            popupCreator();
+            setTimeout(popupCreator, 2000);
         };
 
         // Creates a popup for every dropoff in dropoffLocations.
@@ -141,6 +141,7 @@
                 html+= 'name: '+dropoffLocations.features[i].properties.name+'<br>'
                 html+= 'load: '+dropoffLocations.features[i].properties.load+' palletes<br>'
                 html+= 'weight: '+dropoffLocations.features[i].properties.weight+ ' min'
+                html+=  '<svg height="50" width="50"> <circle cx="25" cy="25" r="13" stroke="black" stroke-width="3" fill=' + dropoffLocations.features[i].properties.color + ' /></svg> '
                 popups[i]= new mapboxgl.Popup();
                 popups[i].setLngLat(dropoffLocations.features[i].geometry.coordinates)
                 .setHTML(html)
@@ -219,6 +220,7 @@
 
         // initialize an object for the truck.
         var truck = new Truck([-66.0500, 18.4028], 30, 'Some Model', 'Pre-018', 'Some Trailer', 60, 0, 0)          
+        updateWeight();
 
         // *********************************************************************
         // Mapbox 
@@ -248,7 +250,7 @@
               }
             });
 
-            popupCreator();
+            
 
             // Adds layer with all marked dropoff locations.
             map.addLayer({

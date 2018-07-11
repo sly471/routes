@@ -111,7 +111,6 @@
         // everytime a dropoff location is marked.
         function updateWeight(){
             var i = 0;
-            var address = []
             dropoffLocations.features.forEach(function(drop){
 
                 var copyMarked = markedDropoff.features.slice(0);
@@ -131,7 +130,6 @@
 
         function updateWeightIndividually(drop){
             console.log('im in')
-            var address = []
             var copyMarked = markedDropoff.features.slice(0);
             copyMarked.push(drop)
             $.ajax({
@@ -142,6 +140,7 @@
                     drop.properties.weight = newWeight;
                     console.log('id: '+ drop.properties.name + ' new Weight: ' + drop.properties.weight )
                     drop.properties.color = colorCalculator(drop.properties)
+
                 });
         };
 
@@ -353,6 +352,25 @@
                 Radius();
             }   
         });
+
+        map.on('mousemove', e=> {
+              var features = map.queryRenderedFeatures(e.point, {
+                layers: ['dropoffs-symbol']
+              });
+
+              if (features.length) {
+                feature=features[0];
+                updateWeightIndividually(feature);
+                setTimeout(function(){
+                    var popup = new mapboxgl.Popup({ offset: [0, -15] })
+                    .setLngLat(feature.geometry.coordinates)
+                    .setHTML(feature.properties.load+' palletes<br><svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1"><circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>+'+feature.properties.weight+ ' min')
+                    .setLngLat(feature.geometry.coordinates)
+                    .addTo(map);
+                },3000)
+                
+              }
+            });
     </script>
 </body>
 </html>

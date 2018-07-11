@@ -120,28 +120,26 @@
                     method: 'GET',
                     url: getRouteWeight(copyMarked),
                     }).done(function(timeout) {
-
-                        var newWeight = Math.round(timeout.trips[0].duration/60) - truck.routeWeight
-
+                        var newWeight = Math.round(timeout.trips[0].duration/60) - truck.routeWeight;
 
                         drop.properties.weight = newWeight;
-
                         drop.properties.color = colorCalculator(drop.properties)
                     });
             });
-            popupCreator();
+            setTimeout(popupCreator, 5000);
         };
 
         // Creates a popup for every dropoff in dropoffLocations.
         function popupCreator(){
             popups.splice(0, popups.length);
             for(var i=0; i<dropoffLocations.features.length; i++){
-                
+                id= "pop"+i.toString();
                 html= ''
-                html+= 'name: '+dropoffLocations.features[i].properties.name+'<br>'
-                html+= 'load: '+dropoffLocations.features[i].properties.load+' palletes<br>'
-                html+= 'weight: '+dropoffLocations.features[i].properties.weight+ ' min'
-                popups[i]= new mapboxgl.Popup();
+                html+= dropoffLocations.features[i].properties.load+' palletes<br>'
+                html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
+                html+= '<circle cx="10" cy="10" r="5" fill="'+dropoffLocations.features[i].properties.color+'"/></svg>'
+                html+= '+'+dropoffLocations.features[i].properties.weight+ ' min'
+                popups[i]= new mapboxgl.Popup({closeOnClick:false, closeButton:false});
                 popups[i].setLngLat(dropoffLocations.features[i].geometry.coordinates)
                 .setHTML(html)
                 .addTo(map);
@@ -157,34 +155,45 @@
         // *********************************************************************
 
         // List which holds all the known dropoff locations on the map.
-        var dropoffLocations= turf.featureCollection([
-            turf.point([-66.0264859, 18.3939037],{name: '1',  load:1, weight:10}),
-            turf.point([-66.0491875, 18.3912599],{name: '2',  load:2, weight:20}),
-            turf.point([-66.0325626, 18.4221600],{name: '3',  load:3, weight:30}),
-            turf.point([-66.0448384, 18.3801500],{name: '4',  load:4, weight:10}),
-            turf.point([-66.0364162, 18.4249728],{name: '5',  load:2, weight:20}),
-            turf.point([-66.0566923, 18.3949524],{name: '6',  load:3, weight:30}),
-            turf.point([-66.0509650, 18.4134795],{name: '7',  load:1, weight:10}),
-            turf.point([-66.0497187, 18.4151344],{name: '8',  load:2, weight:20}),
-            turf.point([-66.0331616, 18.3826868],{name: '9',  load:3, weight:30}),
-            turf.point([-66.0256296, 18.4088110],{name: '10', load:1, weight:10}),
-            turf.point([-66.0674004, 18.3943928],{name: '11', load:2, weight:20}),
-            turf.point([-66.0282124, 18.4057161],{name: '12', load:3, weight:30}),
-            turf.point([-66.0463558, 18.4099867],{name: '13', load:1, weight:10}),
-            turf.point([-66.0742350, 18.4124916],{name: '14', load:2, weight:20}),
-            turf.point([-66.0522908, 18.3763833],{name: '15', load:3, weight:30}),
-            turf.point([-66.0520926, 18.3784950],{name: '16', load:1, weight:10}),
-            turf.point([-66.0637091, 18.4001899],{name: '17', load:2, weight:20}),
-            turf.point([-66.0301777, 18.4094323],{name: '18', load:3, weight:30}),
-            turf.point([-66.0471734, 18.3795232],{name: '19', load:1, weight:10}),
-            turf.point([-66.0575418, 18.3975852],{name: '20', load:2, weight:20}),
-            turf.point([-66.0376495, 18.4078695],{name: '21', load:3, weight:30}),
-            turf.point([-66.0648457, 18.3842672],{name: '22', load:1, weight:10}),
-            turf.point([-66.0714777, 18.3880810],{name: '23', load:2, weight:20}),
-        ]);
+        // var dropoffLocations= turf.featureCollection([
+        //     turf.point([-66.0264859, 18.3939037],{name: '1',  load:1, weight:10}),
+        //     turf.point([-66.0491875, 18.3912599],{name: '2',  load:2, weight:20}),
+        //     turf.point([-66.0325626, 18.4221600],{name: '3',  load:3, weight:30}),
+        //     turf.point([-66.0448384, 18.3801500],{name: '4',  load:4, weight:10}),
+        //     turf.point([-66.0364162, 18.4249728],{name: '5',  load:2, weight:20}),
+        //     turf.point([-66.0566923, 18.3949524],{name: '6',  load:3, weight:30}),
+        //     turf.point([-66.0509650, 18.4134795],{name: '7',  load:1, weight:10}),
+        //     turf.point([-66.0497187, 18.4151344],{name: '8',  load:2, weight:20}),
+        //     turf.point([-66.0331616, 18.3826868],{name: '9',  load:3, weight:30}),
+        //     turf.point([-66.0256296, 18.4088110],{name: '10', load:1, weight:10}),
+        //     turf.point([-66.0674004, 18.3943928],{name: '11', load:2, weight:20}),
+        //     turf.point([-66.0282124, 18.4057161],{name: '12', load:3, weight:30}),
+        //     turf.point([-66.0463558, 18.4099867],{name: '13', load:1, weight:10}),
+        //     turf.point([-66.0742350, 18.4124916],{name: '14', load:2, weight:20}),
+        //     turf.point([-66.0522908, 18.3763833],{name: '15', load:3, weight:30}),
+        //     turf.point([-66.0520926, 18.3784950],{name: '16', load:1, weight:10}),
+        //     turf.point([-66.0637091, 18.4001899],{name: '17', load:2, weight:20}),
+        //     turf.point([-66.0301777, 18.4094323],{name: '18', load:3, weight:30}),
+        //     turf.point([-66.0471734, 18.3795232],{name: '19', load:1, weight:10}),
+        //     turf.point([-66.0575418, 18.3975852],{name: '20', load:2, weight:20}),
+        //     turf.point([-66.0376495, 18.4078695],{name: '21', load:3, weight:30}),
+        //     turf.point([-66.0648457, 18.3842672],{name: '22', load:1, weight:10}),
+        //     turf.point([-66.0714777, 18.3880810],{name: '23', load:2, weight:20}),
+        // ]);
+        //     turf.point([-66.0264859, 18.3939037],{name: '1',  load:1, weight:10}),
+        var dropoffLocations= turf.featureCollection([]);
+        for (var i=0; i<25; i++){
+            x= Math.random() * (-65.70716270963167 - (-67.13664550786771)) + (-67.13664550786771);
+            y= Math.random() * (18.45869548139244 - (17.986497494385915)) + (17.986497494385915)
+            n= i;
+            l= getRndInteger(1, 40);
+            w= getRndInteger(1, 30);
+            dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: w}));
+        }
         
         var blank = turf.featureCollection([]);
         var popups= [];
+
         // Empty list which will hold all the dropoff locations that were marked on the map.
         var markedDropoff = turf.featureCollection([]);
         
@@ -248,7 +257,7 @@
               }
             });
 
-            popupCreator();
+            updateWeight();
 
             // Adds layer with all marked dropoff locations.
             map.addLayer({
@@ -282,7 +291,7 @@
         // Events/Listeners 
         // *********************************************************************
         map.on('click', e =>{
-
+            console.log(e.lngLat);
             // returns the info of the clicked dropoff marker on map.
             var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
 

@@ -148,15 +148,15 @@
         // Creates a popup for every dropoff in dropoffLocations.
         function popupCreator(){
             popups.splice(0, popups.length);
-            for(var i=0; i<dropoffLocations.features.length; i++){
+            for(var i=0; i<dropoffPopup.features.length; i++){
                 id= "pop"+i.toString();
                 html= ''
-                html+= dropoffLocations.features[i].properties.load+' palletes<br>'
+                html+= dropoffPopup.features[i].properties.load+' palletes<br>'
                 html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
-                html+= '<circle cx="10" cy="10" r="5" fill="'+dropoffLocations.features[i].properties.color+'"/></svg>'
-                html+= '+'+dropoffLocations.features[i].properties.weight+ ' min'
+                html+= '<circle cx="10" cy="10" r="5" fill="'+dropoffPopup.features[i].properties.color+'"/></svg>'
+                html+= '+'+dropoffPopup.features[i].properties.weight+ ' min'
                 popups[i]= new mapboxgl.Popup({closeOnClick:false, closeButton:false});
-                popups[i].setLngLat(dropoffLocations.features[i].geometry.coordinates)
+                popups[i].setLngLat(dropoffPopup.features[i].geometry.coordinates)
                 .setHTML(html)
                 .addTo(map);
             }
@@ -170,14 +170,16 @@
 
             var centerPoint = {radius:0.16093, x:truck.location[0], y:truck.location[1]}
             dropoffLocations.features.forEach(function(point){
+                console.log(point)
                 var pointLocation = {radius: 0.00001, x:point.geometry.coordinates[0], y:point.geometry.coordinates[1]}
                 var dx = centerPoint.x - pointLocation.x;
                 var dy = centerPoint.y - pointLocation.y;
                 if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
+                    dropoffPopup.features.push(point)
                     new updateWeightIndividually(point)
                 }
             })
-            setTimeout(popupCreator, 10000);
+            setTimeout(popupCreator, 1000);
         };
         // *;********************************************************************
         // Variable & Object Declaration
@@ -211,13 +213,14 @@
         // ]);
         //     turf.point([-66.0264859, 18.3939037],{name: '1',  load:1, weight:10}),
         var dropoffLocations= turf.featureCollection([]);
+        var dropoffPopup = turf.featureCollection([]);
         for (var i=0; i<50; i++){
             x= Math.random() * (-65.70716270963167 - (-67.13664550786771)) + (-67.13664550786771);
             y= Math.random() * (18.45869548139244 - (17.986497494385915)) + (17.986497494385915)
             n= i;
             l= getRndInteger(1, 10);
-            w= getRndInteger(1, 30);
-            dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: w}));
+            //w= getRndInteger(1, 30);
+            dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: null}));
         }
         
         var blank = turf.featureCollection([]);
@@ -286,7 +289,7 @@
               }
             });
 
-            updateWeight();
+            Radius()
 
             // Adds layer with all marked dropoff locations.
             map.addLayer({

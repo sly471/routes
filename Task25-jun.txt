@@ -1,5 +1,6 @@
-apuntar todo lo que se ve en https://blog.mapbox.com/build-an-interactive-route-planner-for-fleet-management-f259f517ee7c example
-luego pseudocode de como se puede hacerlo. 
+apuntar todo lo que se ve en 
+https://blog.mapbox.com/build-an-interactive-route-planner-for-fleet-management-f259f517ee7c 
+example luego pseudocode de como se puede hacerlo. 
 
 Anotaciones:
 Objeto Camion:

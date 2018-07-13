@@ -162,20 +162,17 @@
                 return drop
             }) 
             .then(function(feature){
-                var popup = new mapboxgl.Popup({ offset: [0, -15] })
-                    .setLngLat(feature.geometry.coordinates)
-                    .setHTML(feature.properties.load+' palletes<br><svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1"><circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>+'+feature.properties.weight+ ' min')
-                    .setLngLat(feature.geometry.coordinates)
-                    .addTo(map);  
+
+                popupCreatorIndividually(feature);
                 dropoffLocations.features.forEach(function(dropoff){
                     if(dropoff.properties.name == feature.properties.name){
                         dropoff.properties.weight = feature.properties.weight
                     }
+                map.getSource('dropoffs-symbol').setData(dropoffLocations)
                 })
             }) 
         };
-        // if feature.weight == -1 || feature.weight < dropoff.weight
-        // Creates a popup for every dropoff in dropoffLocations.
+        
         function popupCreator(){
             popups.splice(0, popups.length);
             for(var i=0; i<dropoffPopup.features.length; i++){
@@ -190,6 +187,21 @@
                 .setHTML(html)
                 .addTo(map);
             }
+        };
+
+        // if feature.weight == -1 || feature.weight < dropoff.weight
+        // Creates a popup for every dropoff in dropoffLocations.
+        function popupCreatorIndividually(feature){
+            html= ''
+            html+= feature.properties.load+' palletes<br>'
+            html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
+            html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
+            html+= '+'+feature.properties.weight+ ' min'
+            var popup = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                .setLngLat(feature.geometry.coordinates)
+                .setHTML(html)
+                .setLngLat(feature.geometry.coordinates)
+                .addTo(map);
         };
 
         // Returns an integer between min(included) & max(excluded)
@@ -208,7 +220,6 @@
                     new updateWeightIndividually(point)
                 }
             })
-            setTimeout(popupCreator, 1000);
         };
         // *;********************************************************************
         // Variable & Object Declaration
@@ -222,8 +233,9 @@
             y= Math.random() * (18.45869548139244 - (17.986497494385915)) + (17.986497494385915)
             n= i;
             l= getRndInteger(1, 10);
+            pp= false
             //w= getRndInteger(1, 30);
-            dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: null}));
+            dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: -1, ppop:pp}));
         }
         
         var blank = turf.featureCollection([]);
@@ -342,19 +354,25 @@
                         // remove the dropoff from dropoffLocation, do to it now being marked.
                         dropoffLocations.features.splice(i, 1);
                     } 
-                    dropoffLocations.features[i].properties.weight = -1 
+                    dropoffLocations.features[i].properties.weight = -1; 
                 }
+            } 
 
-                // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
-                map.getSource('dropoffs-symbol').setData(dropoffLocations);
-                map.getSource('marked-dropoff').setData(markedDropoff);
-                                
-                // draw the truck route.
-                drawRoute();
+            else{
+                for (var i=0; i< dropoffLocations.features.length; i++){
+                    dropoffLocations.features[i].properties.ppop=false;
+                }
+            }
 
-                // update the weight of the dropoff points in dropoffLocations.
-                Radius();
-            }   
+            // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
+            map.getSource('dropoffs-symbol').setData(dropoffLocations);
+            map.getSource('marked-dropoff').setData(markedDropoff);
+                            
+            // draw the truck route.
+            drawRoute();
+
+            // update the weight of the dropoff points in dropoffLocations.
+            Radius();
         });
 
         map.on('mouseover','dropoffs-symbol', e=> {
@@ -363,10 +381,33 @@
             });
             if (features.length) {
                 feature=features[0]; 
-                if(feature.properties.weight == 'null'){
+                if(feature.properties.weight == -1){
                     updateWeightIndividually(feature);
                 }
+                else if(feature.properties.ppop == false){
+                    feature.properties.color= colorCalculator(feature.properties)
+                    popupCreatorIndividually(feature);
+                    feature.properties.ppop=true;
+                    for (var i=0; i<dropoffLocations.features.length; i++){
+                        if(feature.properties.name==dropoffLocations.features[i].properties.name){
+                            dropoffLocations.features[i]= feature;
+                            break
+                        }
+                    }
+
+                    // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
+                    map.getSource('dropoffs-symbol').setData(dropoffLocations);
+                    map.getSource('marked-dropoff').setData(markedDropoff);
+                                    
+                    // draw the truck route.
+                    drawRoute();
+
+                    // update the weight of the dropoff points in dropoffLocations.
+                    Radius();
+
+                }
             }
+
         });
     </script>
 </body>

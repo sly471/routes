@@ -129,7 +129,6 @@
         };
 
         function updateWeightIndividually(drop){
-            console.log('im in')
             var copyMarked = markedDropoff.features.slice(0);
             copyMarked.push(drop)
             $.ajax({
@@ -138,7 +137,7 @@
                 }).done(function(timeout) {
                     var newWeight = Math.round(timeout.trips[0].duration/60) - truck.routeWeight
                     drop.properties.weight = newWeight;
-                    console.log('id: '+ drop.properties.name + ' new Weight: ' + drop.properties.weight )
+                    //console.log('id: '+ drop.properties.name + ' new Weight: ' + drop.properties.weight )
                     drop.properties.color = colorCalculator(drop.properties)
 
                 });
@@ -169,7 +168,6 @@
 
             var centerPoint = {radius:0.16093, x:truck.location[0], y:truck.location[1]}
             dropoffLocations.features.forEach(function(point){
-                console.log(point)
                 var pointLocation = {radius: 0.00001, x:point.geometry.coordinates[0], y:point.geometry.coordinates[1]}
                 var dx = centerPoint.x - pointLocation.x;
                 var dy = centerPoint.y - pointLocation.y;
@@ -353,21 +351,25 @@
             }   
         });
 
-        map.on('mousemove', e=> {
+        map.on('mouseover','dropoffs-symbol', e=> {
               var features = map.queryRenderedFeatures(e.point, {
                 layers: ['dropoffs-symbol']
               });
 
               if (features.length) {
                 feature=features[0];
-                updateWeightIndividually(feature);
+                
+                if(feature.properties.weight == 'null'){
+                    updateWeightIndividually(feature);
+                }
                 setTimeout(function(){
+                    
                     var popup = new mapboxgl.Popup({ offset: [0, -15] })
                     .setLngLat(feature.geometry.coordinates)
                     .setHTML(feature.properties.load+' palletes<br><svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1"><circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>+'+feature.properties.weight+ ' min')
                     .setLngLat(feature.geometry.coordinates)
                     .addTo(map);
-                },3000)
+                },1000)
                 
               }
             });

@@ -105,14 +105,6 @@
                 map.getSource('route').setData(route);
                 truck.updateRouteWeight(data.trips[0].duration);
             })
-            // $.ajax({
-            //   method: 'GET',
-            //   url: getRouteMarked(markedDropoff),
-            // }).done(function(data) {
-            //    var route = (data.trips[0].geometry);
-                // map.getSource('route').setData(route);
-                // truck.updateRouteWeight(data.trips[0].duration);   
-            // });
         };
         
         // This function will update the weight (re-appply the color) to the non-marked dropoff locations,
@@ -135,17 +127,7 @@
                 .then(function(){
                     popupCreator()
                 })
-            //     $.ajax({
-            //         method: 'GET',
-            //         url: getRouteWeight(copyMarked),
-            //         }).done(function(timeout) {
-            //             var newWeight = Math.round(timeout.trips[0].duration/60) - truck.routeWeight;
-
-            //             drop.properties.weight = newWeight;
-            //             drop.properties.color = colorCalculator(drop.properties)
-            //         });
              });
-            // setTimeout(popupCreator, 10000);
         };
 
         function updateWeightIndividually(drop){
@@ -208,9 +190,9 @@
         function getRndInteger(min, max) {
             return Math.floor(Math.random() * (max - min) ) + min;
         };
-        function Radius(){
+        function Radius(_x, _y){
 
-            var centerPoint = {radius:0.16093, x:truck.location[0], y:truck.location[1]}
+            var centerPoint = {radius:0.16093, x:_x, y:_y}
             dropoffLocations.features.forEach(function(point){
                 var pointLocation = {radius: 0.00001, x:point.geometry.coordinates[0], y:point.geometry.coordinates[1]}
                 var dx = centerPoint.x - pointLocation.x;
@@ -226,23 +208,25 @@
         // *********************************************************************
 
         // List which holds all the known dropoff locations on the map.
+        var dropcoor = turf.featureCollection([]);
         var dropoffLocations= turf.featureCollection([]);
         var dropoffPopup = turf.featureCollection([]);
+        var blank = turf.featureCollection([]);
+        var popups= [];
+        // Empty list which will hold all the dropoff locations that were marked on the map.
+        var markedDropoff = turf.featureCollection([]);
         for (var i=0; i<50; i++){
             x= Math.random() * (-65.70716270963167 - (-67.13664550786771)) + (-67.13664550786771);
             y= Math.random() * (18.45869548139244 - (17.986497494385915)) + (17.986497494385915)
             n= i;
             l= getRndInteger(1, 10);
             pp= false
-            //w= getRndInteger(1, 30);
             dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: -1, ppop:pp}));
         }
         
-        var blank = turf.featureCollection([]);
-        var popups= [];
 
-        // Empty list which will hold all the dropoff locations that were marked on the map.
-        var markedDropoff = turf.featureCollection([]);
+
+
         
         //Object Truck
         var Truck = function(_location, _maxLoad, _model, _licensePlate, _trailer, _speed, _routeWeight, _expectedTime){
@@ -304,7 +288,8 @@
               }
             });
 
-            Radius()
+            Radius(truck.location[0], truck.location[1])
+
 
             // Adds layer with all marked dropoff locations.
             map.addLayer({
@@ -371,8 +356,16 @@
             // draw the truck route.
             drawRoute();
 
-            // update the weight of the dropoff points in dropoffLocations.
-            Radius();
+            //update the weight of the dropoff points in dropoffLocations.
+            console.log(truck.location[0])
+            dropcoor.features.length = 0
+
+            dropcoor.features.push(turf.point([truck.location[0], truck.location[1]]))
+            markedDropoff.features.forEach(mark => {
+                 dropcoor.features.push(turf.point(mark.geometry.coordinates))
+            })
+            var center = turf.center(dropcoor)
+            Radius(center.geometry.coordinates[0], center.geometry.coordinates[1]);
         });
 
         map.on('mouseover','dropoffs-symbol', e=> {
@@ -398,16 +391,9 @@
                     // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
                     map.getSource('dropoffs-symbol').setData(dropoffLocations);
                     map.getSource('marked-dropoff').setData(markedDropoff);
-                                    
-                    // draw the truck route.
-                    drawRoute();
-
-                    // update the weight of the dropoff points in dropoffLocations.
-                    Radius();
-
+                                
                 }
             }
-
         });
     </script>
 </body>

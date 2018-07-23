@@ -96,7 +96,7 @@
         // This function will get the information returned from the getRoute and use it to draw the optimized
         // truck route on the map.
         function drawRoute(){
-            fetch(getRouteMarked(markedDropoff))
+            fetch(getRouteMarked(truck.markedDropoff))
             .then(function(res){
                 return res.json()
             })
@@ -113,7 +113,7 @@
             var i = 0;
             dropoffLocations.features.forEach(function(drop){
 
-                var copyMarked = markedDropoff.features.slice(0);
+                var copyMarked = truck.markedDropoff.features.slice(0);
                 copyMarked.push(drop)
                 fetch(getRouteWeight(copyMarked))
                 .then(function(res){
@@ -131,7 +131,7 @@
         };
 
         function updateWeightIndividually(drop){
-            var copyMarked = markedDropoff.features.slice(0);
+            var copyMarked = truck.markedDropoff.features.slice(0);
             copyMarked.push(drop)
             fetch(getRouteWeight(copyMarked))
             .then(function(res){
@@ -214,7 +214,7 @@
         var blank = turf.featureCollection([]);
         var popups= [];
         // Empty list which will hold all the dropoff locations that were marked on the map.
-        var markedDropoff = turf.featureCollection([]);
+        //var markedDropoff = turf.featureCollection([]);
         for (var i=0; i<50; i++){
             x= Math.random() * (-65.70716270963167 - (-67.13664550786771)) + (-67.13664550786771);
             y= Math.random() * (18.45869548139244 - (17.986497494385915)) + (17.986497494385915)
@@ -225,9 +225,6 @@
         }
         
 
-
-
-        
         //Object Truck
         var Truck = function(_location, _maxLoad, _model, _licensePlate, _trailer, _speed, _routeWeight, _expectedTime){
             this.location = _location;          //initial location of truck
@@ -238,6 +235,7 @@
             this.trailer = _trailer;            //trailer model of truck
             this.speed = _speed;                //the speed of truck
             this.routeWeight = _routeWeight;    //time it takes the route to complete
+            this.markedDropoff = turf.featureCollection([]);
             this.updateLoad = function(load){
                 if((this.currentLoad - load) >= 0){
                     this.currentLoad = this.currentLoad - load;
@@ -295,7 +293,7 @@
             map.addLayer({
               id: 'marked-dropoff',
               type: 'symbol',
-              source: {data: markedDropoff,type: 'geojson'},
+              source: {data: truck.markedDropoff,type: 'geojson'},
               layout: {
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
@@ -333,7 +331,7 @@
                     // if the clicked marker is found, do the following.
                     if(pt[0].properties.name == dropoffLocations.features[i].properties.name){
                         // push the dropoff to markedDropoff.
-                        markedDropoff.features.push(dropoffLocations.features[i]);
+                        truck.markedDropoff.features.push(dropoffLocations.features[i]);
                         // update the truck load.
                         truck.updateLoad(dropoffLocations.features[i].properties.load);
                         // remove the dropoff from dropoffLocation, do to it now being marked.
@@ -351,17 +349,16 @@
 
             // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
-            map.getSource('marked-dropoff').setData(markedDropoff);
+            map.getSource('marked-dropoff').setData(truck.markedDropoff);
                             
             // draw the truck route.
             drawRoute();
 
             //update the weight of the dropoff points in dropoffLocations.
-            console.log(truck.location[0])
             dropcoor.features.length = 0
 
             dropcoor.features.push(turf.point([truck.location[0], truck.location[1]]))
-            markedDropoff.features.forEach(mark => {
+            truck.markedDropoff.features.forEach(mark => {
                  dropcoor.features.push(turf.point(mark.geometry.coordinates))
             })
             var center = turf.center(dropcoor)
@@ -374,7 +371,7 @@
             });
             if (features.length) {
                 feature=features[0]; 
-                if(feature.properties.weight == -1){
+                if(feature.properties.weight == -1){ 
                     updateWeightIndividually(feature);
                 }
                 else if(feature.properties.ppop == false){
@@ -388,13 +385,27 @@
                         }
                     }
 
-                    // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
+                    // update the sources of the layers: 'dropoffs-symbol'.
                     map.getSource('dropoffs-symbol').setData(dropoffLocations);
-                    map.getSource('marked-dropoff').setData(markedDropoff);
-                                
                 }
             }
         });
+        var popuproute
+        map.on('mouseover', 'route', e => {
+            var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route']});
+            if (routeLocation.length){
+            var pophtml = ''
+            pophtml+= 'Current Route Duration<br>'
+            pophtml+= truck.routeWeight+ ' min'
+            popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                .setLngLat(e.lngLat)
+                .setHTML(pophtml)
+                .addTo(map);
+            }
+        });
+        map.on('mouseleave', 'route', e => {
+            popuproute.remove()
+        })
     </script>
 </body>
 </html>

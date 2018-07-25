@@ -123,6 +123,7 @@
             this.speed = _speed;                //the speed of truck
             this.routeWeight = _routeWeight;    //time it takes the route to complete
             this.markedDropoff = turf.featureCollection([]);
+            this.APIData;
             this.updateLoad = load => {
                 if((this.currentLoad - load) >= 0){
                     this.currentLoad = this.currentLoad - load;
@@ -143,8 +144,8 @@
         trucks.push(new Truck([-66.7600, 18.0000], 50, 'Ultra Deluxe Model', 'PRo-003', 'Even Bigger Trailer', 60, 0, 0))         
         var truckSelected = trucks[0];
 
-                document.getElementById('pd').innerHTML = 
-                '<table><tr><th rowspan="3" onclick="magia(0)">Route 1</th><td>Current Load: '+truckSelected.currentLoad+'</td></tr><tr><td>ETA: '+truckSelected.routeWeight +'</td></tr><tr><td>Stops: '+ truckSelected.markedDropoff.features.length +'</td></tr></table>'
+        document.getElementById('pd').innerHTML = 
+        '<table><tr><th rowspan="3" onclick="magia(0)">Route 1</th><td>Current Load: '+truckSelected.currentLoad+'</td></tr><tr><td>ETA: '+truckSelected.routeWeight +'</td></tr><tr><td>Stops: '+ truckSelected.markedDropoff.features.length +'</td></tr></table>'
 
 
 
@@ -187,12 +188,14 @@
             })
             .then(data => {
                 var route = (data.trips[0].geometry);
+                truck.APIData= data;
                 map.getSource('route').setData(route);
                 truck.updateRouteWeight(data.trips[0].duration);
             })
             .then( nothing => {
                 document.getElementById('pd').innerHTML = 
                 '<table><tr><th rowspan="3" onclick="magia(0)">Route 1</th><td>Current Load: '+truckSelected.currentLoad+'</td></tr><tr><td>ETA: '+truckSelected.routeWeight +'</td></tr><tr><td>Stops: '+ truckSelected.markedDropoff.features.length +'</td></tr></table>'
+                animate(truck);
 
             })
         };
@@ -325,8 +328,30 @@
             dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: -1, ppop:pp}));
         }
         
-        
-  
+        function animate(truck){
+            console.log('in animate');
+            var route= truck.APIData.trips[0].geometry
+            var start= route.coordinates[0];
+            var j=0;
+
+            var tm = document.createElement('div');
+            tm.classList = 'truck';
+
+            marker= new mapboxgl.Marker()
+                .setLngLat(start)
+                .addTo(map);
+            
+            tick(route, marker, j);
+        }
+
+        function tick(route, marker, j){
+            console.log(route.coordinates[j])
+            marker.remove()
+                .setLngLat(route.coordinates[j])
+                .addTo(map);
+            if (j<route.coordinates.length) {setTimeout(function(){tick(route, marker, j+1)},100)};
+        }
+            
 
         // *********************************************************************
         // Mapbox 
@@ -427,7 +452,6 @@
                             
             // draw the truck route.
             drawRoute(truckSelected);
-
             //update the weight of the dropoff points in dropoffLocations.
             dropcoor.features.length = 0
 
@@ -478,6 +502,7 @@
                 .addTo(map);
             }
         });
+
         map.on('mouseleave', 'route', e => {
             popuproute.remove()
         })

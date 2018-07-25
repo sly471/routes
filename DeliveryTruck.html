@@ -9,7 +9,6 @@
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet'/>
     <style>
-      
         body {margin: 0; padding: 0;}
         #map {
             position: absolute;
@@ -25,13 +24,57 @@
             border: 2px solid #fff;
             border-radius: 50%;
             background: #3887be;
-            pointer-events: none;
+            cursor: pointer;
         }
+        .mapboxgl-popup {
+          max-width: 200px;
+        }
+
+        .mapboxgl-popup-content {
+          text-align: center;
+          font-family: 'Open Sans', sans-serif;
+        }
+        .map-overlay {
+          position: absolute;
+          bottom: 0;
+          right: 0;
+          background: rgba(255, 255, 255, 1.0);
+          margin-right: 1005px;
+          font-family: Arial, sans-serif;
+          overflow: auto;
+          border-radius: 3px;
+
+        }
+
+        #features {
+          top: 0;
+          height: 1000px;
+          margin-top: 0px;
+          width: 350px;
+        }
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #dddddd;
+        }
+
     </style>
 </head>
 
-<body>
+<body>    
     <div id='map' class='contain'> </div>
+    <div class='map-overlay' id='features'>
+    <div id='pd'></div></div>
     <script type="text/javascript">
 
         // *********************************************************************
@@ -45,8 +88,8 @@
         var map = new mapboxgl.Map({
             container: 'map', // container id
             style: 'mapbox://styles/mapbox/streets-v10', // stylesheet location
-            center: [-66.4500, 18.2208], // starting position
-            zoom: 9 // starting zoom
+            center: [-66.700, 18.2208], // starting position
+            zoom: 8.5 // starting zoom
         });
 
         // Navigation Control
@@ -64,6 +107,7 @@
         var blank = turf.featureCollection([]);
         var popups= [];
         var trucks = [];
+        var popuproute ;
         // *********************************************************************
         // Objects
         // *********************************************************************
@@ -99,7 +143,13 @@
         trucks.push(new Truck([-66.7600, 18.0000], 50, 'Ultra Deluxe Model', 'PRo-003', 'Even Bigger Trailer', 60, 0, 0))         
         var truckSelected = trucks[0];
 
+                document.getElementById('pd').innerHTML = 
+                '<table><tr><th rowspan="3" onclick="magia(0)">Route 1</th><td>Current Load: '+truckSelected.currentLoad+'</td></tr><tr><td>ETA: '+truckSelected.routeWeight +'</td></tr><tr><td>Stops: '+ truckSelected.markedDropoff.features.length +'</td></tr></table>'
 
+
+
+
+        // '<h3><strong>' + truckSelected.model+ '<br>'+ truckSelected.licensePlate + '<br>' + +truckSelected.currentLoad +'</strong></h3><p><strong><em>' 
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
@@ -140,10 +190,19 @@
                 map.getSource('route').setData(route);
                 truck.updateRouteWeight(data.trips[0].duration);
             })
+            .then( nothing => {
+                document.getElementById('pd').innerHTML = 
+                '<table><tr><th rowspan="3" onclick="magia(0)">Route 1</th><td>Current Load: '+truckSelected.currentLoad+'</td></tr><tr><td>ETA: '+truckSelected.routeWeight +'</td></tr><tr><td>Stops: '+ truckSelected.markedDropoff.features.length +'</td></tr></table>'
+
+            })
         };
 
         // This function will update the weight (re-appply the color) to the non-marked dropoff locations,
         // everytime a dropoff location is marked.
+        function magia(id){
+            truckSelected = trucks[id]
+            console.table(truckSelected)
+        }
         function updateWeight(truck){
             var i = 0;
             dropoffLocations.features.forEach(function(drop){
@@ -267,6 +326,7 @@
         }
         
         
+  
 
         // *********************************************************************
         // Mapbox 
@@ -352,6 +412,7 @@
                     } 
                     dropoffLocations.features[i].properties.weight = -1; 
                 }
+        
             } 
 
             else{
@@ -403,13 +464,14 @@
                 }
             }
         });
-        var popuproute
+         
         map.on('mouseover', 'route', e => {
+            
             var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route']});
             if (routeLocation.length){
             var pophtml = ''
             pophtml+= 'Current Route Duration<br>'
-            pophtml+= truck.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+            pophtml+= truckSelected.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
             popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
                 .setLngLat(e.lngLat)
                 .setHTML(pophtml)

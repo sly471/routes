@@ -61,8 +61,6 @@
         #features {
           top: 0;
           height: 640px;
-          margin-top: 0px;
-          width: 350px;
         }
         table {
             font-family: arial, sans-serif;
@@ -83,16 +81,16 @@
     </style>
 </head>
 
-<body>    
+<body>
     <div id='map' class='contain'> </div>
     <div class='map-overlay' id='features'>
     <div id='pd'></div></div>
     <script type="text/javascript">
 
         // *********************************************************************
-        // Mapbox 
+        // Mapbox
         // *********************************************************************
-        
+
         // Load initial map
         // *********************************************************************
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2x5NDcxIiwiYSI6ImNqaWthMGZ0dzBpemwza21qM3BscTV5ZXcifQ.bdNLupProYoMvqdmNOpl-A';
@@ -107,7 +105,7 @@
         // Navigation Control
         var nav = new mapboxgl.NavigationControl();
         map.addControl(nav, 'top-right');
-       
+
         // *********************************************************************
         // Variable & Object Declaration
         // *********************************************************************
@@ -140,17 +138,18 @@
             this.updateLoad = load => {
                 if((this.currentLoad - load) >= 0){
                     this.currentLoad = this.currentLoad - load;
-                    
+
                 }
                 else{
                     alert('Not enought load in truck');
                 }
             };
             this.updateRouteWeight = function(routeDurability){
-                this.routeWeight = Math.round(routeDurability/60) //routeDurability will contain data.trips[0].duration which contains  
+                this.routeWeight = Math.round(routeDurability/60) //routeDurability will contain data.trips[0].duration which contains
                                                                   // the time expected in seconds
             }
         };
+
         
         trucks.push(new Truck([-66.0500, 18.4028], 30, 'Some Model', 'PRo-001', 'Some Trailer', 60))         
         trucks.push(new Truck([-65.9031, 17.7134], 40, 'Another Model', 'PRo-002', 'Bigger Trailer', 60))         
@@ -164,7 +163,6 @@
         HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
         document.getElementById('pd').innerHTML = HTML_Table
 
-        // '<h3><strong>' + truckSelected.model+ '<br>'+ truckSelected.licensePlate + '<br>' + +truckSelected.currentLoad +'</strong></h3><p><strong><em>' 
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
@@ -175,22 +173,22 @@
 
             var destinations = [];
             route.features.forEach(Geometry => {
-                destinations.push(Geometry.geometry.coordinates); 
-             }); 
-            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' 
-                    + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token=' 
-                    + mapboxgl.accessToken; 
+                destinations.push(Geometry.geometry.coordinates);
+             });
+            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';'
+                    + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
+                    + mapboxgl.accessToken;
         };
 
         function getRouteWeight(route, truck){
 
             var destinations = [];
             route.forEach(function(Geometry){
-                destinations.push(Geometry.geometry.coordinates); 
-             }); 
-            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';' 
-                    + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token=' 
-                    + mapboxgl.accessToken; 
+                destinations.push(Geometry.geometry.coordinates);
+             });
+            return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';'
+                    + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
+                    + mapboxgl.accessToken;
         };
 
         // This function will get the information returned from the getRoute and use it to draw the optimized
@@ -214,6 +212,7 @@
         HTML_Table += '</table>'
         HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
         document.getElementById('pd').innerHTML = HTML_Table
+
                 animate(truck);
 
             })
@@ -270,7 +269,7 @@
                 drop.properties.weight = newWeight;
                 drop.properties.color = colorCalculator(drop.properties)
                 return drop
-            }) 
+            })
             .then(feature =>{
 
                 popupCreatorIndividually(feature);
@@ -280,7 +279,7 @@
                     }
                 map.getSource('dropoffs-symbol').setData(dropoffLocations)
                 })
-            }) 
+            })
         };
 
         function Radius(_x, _y, truck){
@@ -341,7 +340,7 @@
             else if(dropoff.weight >= 0){
                 return '#00ff00';
             }
-        }; 
+        };
 
         // Returns an integer between min(included) & max(excluded)
         function getRndInteger(min, max) {
@@ -358,7 +357,7 @@
             pp= false
             dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: -1, ppop:pp}));
         }
-        
+
         function animate(truck){
             console.log('in animate');
             var route= truck.APIData.trips[0].geometry
@@ -371,7 +370,7 @@
             marker= new mapboxgl.Marker()
                 .setLngLat(start)
                 .addTo(map);
-            
+
             tick(route, marker, j);
         }
 
@@ -382,10 +381,10 @@
                 .addTo(map);
             if (j<route.coordinates.length) {setTimeout(function(){tick(route, marker, j+1)},100)};
         }
-            
+
 
         // *********************************************************************
-        // Mapbox 
+        // Mapbox
         // *********************************************************************
         // Map Layers
         // *********************************************************************
@@ -399,7 +398,7 @@
             truckMarker = new mapboxgl.Marker(marker)
             .setLngLat(truckSelected.location)
             .setPopup(new mapboxgl.Popup({ offset: 25 })
-                                  .setHTML('Current Load: ' + truckSelected.currentLoad +'<br>' +'Truck Model: ' + truckSelected.model + 
+                                  .setHTML('Current Load: ' + truckSelected.currentLoad +'<br>' +'Truck Model: ' + truckSelected.model +
                                     '<br>'  +'License Plate: ' + truckSelected.licensePlate))
             .addTo(map);
 
@@ -429,12 +428,12 @@
                 'icon-image': 'circle-15',
               }
             });
-            
+
             map.addSource('route', {
                 type: 'geojson',
                 data: blank
             });
-            
+
             // Adds layer with the optimized truck route.
             map.addLayer({
               id:'route',
@@ -447,14 +446,14 @@
             });
         });
 
-        // Events/Listeners 
+        // Events/Listeners
         // *********************************************************************
         map.on('click', e =>{
             // returns the info of the clicked dropoff marker on map.
             var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
 
             // if a marker is clicked, do the following
-            if (pt.length){ 
+            if (pt.length){
                 // looks for the clicked marker in dropoffLocations.
                 for(var i = 0; i < dropoffLocations.features.length; i++){
                     // if the clicked marker is found, do the following.
@@ -465,11 +464,11 @@
                         truckSelected.updateLoad(dropoffLocations.features[i].properties.load);
                         // remove the dropoff from dropoffLocation, do to it now being marked.
                         dropoffLocations.features.splice(i, 1);
-                    } 
-                    dropoffLocations.features[i].properties.weight = -1; 
+                    }
+                    dropoffLocations.features[i].properties.weight = -1;
                 }
-        
-            } 
+
+            }
 
             else{
                 for (var i=0; i< dropoffLocations.features.length; i++){
@@ -480,7 +479,7 @@
             // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
-                            
+
             // draw the truck route.
             drawRoute(truckSelected);
             //update the weight of the dropoff points in dropoffLocations.
@@ -499,8 +498,8 @@
                 layers: ['dropoffs-symbol']
             });
             if (features.length) {
-                feature=features[0]; 
-                if(feature.properties.weight == -1){ 
+                feature=features[0];
+                if(feature.properties.weight == -1){
                     updateWeightIndividually(feature, truckSelected);
                 }
                 else if(feature.properties.ppop == false){
@@ -519,9 +518,9 @@
                 }
             }
         });
-         
+
         map.on('mouseover', 'route', e => {
-            
+
             var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route']});
             if (routeLocation.length){
             var pophtml = ''

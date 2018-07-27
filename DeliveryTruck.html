@@ -16,7 +16,8 @@
             bottom: 0;
             right: 0;
             left: 0;
-      }
+        }
+        
         .truck {
             margin: -10px -10px;
             width: 20px;
@@ -26,42 +27,43 @@
             background: #3887be;
             cursor: pointer;
         }
-         .button {
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            padding: 15px 135px;
-            text-align: center;
-            text-decoration: none;
-            display: inline-block;
-            font-size: 16px;
-            margin: 4px 2px;
-            cursor: pointer;
+        
+        .button {
+           background-color: #4CAF50;
+           border: none;
+           color: white;
+           padding: 15px 135px;
+           text-align: center;
+           text-decoration: none;
+           display: inline-block;
+           font-size: 16px;
+           margin: 4px 2px;
+           cursor: pointer;
         }
-        .mapboxgl-popup {
-          max-width: 200px;
-        }
+        
+        .mapboxgl-popup {max-width: 200px;}
 
         .mapboxgl-popup-content {
           text-align: center;
           font-family: 'Open Sans', sans-serif;
         }
+        
         .map-overlay {
           position: absolute;
           bottom: 0;
-          right: 0;
+          left: 0;
           background: rgba(255, 255, 255, 1.0);
-          margin-right: 1005px;
+          margin-left: auto;
           font-family: Arial, sans-serif;
           overflow: auto;
           border-radius: 3px;
-
         }
 
         #features {
           top: 0;
           height: 640px;
         }
+
         table {
             font-family: arial, sans-serif;
             border-collapse: collapse;
@@ -74,9 +76,7 @@
             padding: 8px;
         }
 
-        tr:nth-child(even) {
-            background-color: #dddddd;
-        }
+        tr:nth-child(even) {background-color: #dddddd;}
 
     </style>
 </head>
@@ -92,7 +92,7 @@
         // *********************************************************************
 
         // Load initial map
-        // *********************************************************************
+            // *********************************************************************
         mapboxgl.accessToken = 'pk.eyJ1Ijoic2x5NDcxIiwiYSI6ImNqaWthMGZ0dzBpemwza21qM3BscTV5ZXcifQ.bdNLupProYoMvqdmNOpl-A';
 
         var map = new mapboxgl.Map({
@@ -144,6 +144,8 @@
                     alert('Not enought load in truck');
                 }
             };
+            this.freeLoad= load =>{this.currentLoad= this.currentLoad + load;}
+
             this.updateRouteWeight = function(routeDurability){
                 this.routeWeight = Math.round(routeDurability/60) //routeDurability will contain data.trips[0].duration which contains
                                                                   // the time expected in seconds
@@ -157,7 +159,7 @@
         var truckSelected = trucks[0];
 
         for(var i = 0; i < trucks.length ; i++){
-           HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+            HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
         }
         HTML_Table += '</table>'
         HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
@@ -194,6 +196,7 @@
         // This function will get the information returned from the getRoute and use it to draw the optimized
         // truck route on the map.
         function drawRoute(truck){
+            console.log('drawing route')
             fetch(getRouteMarked(truck.markedDropoff, truck))
             .then(res => {
                 return res.json()
@@ -205,16 +208,16 @@
                 truck.updateRouteWeight(data.trips[0].duration);
             })
             .then( nothing => {
+                HTML_Table = '<table>'
+
                 for(var i = 0; i < trucks.length ; i++){
-                    HTML_Table = '<table>'
-           HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
-        }
-        HTML_Table += '</table>'
-        HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
-        document.getElementById('pd').innerHTML = HTML_Table
+                    HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+                }
+                HTML_Table += '</table>'
+                HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
+                document.getElementById('pd').innerHTML = HTML_Table
 
-                animate(truck);
-
+                // animate(truck);
             })
         };
 
@@ -232,30 +235,11 @@
                 HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
                 document.getElementById('pd').innerHTML = HTML_Table
         }
+        
         function magia(id){
             truckSelected = trucks[id]
             console.table(truckSelected)
         }
-        function updateWeight(truck){
-            var i = 0;
-            dropoffLocations.features.forEach(function(drop){
-
-                var copyMarked = truck.markedDropoff.features.slice(0);
-                copyMarked.push(drop)
-                fetch(getRouteWeight(copyMarked, truck))
-                .then(res =>{
-                    return res.json();
-                })
-                .then(data =>{
-                    var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight;
-                    drop.properties.weight = newWeight;
-                    drop.properties.color = colorCalculator(drop.properties)
-                })
-                .then(function(){
-                    popupCreator()
-                })
-             });
-        };
 
         function updateWeightIndividually(drop, truck){
             var copyMarked = truck.markedDropoff.features.slice(0);
@@ -294,22 +278,6 @@
                     new updateWeightIndividually(point, truck)
                 }
             })
-        };
-
-        function popupCreator(){
-            popups.splice(0, popups.length);
-            for(var i=0; i<dropoffPopup.features.length; i++){
-                id= "pop"+i.toString();
-                html= ''
-                html+= dropoffPopup.features[i].properties.load+' palletes<br>'
-                html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
-                html+= '<circle cx="10" cy="10" r="5" fill="'+dropoffPopup.features[i].properties.color+'"/></svg>'
-                html+= '+'+dropoffPopup.features[i].properties.weight+ ' min'
-                popups[i]= new mapboxgl.Popup({closeOnClick:false, closeButton:false});
-                popups[i].setLngLat(dropoffPopup.features[i].geometry.coordinates)
-                .setHTML(html)
-                .addTo(map);
-            }
         };
 
         // if feature.weight == -1 || feature.weight < dropoff.weight
@@ -448,24 +416,47 @@
 
         // Events/Listeners
         // *********************************************************************
-        map.on('click', e =>{
+        map.on('click',e =>{
             // returns the info of the clicked dropoff marker on map.
-            var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
+            var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol', 'marked-dropoff']});
 
             // if a marker is clicked, do the following
             if (pt.length){
-                // looks for the clicked marker in dropoffLocations.
-                for(var i = 0; i < dropoffLocations.features.length; i++){
-                    // if the clicked marker is found, do the following.
-                    if(pt[0].properties.name == dropoffLocations.features[i].properties.name){
-                        // push the dropoff to markedDropoff.
-                        truckSelected.markedDropoff.features.push(dropoffLocations.features[i]);
-                        // update the truck load.
-                        truckSelected.updateLoad(dropoffLocations.features[i].properties.load);
-                        // remove the dropoff from dropoffLocation, do to it now being marked.
-                        dropoffLocations.features.splice(i, 1);
+                console.log('clickety click');
+
+                if(pt[0].layer.id=='dropoffs-symbol'){
+                    // looks for the clicked marker in dropoffLocations.
+                    for(var i = 0; i < dropoffLocations.features.length; i++){
+                        // if the clicked marker is found, do the following.
+                        if(pt[0].properties.name == dropoffLocations.features[i].properties.name){
+                            // push the dropoff to markedDropoff.
+                            truckSelected.markedDropoff.features.push(dropoffLocations.features[i]);
+                            // update the truck load.
+                            truckSelected.updateLoad(dropoffLocations.features[i].properties.load);
+                            // remove the dropoff from dropoffLocation, do to it now being marked.
+                            dropoffLocations.features.splice(i, 1);
+                            break;
+                        }
+                        dropoffLocations.features[i].properties.weight = -1;
                     }
-                    dropoffLocations.features[i].properties.weight = -1;
+                }
+
+                else{
+                    for(var i=0; i<truckSelected.markedDropoff.features.length; i++){
+                        if(pt[0].properties.name == truckSelected.markedDropoff.features[i].properties.name){
+                            var check=0;
+                            for(var j=0; j<dropoffLocations.features.length; j++){
+                                if(pt[0].properties.name == dropoffLocations.features[j].properties.name){
+                                    check=1;
+                                    break;
+                                }
+                            }
+                            if(check==0){dropoffLocations.features.push(pt[0])};
+                            truckSelected.freeLoad(pt[0].properties.load);
+                            truckSelected.markedDropoff.features.splice(i, 1);
+                            break;
+                        }
+                    }
                 }
 
             }
@@ -475,12 +466,15 @@
                     dropoffLocations.features[i].properties.ppop=false;
                 }
             }
-
             // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
 
             // draw the truck route.
+            if (truckSelected.markedDropoff.features.length==0){
+                map.getSource('route').setData(blank);
+                // truckSelected.markedDropoff = turf.featureCollection([]);
+            }
             drawRoute(truckSelected);
             //update the weight of the dropoff points in dropoffLocations.
             dropcoor.features.length = 0

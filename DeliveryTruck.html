@@ -117,7 +117,7 @@
         var blank = turf.featureCollection([]);
         var popups= [];
         var trucks = [];
-        var popuproute ;
+        var popuproute;
         var HTML_Table = '<table>'
         // *********************************************************************
         // Objects
@@ -159,7 +159,20 @@
         var truckSelected = trucks[0];
 
         for(var i = 0; i < trucks.length ; i++){
-            HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+            HTML_Table+='<tr>'
+            HTML_Table+=    '<th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th>'
+            HTML_Table+=    '<td>Current Load: '+trucks[i].currentLoad+'</td>'
+            HTML_Table+='</tr>'
+            HTML_Table+='<tr>'
+            HTML_Table+=    '<td>'
+            HTML_Table+=        'ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
+            HTML_Table+=        (Math.floor(trucks[i].routeWeight%60)<10?'0':'')
+            HTML_Table+=        Math.floor(trucks[i].routeWeight%60) +'</td>'
+            HTML_Table+='</tr>'
+            HTML_Table+='<tr>'
+            HTML_Table+=    '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
+            HTML_Table+='</tr>'
+            // HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
         }
         HTML_Table += '</table>'
         HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
@@ -169,8 +182,8 @@
         // Functions Declaration
         // *********************************************************************
 
-        // This function will get the markedDropoff variable and feed it to the optimization APi which will return
-        // us the the optimized route for the truck.
+        // This function will get the markedDropoff variable and feed it to the optimization API which will return
+        // the optimized route for the truck.
         function getRouteMarked(route, truck){
 
             var destinations = [];
@@ -196,7 +209,6 @@
         // This function will get the information returned from the getRoute and use it to draw the optimized
         // truck route on the map.
         function drawRoute(truck){
-            console.log('drawing route')
             fetch(getRouteMarked(truck.markedDropoff, truck))
             .then(res => {
                 return res.json()
@@ -217,7 +229,6 @@
                 HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
                 document.getElementById('pd').innerHTML = HTML_Table
 
-                // animate(truck);
             })
         };
 
@@ -327,7 +338,6 @@
         }
 
         function animate(truck){
-            console.log('in animate');
             var route= truck.APIData.trips[0].geometry
             var start= route.coordinates[0];
             var j=0;
@@ -343,7 +353,6 @@
         }
 
         function tick(route, marker, j){
-            console.log(route.coordinates[j])
             marker.remove()
                 .setLngLat(route.coordinates[j])
                 .addTo(map);
@@ -365,9 +374,8 @@
             // Create a new marker.
             truckMarker = new mapboxgl.Marker(marker)
             .setLngLat(truckSelected.location)
-            .setPopup(new mapboxgl.Popup({ offset: 25 })
-                                  .setHTML('Current Load: ' + truckSelected.currentLoad +'<br>' +'Truck Model: ' + truckSelected.model +
-                                    '<br>'  +'License Plate: ' + truckSelected.licensePlate))
+            .setPopup(new mapboxgl.Popup({ offset: 25 }))
+            .setHTML('Current Load: '+truckSelected.currentLoad +'<br>' +'Truck Model: ' + truckSelected.model +'<br>'+'License Plate: ' + truckSelected.licensePlate)
             .addTo(map);
 
             // Adds layer with all dropoff locations.
@@ -422,8 +430,6 @@
 
             // if a marker is clicked, do the following
             if (pt.length){
-                console.log('clickety click');
-
                 if(pt[0].layer.id=='dropoffs-symbol'){
                     // looks for the clicked marker in dropoffLocations.
                     for(var i = 0; i < dropoffLocations.features.length; i++){

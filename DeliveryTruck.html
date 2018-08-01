@@ -77,7 +77,10 @@
         }
 
         tr:nth-child(even) {background-color: #dddddd;}
-
+        .previous {
+            background-color: #f1f1f1;
+            color: black;
+        }
     </style>
 </head>
 
@@ -135,6 +138,15 @@
             this.routeWeight = 0;    //time it takes the route to complete
             this.markedDropoff = turf.featureCollection([]);
             this.APIData;
+            this.marker = document.createElement('div');
+            this.marker.classList = 'truck';
+
+            this.truckMarker = new mapboxgl.Marker(this.marker)
+                                           .setLngLat(this.location)
+                                           .setPopup(new mapboxgl.Popup({ offset: 25 })
+                                                                 .setHTML('Current Load: '+this.currentLoad +'<br>' +'Truck Model: ' + this.model +'<br>'+'License Plate: ' + this.licensePlate))
+                                           .addTo(map);
+
             this.updateLoad = load => {
                 if((this.currentLoad - load) >= 0){
                     this.currentLoad = this.currentLoad - load;
@@ -153,14 +165,14 @@
         };
 
         
-        trucks.push(new Truck([-66.0500, 18.4028], 30, 'Some Model', 'PRo-001', 'Some Trailer', 60))         
-        trucks.push(new Truck([-65.9031, 17.7134], 40, 'Another Model', 'PRo-002', 'Bigger Trailer', 60))         
-        trucks.push(new Truck([-66.7600, 18.0000], 50, 'Ultra Deluxe Model', 'PRo-003', 'Even Bigger Trailer', 60))         
-        var truckSelected = trucks[0];
+        //trucks.push(new Truck([-66.0500, 18.4028], 30, 'Some Model', 'PRo-001', 'Some Trailer', 60))         
+        // trucks.push(new Truck([-65.9031, 17.7134], 40, 'Another Model', 'PRo-002', 'Bigger Trailer', 60))         
+        // trucks.push(new Truck([-66.7600, 18.0000], 50, 'Ultra Deluxe Model', 'PRo-003', 'Even Bigger Trailer', 60))         
+        var truckSelected //= trucks[0];
 
         for(var i = 0; i < trucks.length ; i++){
             HTML_Table+='<tr>'
-            HTML_Table+=    '<th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th>'
+            HTML_Table+=    '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
             HTML_Table+=    '<td>Current Load: '+trucks[i].currentLoad+'</td>'
             HTML_Table+='</tr>'
             HTML_Table+='<tr>'
@@ -173,10 +185,10 @@
             HTML_Table+='<tr>'
             HTML_Table+=    '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
             HTML_Table+='</tr>'
-            // HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+            // HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
         }
         HTML_Table += '</table>'
-        HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Truck</button>'
+        HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
         document.getElementById('pd').innerHTML = HTML_Table
 
         // *********************************************************************
@@ -224,10 +236,10 @@
                 HTML_Table = '<table>'
 
                 for(var i = 0; i < trucks.length ; i++){
-                    HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+                    HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
                 }
                 HTML_Table += '</table>'
-                HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
+                HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
                 document.getElementById('pd').innerHTML = HTML_Table
 
             })
@@ -237,20 +249,96 @@
         // everytime a dropoff location is marked.
         
 
-        function alertFun(){
-            trucks.push(new Truck([-66.7600, 18.0000], Math.floor(Math.random() * (100 - 10) ) + 10, 'Chuck Norris Model', 'PRo-004', 'Chuck Norris Trailer', 60))
+        function AddRoute(){
+            if(trucks.length){
+                trucks.forEach(truck =>{
+                    truck.truckMarker.remove()
+                })
+            }
+            var x= Math.random() * (-65.70716270963167 - (-67.13664550786771)) + (-67.13664550786771);
+            var y= Math.random() * (18.45869548139244 - (17.986497494385915)) + (17.986497494385915)
+            trucks.push(new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10, 'Chuck Norris Model', 'PRo-004', 'Chuck Norris Trailer', 60))
+            truckSelected = trucks[trucks.length-1]
             HTML_Table = '<table>'
                 for(var i = 0; i < trucks.length ; i++){
-                    HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+                    HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
                 }
                 HTML_Table += '</table>'
-                HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
+                HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
                 document.getElementById('pd').innerHTML = HTML_Table
         }
-        
-        function magia(id){
+        function Table(){
+            HTML_Table = '<table>'
+             for(var i = 0; i < trucks.length ; i++){
+                HTML_Table+='<tr>'
+                HTML_Table+=    '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
+                HTML_Table+=    '<td>Current Load: '+trucks[i].currentLoad+'</td>'
+                HTML_Table+='</tr>'
+                HTML_Table+='<tr>'
+                HTML_Table+=    '<td>'
+                HTML_Table+=        'ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
+                HTML_Table+=        (Math.floor(trucks[i].routeWeight%60)<10?'0':'')
+                HTML_Table+=        Math.floor(trucks[i].routeWeight%60) 
+                HTML_Table+=    '</td>'
+                HTML_Table+='</tr>'
+                HTML_Table+='<tr>'
+                HTML_Table+=    '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
+                HTML_Table+='</tr>'
+            }
+            HTML_Table += '</table>'
+            HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
+            document.getElementById('pd').innerHTML = HTML_Table
+        }
+        function SelectTruck(id){
+            if(truckSelected != undefined){
+                truckSelected.truckMarker.remove();
+            }
             truckSelected = trucks[id]
-            console.table(truckSelected)
+            truckSelected.truckMarker.addTo(map)
+
+            var HTML_Directions = ''
+
+            for(var i =0; i< trucks.length;i++){
+                if (i == id){
+                    HTML_Directions += '<a onclick="Table()" class="previous">&#8249; Route '+(id+1) +'</a>'
+                }
+                document.getElementById('pd').innerHTML = HTML_Directions
+            }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+            // HTML_Table = '<table>'
+            //     for(var i = 0; i < trucks.length ; i++){
+            //         if(i == id){
+            //             HTML_Table += '<tr><th rowspan="3" bgcolor="#FF0000" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+            //         }
+            //         else{
+            //             HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+            //         }
+            //     }
+            //     HTML_Table += '</table>'
+            //     HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
+            //     document.getElementById('pd').innerHTML = HTML_Table
         }
 
         function updateWeightIndividually(drop, truck){
@@ -369,15 +457,15 @@
 
         map.on('load', function(){
             // Add Truck.
-            var marker = document.createElement('div');
-            marker.classList = 'truck';
+            // var marker = document.createElement('div');
+            // marker.classList = 'truck';
 
             // Create a new marker.
-            truckMarker = new mapboxgl.Marker(marker)
-            .setLngLat(truckSelected.location)
-            .setPopup(new mapboxgl.Popup({ offset: 25 })
-            .setHTML('Current Load: '+truckSelected.currentLoad +'<br>' +'Truck Model: ' + truckSelected.model +'<br>'+'License Plate: ' + truckSelected.licensePlate))
-            .addTo(map);
+            // truckMarker = new mapboxgl.Marker(marker)
+            // .setLngLat(truckSelected.location)
+            // .setPopup(new mapboxgl.Popup({ offset: 25 })
+            // .setHTML('Current Load: '+truckSelected.currentLoad +'<br>' +'Truck Model: ' + truckSelected.model +'<br>'+'License Plate: ' + truckSelected.licensePlate))
+            // .addTo(map);
 
             // Adds layer with all dropoff locations.
             map.addLayer({
@@ -391,14 +479,14 @@
               }
             });
 
-            Radius(truckSelected.location[0], truckSelected.location[1], truckSelected)
+            //Radius(truckSelected.location[0], truckSelected.location[1], truckSelected)
 
 
             // Adds layer with all marked dropoff locations.
             map.addLayer({
               id: 'marked-dropoff',
               type: 'symbol',
-              source: {data: truckSelected.markedDropoff,type: 'geojson'}, // Think of how to display all MarkedDropoff. prob function with an array of all truck
+              source: {data: blank,type: 'geojson'}, // Think of how to display all MarkedDropoff. prob function with an array of all truck
               layout: {
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,

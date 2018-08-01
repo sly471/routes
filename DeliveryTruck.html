@@ -167,7 +167,8 @@
             HTML_Table+=    '<td>'
             HTML_Table+=        'ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
             HTML_Table+=        (Math.floor(trucks[i].routeWeight%60)<10?'0':'')
-            HTML_Table+=        Math.floor(trucks[i].routeWeight%60) +'</td>'
+            HTML_Table+=        Math.floor(trucks[i].routeWeight%60) 
+            HTML_Table+=    '</td>'
             HTML_Table+='</tr>'
             HTML_Table+='<tr>'
             HTML_Table+=    '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
@@ -175,7 +176,7 @@
             // HTML_Table +='<tr><th rowspan="3" onclick="magia('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
         }
         HTML_Table += '</table>'
-        HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Route</button>'
+        HTML_Table += '<button class="button" type="button" onClick="alertFun()">Add Truck</button>'
         document.getElementById('pd').innerHTML = HTML_Table
 
         // *********************************************************************

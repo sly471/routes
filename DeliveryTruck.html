@@ -93,7 +93,7 @@
 
         // Load initial map
             // *********************************************************************
-        mapboxgl.accessToken = 'pk.eyJ1Ijoic2x5NDcxIiwiYSI6ImNqaWthMGZ0dzBpemwza21qM3BscTV5ZXcifQ.bdNLupProYoMvqdmNOpl-A';
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamtiODFmZjYwaGJrM2pwOHZ3ajBxanpoIn0.-ZNUdftdY8eenrJSGc9ySw';
 
         var map = new mapboxgl.Map({
             container: 'map', // container id
@@ -375,8 +375,8 @@
             // Create a new marker.
             truckMarker = new mapboxgl.Marker(marker)
             .setLngLat(truckSelected.location)
-            .setPopup(new mapboxgl.Popup({ offset: 25 }))
-            .setHTML('Current Load: '+truckSelected.currentLoad +'<br>' +'Truck Model: ' + truckSelected.model +'<br>'+'License Plate: ' + truckSelected.licensePlate)
+            .setPopup(new mapboxgl.Popup({ offset: 25 })
+            .setHTML('Current Load: '+truckSelected.currentLoad +'<br>' +'Truck Model: ' + truckSelected.model +'<br>'+'License Plate: ' + truckSelected.licensePlate))
             .addTo(map);
 
             // Adds layer with all dropoff locations.

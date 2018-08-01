@@ -96,7 +96,7 @@
 
         // Load initial map
             // *********************************************************************
-        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamtiODFmZjYwaGJrM2pwOHZ3ajBxanpoIn0.-ZNUdftdY8eenrJSGc9ySw';
+        mapboxgl.accessToken = 'pk.eyJ1IjoidG9ybGFuY28iLCJhIjoiY2prYmR3dmszMHVtcDNwbWl3cHdwOTl5NSJ9.NxympEZmljc0jq4DJmK5JQ';
 
         var map = new mapboxgl.Map({
             container: 'map', // container id
@@ -582,11 +582,10 @@
             Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
         });
 
-        map.on('mouseover','dropoffs-symbol', e=> {
-            var features = map.queryRenderedFeatures(e.point, {
-                layers: ['dropoffs-symbol']
-            });
+        map.on('mouseover', 'dropoffs-symbol', e=> {
+            var features = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
             if (features.length) {
+                map.getCanvas().style.cursor='pointer';
                 feature=features[0];
                 if(feature.properties.weight == -1){
                     updateWeightIndividually(feature, truckSelected);
@@ -608,23 +607,30 @@
             }
         });
 
+        map.on('mouseover', 'marked-dropoff' , e=>{
+            features= map.queryRenderedFeatures(e.point, {layers:['marked-dropoff']});
+            if(features.length){map.getCanvas().style.cursor='pointer'};
+        })
+
+        map.on('mouseleave','dropoffs-symbol', e=> {map.getCanvas().style.cursor=''});
+        
+        map.on('mouseleave','marked-dropoff' , e=> {map.getCanvas().style.cursor=''});
+
         map.on('mouseover', 'route', e => {
 
             var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route']});
             if (routeLocation.length){
-            var pophtml = ''
-            pophtml+= 'Current Route Duration<br>'
-            pophtml+= truckSelected.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-            popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                .setLngLat(e.lngLat)
-                .setHTML(pophtml)
-                .addTo(map);
+                var pophtml = ''
+                pophtml+= 'Current Route Duration<br>'
+                pophtml+= truckSelected.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                    .setLngLat(e.lngLat)
+                    .setHTML(pophtml)
+                    .addTo(map);
             }
         });
 
-        map.on('mouseleave', 'route', e => {
-            popuproute.remove()
-        })
+        map.on('mouseleave', 'route', e => {popuproute.remove()});
     </script>
 </body>
 </html>

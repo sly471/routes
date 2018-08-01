@@ -140,6 +140,7 @@
             this.APIData;
             this.marker = document.createElement('div');
             this.marker.classList = 'truck';
+            this.routeMile;
 
             this.truckMarker = new mapboxgl.Marker(this.marker)
                                            .setLngLat(this.location)
@@ -229,6 +230,9 @@
             .then(data => {
                 var route = (data.trips[0].geometry);
                 truck.APIData= data;
+                console.table(data);
+                truck.routeMile= data.trips[0].distance/1609.344;
+                console.log(truck.routeMile)
                 map.getSource('route').setData(route);
                 truck.updateRouteWeight(data.trips[0].duration);
             })
@@ -304,41 +308,6 @@
                 }
                 document.getElementById('pd').innerHTML = HTML_Directions
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-            // HTML_Table = '<table>'
-            //     for(var i = 0; i < trucks.length ; i++){
-            //         if(i == id){
-            //             HTML_Table += '<tr><th rowspan="3" bgcolor="#FF0000" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
-            //         }
-            //         else{
-            //             HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
-            //         }
-            //     }
-            //     HTML_Table += '</table>'
-            //     HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
-            //     document.getElementById('pd').innerHTML = HTML_Table
         }
 
         function updateWeightIndividually(drop, truck){

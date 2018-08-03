@@ -10,6 +10,21 @@
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet'/>
     <style>
         body {margin: 0; padding: 0;}
+
+        tr:nth-child(even) {background-color: #dddddd;}
+        
+        table {
+            font-family: arial, sans-serif;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        td, th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+
         #map {
             position: absolute;
             top: 0;
@@ -40,12 +55,14 @@
            margin: 4px 2px;
            cursor: pointer;
         }
+        
         .back {
             font-family: arial;
             border-collapse: collapse;
             width: 100%;
             padding: 20px 40px; 
         }
+        
         .mapboxgl-popup {max-width: 200px;}
 
         .mapboxgl-popup-content {
@@ -68,27 +85,13 @@
           top: 0;
           height: 640px;
         }
-
-        table {
-            font-family: arial, sans-serif;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        td, th {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-        }
-
-        tr:nth-child(even) {background-color: #dddddd;}
+        
         .previous {
             background-color: #f1f1f1;
             color: black;
         }
     </style>
 </head>
-
 <body>
     <div id='map' class='contain'> </div>
     <div class='map-overlay' id='features'>
@@ -159,6 +162,7 @@
                     alert('Not enought load in truck');
                 }
             };
+
             this.freeLoad= load =>{this.currentLoad= this.currentLoad + load;}
 
             this.updateRouteWeight = function(routeDurability){
@@ -225,31 +229,32 @@
             .then(data => {
                 var route = (data.trips[0].geometry);
                 truck.APIData= data;
-                map.getSource('route').setData(route);
+                truck.routeMile= data.trips[0].distance/1609.344;
                 truck.updateRouteWeight(data.trips[0].duration);
+                map.getSource('route').setData(route);
+                
             })
             .then( nothing => {
                var HTML_Directions = '';
-            var id ;
-            for(var i =0; i< trucks.length;i++){
-                if(trucks[i]==truckSelected){
-                    var id = i
+                var id;
+                for(var i =0; i< trucks.length;i++){
+                    if(trucks[i]==truckSelected){
+                        var id = i
+                    }
                 }
-            }
-            HTML_Directions += '<button style="display:inline-block; vertical-align: middle; margin:0px; padding: 0; border: none; background: none;font-size : 50px"  type="button" onclick="Table()" class="previous">&#8249; </button><h3 style="display:inline-block; vertical-align: middle; margin:0px 130px">  Route '+(id+1) +'</h3>'
-                       
-            HTML_Directions += '<div> Current Load: ' + truck.currentLoad + '</div>'      
-            HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'          
-            HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
-            HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
-            HTML_Directions+=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
-            document.getElementById('pd').innerHTML = HTML_Directions
+                HTML_Directions += '<button style="display:inline-block; vertical-align: middle; margin:0px; padding: 0; border: none; background: none;font-size : 50px"  type="button" onclick="Table()" class="previous">&#8249; </button><h3 style="display:inline-block; vertical-align: middle; margin:0px 130px">  Route '+(id+1) +'</h3>'
+                           
+                HTML_Directions += '<div> Current Load: ' + truck.currentLoad + '</div>'      
+                HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'          
+                HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
+                HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
+                HTML_Directions+=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
+                document.getElementById('pd').innerHTML = HTML_Directions
             })
         };
 
         // This function will update the weight (re-appply the color) to the non-marked dropoff locations,
-        // everytime a dropoff location is marked.
-        
+        // everytime a dropoff location is marked. 
 
         function AddRoute(){
             if(trucks.length){
@@ -262,12 +267,12 @@
             trucks.push(new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10, 'Chuck Norris Model', 'PRo-004', 'Chuck Norris Trailer', 60))
             truckSelected = trucks[trucks.length-1]
             HTML_Table = '<table>'
-                for(var i = 0; i < trucks.length ; i++){
-                    HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
-                }
-                HTML_Table += '</table>'
-                HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
-                document.getElementById('pd').innerHTML = HTML_Table
+            for(var i = 0; i < trucks.length ; i++){
+                HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+            }
+            HTML_Table += '</table>'
+            HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
+            document.getElementById('pd').innerHTML = HTML_Table
         }
         function Table(){
             HTML_Table = '<table>'

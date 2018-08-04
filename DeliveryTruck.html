@@ -93,18 +93,29 @@
     </style>
 </head>
 <body>
+
     <div id='map' class='contain'> </div>
     <div class='map-overlay' id='features'>
     <div id='pd'></div></div>
     <script type="text/javascript">
+        // *********************************************************************
+        // TODO
+        // *********************************************************************
+        // - Every route should be its own layer(Right now the routes are sharing the same layer)
+        // - When User is in HTMLTable UI all route should display.
+        // - When selecting a specific route, all other route except the selected one should be hidden.(this will resolves the trouble of making the problem redraw everything and calling the API more than it should)
+        // Solves problem with radius that creates popups with negative times.
+        // Add different color to each route. For visual aspect to let the user know which dropoff belong to each route.
+        
+
 
         // *********************************************************************
         // Mapbox
         // *********************************************************************
 
         // Load initial map
-            // *********************************************************************
-        mapboxgl.accessToken = 'pk.eyJ1IjoidG9ybGFuY28iLCJhIjoiY2prYmR3dmszMHVtcDNwbWl3cHdwOTl5NSJ9.NxympEZmljc0jq4DJmK5JQ';
+        // *********************************************************************
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamlrYmppYWIyY2UzM2twZWJkdDJzdDlyIn0.7xKRaoS1MYm5N1edRqSBbQ';
 
         var map = new mapboxgl.Map({
             container: 'map', // container id
@@ -136,7 +147,7 @@
         // *********************************************************************
 
         // initialize an object for the truck.
-        var Truck = function(_location, _maxLoad, _model, _licensePlate, _trailer, _speed){
+        var Truck = function(_location, _maxLoad){
             this.location = _location;          //initial location of truck
             this.maxLoad = _maxLoad;            //maximum weight that truck can handle
             this.currentLoad = _maxLoad;        //current weight that truck is handling
@@ -149,8 +160,8 @@
 
             this.truckMarker = new mapboxgl.Marker(this.marker)
                                            .setLngLat(this.location)
-                                           .setPopup(new mapboxgl.Popup({ offset: 25 })
-                                                                 .setHTML('Current Load: '+this.currentLoad +'<br>' +'Truck Model: ' + this.model +'<br>'+'License Plate: ' + this.licensePlate))
+                                           //.setPopup(new mapboxgl.Popup({ offset: 25 })
+                                            //                     .setHTML('Max Load: '+this.maxLoad +'<br>' +'currentLoad: ' + this.currentLoad +'<br>'+'Route Duration: ' + Math.floor(this.routeWeight/60)+':'+(Math.floor(this.routeWeight%60)<10?'0':'')+Math.floor(this.routeWeight%60)+'</div> '))
                                            .addTo(map);
 
             this.updateLoad = load => {
@@ -170,30 +181,57 @@
                                                                   // the time expected in seconds
             }
         };
-
-        for(var i = 0; i < trucks.length ; i++){
-            HTML_Table+='<tr>'
-            HTML_Table+=    '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
-            HTML_Table+=    '<td>Current Load: '+trucks[i].currentLoad+'</td>'
-            HTML_Table+='</tr>'
-            HTML_Table+='<tr>'
-            HTML_Table+=    '<td>'
-            HTML_Table+=        'ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
-            HTML_Table+=        (Math.floor(trucks[i].routeWeight%60)<10?'0':'')
-            HTML_Table+=        Math.floor(trucks[i].routeWeight%60) 
-            HTML_Table+=    '</td>'
-            HTML_Table+='</tr>'
-            HTML_Table+='<tr>'
-            HTML_Table+=    '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
-            HTML_Table+='</tr>'
-        }
-        HTML_Table += '</table>'
-        HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
-        document.getElementById('pd').innerHTML = HTML_Table
+        HTMLTable()
 
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
+        // When Selecting a truck, this will be the menu that will display. It displays information about the route that was selected(soon directions of the route)
+        function HTMLDirections(truck, id){
+            var HTML_Directions = '';
+            HTML_Directions += '<button style="display:inline-block;'
+            HTML_Directions +=' vertical-align: middle;'
+            HTML_Directions +=' margin:0px;'
+            HTML_Directions +=' padding: 0;'
+            HTML_Directions +=' border: none;'
+            HTML_Directions +=' background: none;'
+            HTML_Directions +=' font-size : 50px"'
+            HTML_Directions +=' type="button" onclick="HTMLTable()" class="previous">&#8249; </button>'
+            HTML_Directions +=' <h3 style="display:inline-block; vertical-align: middle; margin:0px 130px">  Route '+(id+1) +'</h3>' 
+            HTML_Directions += '<div> Current Load: ' + truck.currentLoad + '</div>'      
+            HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'          
+            HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
+            HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
+            HTML_Directions+=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
+            document.getElementById('pd').innerHTML = HTML_Directions
+        }
+        // On the main menu of the ui, this HTML will be displayed
+        function HTMLTable(){
+            truckSelected=undefined;
+            HTML_Table = '<table>'
+             for(var i = 0; i < trucks.length ; i++){
+                HTML_Table+='<tr>'
+                HTML_Table+=    '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
+                HTML_Table+=    '<td>Current Load: '+trucks[i].currentLoad+'</td>'
+                HTML_Table+='</tr>'
+                HTML_Table+='<tr>'
+                HTML_Table+=    '<td>'
+                HTML_Table+=        'ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
+                HTML_Table+=        (Math.floor(trucks[i].routeWeight%60)<10?'0':'')
+                HTML_Table+=        Math.floor(trucks[i].routeWeight%60) 
+                HTML_Table+=    '</td>'
+                HTML_Table+='</tr>'
+                HTML_Table+='<tr>'
+                HTML_Table+=    '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
+                HTML_Table+='</tr>'
+            }
+            HTML_Table += '</table>'
+            HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
+            document.getElementById('pd').innerHTML = HTML_Table
+            trucks.forEach(truck => {
+                truck.truckMarker.addTo(map)
+            })
+        }
 
         // This function will get the markedDropoff variable and feed it to the optimization API which will return
         // the optimized route for the truck.
@@ -207,7 +245,7 @@
                     + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
                     + mapboxgl.accessToken;
         };
-
+        // This functions creates the URL to updates the dropoff locations with the time that will take to be added to the route.
         function getRouteWeight(route, truck){
 
             var destinations = [];
@@ -234,102 +272,19 @@
                 map.getSource('route').setData(route);
                 
             })
-            .then( nothing => {
-               var HTML_Directions = '';
+            .then(nothing => {
+               
                 var id;
                 for(var i =0; i< trucks.length;i++){
                     if(trucks[i]==truckSelected){
                         var id = i
                     }
                 }
-                HTML_Directions += '<button style="display:inline-block; vertical-align: middle; margin:0px; padding: 0; border: none; background: none;font-size : 50px"  type="button" onclick="Table()" class="previous">&#8249; </button><h3 style="display:inline-block; vertical-align: middle; margin:0px 130px">  Route '+(id+1) +'</h3>'
-                           
-                HTML_Directions += '<div> Current Load: ' + truck.currentLoad + '</div>'      
-                HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'          
-                HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
-                HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
-                HTML_Directions+=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
-                document.getElementById('pd').innerHTML = HTML_Directions
+                HTMLDirections(truck, id)
+                
             })
-        }; 
-
-        function AddRoute(){
-            if(trucks.length){
-                trucks.forEach(truck =>{
-                    truck.truckMarker.remove()
-                })
-            }
-            var x= getRndFloat(-67.13664550786771, -65.70716270963167);
-            var y= getRndFloat(17.986497494385915, 18.45869548139244);
-            var tmp= Math.random().toString(36).substring(7);
-            trucks.push(new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10, tmp+' Model', 'PRo-004', tmp+'Trailer', 60))
-            truckSelected = trucks[trucks.length-1]
-            
-            HTML_Table = '<table>'
-            for(var i = 0; i < trucks.length ; i++){
-                //HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
-                HTML_Table +='<tr>'
-                HTML_Table +=   '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
-                HTML_Table +=   '<td>Current Load: '+trucks[i].currentLoad+'</td>'
-                HTML_Table +='</tr>'
-                
-                HTML_Table +='<tr>'
-                HTML_Table +=   '<td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
-                HTML_Table +=              (Math.floor(trucks[i].routeWeight%60)<10?'0':'') 
-                HTML_Table +=               Math.floor(trucks[i].routeWeight%60)+'</td>'
-                HTML_Table +='</tr>'
-                
-                HTML_Table +='<tr>'
-                HTML_Table +=   '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
-                HTML_Table +='</tr>'
-            }
-            HTML_Table += '</table>'
-            HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
-            document.getElementById('pd').innerHTML = HTML_Table
-        }
-        
-        function Table(){
-            HTML_Table = '<table>'
-             for(var i = 0; i < trucks.length ; i++){
-                HTML_Table+='<tr>'
-                HTML_Table+=    '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
-                HTML_Table+=    '<td>Current Load: '+trucks[i].currentLoad+'</td>'
-                HTML_Table+='</tr>'
-                HTML_Table+='<tr>'
-                HTML_Table+=    '<td>'
-                HTML_Table+=        'ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
-                HTML_Table+=        (Math.floor(trucks[i].routeWeight%60)<10?'0':'')
-                HTML_Table+=        Math.floor(trucks[i].routeWeight%60) 
-                HTML_Table+=    '</td>'
-                HTML_Table+='</tr>'
-                HTML_Table+='<tr>'
-                HTML_Table+=    '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
-                HTML_Table+='</tr>'
-            }
-            HTML_Table += '</table>'
-            HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
-            document.getElementById('pd').innerHTML = HTML_Table
-        }
-        
-        function SelectTruck(id){
-            if(truckSelected != undefined){
-                truckSelected.truckMarker.remove();
-            }
-            truckSelected = trucks[id]
-            truckSelected.truckMarker.addTo(map)
-
-            var HTML_Directions = '';
-            HTML_Directions += '<button style="display:inline-block; vertical-align: middle; margin:0px; padding: 0; border: none; background: none;font-size : 50px"  type="button" onclick="Table()" class="previous">&#8249; </button><h3 style="display:inline-block; vertical-align: middle; margin:0px 130px">  Route '+(id+1) +'</h3>'
-            HTML_Directions += '<div> Current Load: ' + truckSelected.currentLoad + '</div>'
-            HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truckSelected.routeWeight/60)+':'
-            HTML_Directions +=                  (Math.floor(truckSelected.routeWeight%60)<10?'0':'')
-            HTML_Directions +=                   Math.floor(truckSelected.routeWeight%60)+'</div> '
-
-            HTML_Directions+=  '<div> Stops: ' + truckSelected.markedDropoff.features.length + '</div>'
-        
-            document.getElementById('pd').innerHTML = HTML_Directions
-        }
-
+        };
+        // This functions calls the optimization api to calculate the time that will add to each dropoff 
         function updateTruckWeight(drop, truck){
             var copyMarked = truck.markedDropoff.features.slice(0);
             copyMarked.push(drop)
@@ -354,7 +309,24 @@
                 })
             })
         };
+        // Function that is called when the Add Route Button is added. For now it adds a marker to the map within a bounding box. and create a truck object.
+        function AddRoute(){
+            var x= getRndFloat(-67.13664550786771, -65.70716270963167);
+            var y= getRndFloat(17.986497494385915, 18.45869548139244);
+            var tmp= Math.random().toString(36).substring(7);
+            trucks.push(new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10))
+            HTMLTable()
+        }
+        function SelectTruck(id){
+            trucks.forEach(truck => {
+                truck.truckMarker.remove()
+            })
+            truckSelected = trucks[id]
+            truckSelected.truckMarker.addTo(map)
 
+            HTMLDirections(truckSelected, id)
+        }
+        // Display automatically the popups of the dropoff within the Radius
         function Radius(_x, _y, truck){
 
             var centerPoint = {radius:0.16093, x:_x, y:_y}
@@ -378,7 +350,7 @@
             html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
             html+= '+'+feature.properties.weight+ ' min'
             var popup = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                .setLngLat(feature.geometry.coordinates)
+                //.setLngLat(feature.geometry.coordinates)
                 .setHTML(html)
                 .setLngLat(feature.geometry.coordinates)
                 .addTo(map);
@@ -436,7 +408,7 @@
             marker.remove()
                 .setLngLat(route.coordinates[j])
                 .addTo(map);
-            if (j<route.coordinates.length) {setTimeout(function(){tick(route, marker, j+1)},100)};
+            if (j<route.coordinates.length) {setTimeout(function(){tick( route, marker,j+1)},100)};
         }
 
 
@@ -494,7 +466,7 @@
             var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol', 'marked-dropoff']});
 
             // if a marker is clicked, do the following
-            if (pt.length){
+            if (pt.length && truckSelected != undefined){
                 // if the marker is unmarked, do the following
                 if(pt[0].layer.id=='dropoffs-symbol'){
                     // looks for the clicked marker in dropoffLocations.

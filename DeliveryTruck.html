@@ -251,10 +251,7 @@
                 HTML_Directions+=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
                 document.getElementById('pd').innerHTML = HTML_Directions
             })
-        };
-
-        // This function will update the weight (re-appply the color) to the non-marked dropoff locations,
-        // everytime a dropoff location is marked. 
+        }; 
 
         function AddRoute(){
             if(trucks.length){
@@ -262,18 +259,35 @@
                     truck.truckMarker.remove()
                 })
             }
-            var x= Math.random() * (-65.70716270963167 - (-67.13664550786771)) + (-67.13664550786771);
-            var y= Math.random() * (18.45869548139244 - (17.986497494385915)) + (17.986497494385915)
-            trucks.push(new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10, 'Chuck Norris Model', 'PRo-004', 'Chuck Norris Trailer', 60))
+            var x= getRndFloat(-67.13664550786771, -65.70716270963167);
+            var y= getRndFloat(17.986497494385915, 18.45869548139244);
+            var tmp= Math.random().toString(36).substring(7);
+            trucks.push(new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10, tmp+' Model', 'PRo-004', tmp+'Trailer', 60))
             truckSelected = trucks[trucks.length-1]
+            
             HTML_Table = '<table>'
             for(var i = 0; i < trucks.length ; i++){
-                HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+                //HTML_Table +='<tr><th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th><td>Current Load: '+trucks[i].currentLoad+'</td></tr><tr><td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'+ (Math.floor(trucks[i].routeWeight%60)<10?'0':'') + Math.floor(trucks[i].routeWeight%60) +'</td></tr><tr><td>Stops: '+ trucks[i].markedDropoff.features.length +'</td></tr>'
+                HTML_Table +='<tr>'
+                HTML_Table +=   '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
+                HTML_Table +=   '<td>Current Load: '+trucks[i].currentLoad+'</td>'
+                HTML_Table +='</tr>'
+                
+                HTML_Table +='<tr>'
+                HTML_Table +=   '<td>ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
+                HTML_Table +=              (Math.floor(trucks[i].routeWeight%60)<10?'0':'') 
+                HTML_Table +=               Math.floor(trucks[i].routeWeight%60)+'</td>'
+                HTML_Table +='</tr>'
+                
+                HTML_Table +='<tr>'
+                HTML_Table +=   '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
+                HTML_Table +='</tr>'
             }
             HTML_Table += '</table>'
             HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
             document.getElementById('pd').innerHTML = HTML_Table
         }
+        
         function Table(){
             HTML_Table = '<table>'
              for(var i = 0; i < trucks.length ; i++){
@@ -296,6 +310,7 @@
             HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
             document.getElementById('pd').innerHTML = HTML_Table
         }
+        
         function SelectTruck(id){
             if(truckSelected != undefined){
                 truckSelected.truckMarker.remove();
@@ -315,7 +330,7 @@
             document.getElementById('pd').innerHTML = HTML_Directions
         }
 
-        function updateWeightIndividually(drop, truck){
+        function updateTruckWeight(drop, truck){
             var copyMarked = truck.markedDropoff.features.slice(0);
             copyMarked.push(drop)
             fetch(getRouteWeight(copyMarked, truck))
@@ -330,7 +345,7 @@
             })
             .then(feature =>{
 
-                popupCreatorIndividually(feature);
+                createPopup(feature);
                 dropoffLocations.features.forEach(function(dropoff){
                     if(dropoff.properties.name == feature.properties.name){
                         dropoff.properties.weight = feature.properties.weight
@@ -349,14 +364,14 @@
                 var dy = centerPoint.y - pointLocation.y;
                 if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
                     dropoffPopup.features.push(point)
-                    new updateWeightIndividually(point, truck)
+                    new updateTruckWeight(point, truck)
                 }
             })
         };
 
         // if feature.weight == -1 || feature.weight < dropoff.weight
         // Creates a popup for every dropoff in dropoffLocations.
-        function popupCreatorIndividually(feature){
+        function createPopup(feature){
             html= ''
             html+= feature.properties.load+' palletes<br>'
             html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
@@ -389,15 +404,17 @@
             return Math.floor(Math.random() * (max - min) ) + min;
         };
 
+        // Returns a float between min(included) & max(excluded)
+        function getRndFloat(min, max) {
+            return Math.random() * (max - min)  + min;
+        };
+
         // Empty list which will hold all the dropoff locations that were marked on the map.
-        //var markedDropoff = turf.featureCollection([]);
         for (var i=0; i<50; i++){
-            x= Math.random() * (-65.70716270963167 - (-67.13664550786771)) + (-67.13664550786771);
-            y= Math.random() * (18.45869548139244 - (17.986497494385915)) + (17.986497494385915)
-            n= i;
+            x= getRndFloat(-67.13664550786771, -65.70716270963167)
+            y= getRndFloat(17.986497494385915, 18.45869548139244)
             l= getRndInteger(1, 10);
-            pp= false
-            dropoffLocations.features.push(turf.point([x, y],{name: n, load: l, weight: -1, ppop:pp}));
+            dropoffLocations.features.push(turf.point([x, y],{name: i, load: l, weight: -1, ppop:false}));
         }
 
         function animate(truck){
@@ -455,16 +472,11 @@
               }
             });
 
-            map.addSource('route', {
-                type: 'geojson',
-                data: blank
-            });
-
             // Adds layer with the optimized truck route.
             map.addLayer({
               id:'route',
               type: 'line',
-              source:'route',
+              source:{data: blank,type: 'geojson'},
               paint: {
                 'line-color': '#0000ff',
                 'line-width': 4
@@ -474,12 +486,16 @@
 
         // Events/Listeners
         // *********************************************************************
+        
+        // when the clicks on the map, checks if a marker was clicked and if true,
+        // then change that marker from unmarked to marked or vice-versa.
         map.on('click',e =>{
             // returns the info of the clicked dropoff marker on map.
             var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol', 'marked-dropoff']});
 
             // if a marker is clicked, do the following
             if (pt.length){
+                // if the marker is unmarked, do the following
                 if(pt[0].layer.id=='dropoffs-symbol'){
                     // looks for the clicked marker in dropoffLocations.
                     for(var i = 0; i < dropoffLocations.features.length; i++){
@@ -497,9 +513,13 @@
                     }
                 }
 
+                // if the marker is marked, do the following
                 else{
+                    // look the marker in markedDropoff of truckSelected
                     for(var i=0; i<truckSelected.markedDropoff.features.length; i++){
+                        // if found, do the following
                         if(pt[0].properties.name == truckSelected.markedDropoff.features[i].properties.name){
+                            // check if marked is already in dropoffLocations.
                             var check=0;
                             for(var j=0; j<dropoffLocations.features.length; j++){
                                 if(pt[0].properties.name == dropoffLocations.features[j].properties.name){
@@ -507,8 +527,14 @@
                                     break;
                                 }
                             }
+
+                            // if the marked is not in dropoffLocations, then add it
                             if(check==0){dropoffLocations.features.push(pt[0])};
+
+                            // update truckSelected
                             truckSelected.freeLoad(pt[0].properties.load);
+
+                            // remove the dropoff from truckSelected.markedDropoff
                             truckSelected.markedDropoff.features.splice(i, 1);
                             break;
                         }
@@ -517,6 +543,7 @@
 
             }
 
+            // if marker not clicked, change ppop of dropoffLocations to false.
             else{
                 for (var i=0; i< dropoffLocations.features.length; i++){
                     dropoffLocations.features[i].properties.ppop=false;
@@ -532,6 +559,7 @@
                 // truckSelected.markedDropoff = turf.featureCollection([]);
             }
             drawRoute(truckSelected);
+
             //update the weight of the dropoff points in dropoffLocations.
             dropcoor.features.length = 0
 
@@ -543,18 +571,29 @@
             Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
         });
 
+        // when the cursor is hovering over the marker, it will change the cursor icon
+        // from the grab icon to the pointer icon & create a popup for the dropoff marker.
         map.on('mouseover', 'dropoffs-symbol', e=> {
             var features = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
+            // if cursor hovers an unmarked dropoff, do the following
             if (features.length) {
-                map.getCanvas().style.cursor='pointer';
+
+                map.getCanvas().style.cursor='pointer'; // change cursor icon from grab to pointer
+                
                 feature=features[0];
+
+                // if weight of dropoff is undefined, update it
                 if(feature.properties.weight == -1){
-                    updateWeightIndividually(feature, truckSelected);
+                    updateTruckWeight(feature, truckSelected);
                 }
+
+                // if the dropoff does not have a popup, do the following
                 else if(feature.properties.ppop == false){
-                    feature.properties.color= colorCalculator(feature.properties)
-                    popupCreatorIndividually(feature);
-                    feature.properties.ppop=true;
+                    feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
+                    createPopup(feature);   //create popup for dropoff
+                    feature.properties.ppop=true; //change ppop of dropoff
+
+                    // update dropoff in dropoffLocations
                     for (var i=0; i<dropoffLocations.features.length; i++){
                         if(feature.properties.name==dropoffLocations.features[i].properties.name){
                             dropoffLocations.features[i]= feature;
@@ -562,24 +601,35 @@
                         }
                     }
 
-                    // update the sources of the layers: 'dropoffs-symbol'.
+                    // update source of the layer 'dropoffs-symbol'.
                     map.getSource('dropoffs-symbol').setData(dropoffLocations);
                 }
             }
         });
 
+        // when the cursor is hovering over the marker, it will change the cursor icon
+        // from the grab icon to the pointer icon.
         map.on('mouseover', 'marked-dropoff' , e=>{
             features= map.queryRenderedFeatures(e.point, {layers:['marked-dropoff']});
             if(features.length){map.getCanvas().style.cursor='pointer'};
         })
 
+        // when the cursor leaves the marker, change cursor icon from the pointer icon 
+        // to the grab icon.
         map.on('mouseleave','dropoffs-symbol', e=> {map.getCanvas().style.cursor=''});
         
+        // when the cursor leaves the marker, change cursor icon from the pointer icon 
+        // to the grab icon.
         map.on('mouseleave','marked-dropoff' , e=> {map.getCanvas().style.cursor=''});
 
+        // when the cursor is hovering over the route, display a popup with
+        // the time it takes the truck to finish the route.
         map.on('mouseover', 'route', e => {
 
+            // check is cursor is hovering over route
             var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route']});
+
+            // if hovering on route, create route popup
             if (routeLocation.length){
                 var pophtml = ''
                 pophtml+= 'Current Route Duration<br>'
@@ -591,6 +641,7 @@
             }
         });
 
+        // when the cursor leaves the route, removes route popup.
         map.on('mouseleave', 'route', e => {popuproute.remove()});
     </script>
 </body>

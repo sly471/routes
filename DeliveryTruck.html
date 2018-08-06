@@ -103,9 +103,10 @@
         // *********************************************************************
         // - Every route should be its own layer(Right now the routes are sharing the same layer)
         // - When User is in HTMLTable UI all route should display.
-        // - When selecting a specific route, all other route except the selected one should be hidden.(this will resolves the trouble of making the problem redraw everything and calling the API more than it should)
-        // Solves problem with radius that creates popups with negative times.
-        // Add different color to each route. For visual aspect to let the user know which dropoff belong to each route.
+        // - When selecting a specific route, all other route except the selected one should be hidden.(this will resolves the trouble of 
+        //   making the problem redraw everything and calling the API more than it should)
+        // - Solves problem with radius that creates popups with negative times.
+        // - Add different color to each route. For visual aspect to let the user know which dropoff belong to each route.
         
 
 
@@ -142,6 +143,7 @@
         var popuproute;
         var truckSelected;
         var HTML_Table = '<table>'
+        var color= '#ff0000';
         // *********************************************************************
         // Objects
         // *********************************************************************
@@ -157,6 +159,8 @@
             this.marker = document.createElement('div');
             this.marker.classList = 'truck';
             this.routeMile;
+            this.routeColor= {'line-color':'#'+Math.floor(Math.random()*16777215).toString(16), 'line-width':4};
+;
 
             this.truckMarker = new mapboxgl.Marker(this.marker)
                                            .setLngLat(this.location)
@@ -269,6 +273,7 @@
                 truck.APIData= data;
                 truck.routeMile= data.trips[0].distance/1609.344;
                 truck.updateRouteWeight(data.trips[0].duration);
+                // map.getPaint('route').setData(truck.routeColor);
                 map.getSource('route').setData(route);
                 
             })
@@ -309,6 +314,7 @@
                 })
             })
         };
+
         // Function that is called when the Add Route Button is added. For now it adds a marker to the map within a bounding box. and create a truck object.
         function AddRoute(){
             var x= getRndFloat(-67.13664550786771, -65.70716270963167);
@@ -349,7 +355,7 @@
             html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
             html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
             html+= '+'+feature.properties.weight+ ' min'
-            var popup = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+            var popup = new mapboxgl.Popup({ offset: [0, 0], closeButton:false})
                 //.setLngLat(feature.geometry.coordinates)
                 .setHTML(html)
                 .setLngLat(feature.geometry.coordinates)
@@ -419,6 +425,13 @@
         // *********************************************************************
 
         map.on('load', function(){
+            // Adds layer with the optimized truck route.
+            map.addLayer({
+              id:'route',
+              type: 'line',
+              source:{data: blank,type: 'geojson'},
+              paint: {'line-color':color, 'line-width':4}
+            });
 
             // Adds layer with all dropoff locations.
             map.addLayer({
@@ -443,17 +456,6 @@
                 'icon-image': 'circle-15',
               }
             });
-
-            // Adds layer with the optimized truck route.
-            map.addLayer({
-              id:'route',
-              type: 'line',
-              source:{data: blank,type: 'geojson'},
-              paint: {
-                'line-color': '#0000ff',
-                'line-width': 4
-              }
-            });
         });
 
         // Events/Listeners
@@ -465,8 +467,11 @@
             // returns the info of the clicked dropoff marker on map.
             var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol', 'marked-dropoff']});
 
+            if(trucks.length==0){alert('Please first add a route.')}
+            else if(truckSelected == undefined){alert('Please select a route before adding a dropoff.')};
+
             // if a marker is clicked, do the following
-            if (pt.length && truckSelected != undefined){
+            if (pt.length){
                 // if the marker is unmarked, do the following
                 if(pt[0].layer.id=='dropoffs-symbol'){
                     // looks for the clicked marker in dropoffLocations.
@@ -512,7 +517,6 @@
                         }
                     }
                 }
-
             }
 
             // if marker not clicked, change ppop of dropoffLocations to false.
@@ -521,16 +525,19 @@
                     dropoffLocations.features[i].properties.ppop=false;
                 }
             }
-            // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
-            map.getSource('dropoffs-symbol').setData(dropoffLocations);
-            map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
+
 
             // draw the truck route.
             if (truckSelected.markedDropoff.features.length==0){
                 map.getSource('route').setData(blank);
                 // truckSelected.markedDropoff = turf.featureCollection([]);
             }
+
             drawRoute(truckSelected);
+
+            // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
+            map.getSource('dropoffs-symbol').setData(dropoffLocations);
+            map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
 
             //update the weight of the dropoff points in dropoffLocations.
             dropcoor.features.length = 0

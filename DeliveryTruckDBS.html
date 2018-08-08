@@ -107,6 +107,7 @@
         //   redraw everything and calling the API more than it should)
         // - Solves problem with radius that creates popups with negative times.
         // - Add different color to each route. For visual aspect to let the user know which dropoff belong to each route.
+        // - when 
         
         // *********************************************************************
         // In Development
@@ -147,7 +148,7 @@
         var truckSelected;
         var HTML_Table = '<table>'
         var maxCluster = 0
-        var Colors = ['#ff0000', '#00ff00', '#0000ff', '#008000', '#800000', '#FFFF00', '#808080', '#00ffFF', '#FFFFFF', '#000000', '#800080', '#008080', '#000080']
+        var Colors = ['#ff0000', '#00ff00', '#0000ff', '#008000', '#800000', '#FFFF00', '#808080', '#00ffFF', '#FFFFFF', '#800080', '#008080', '#000080']
         var clusterList=[]
         // *********************************************************************
         // Objects
@@ -336,7 +337,7 @@
         }
         // Display automatically the popups of the dropoff within the Radius
         function Radius(_x, _y, truck){
-
+            console.log("im in")
             var centerPoint = {radius:0.16093, x:_x, y:_y}
             dropoffLocations.features.forEach(point =>{
                 var pointLocation = {radius: 0.00001, x:point.geometry.coordinates[0], y:point.geometry.coordinates[1]}
@@ -344,6 +345,7 @@
                 var dy = centerPoint.y - pointLocation.y;
                 if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
                     dropoffPopup.features.push(point)
+                    console.log("creating popup")
                     new updateTruckWeight(point, truck)
                 }
             })
@@ -415,7 +417,7 @@
         dropoffLocations.features.forEach(drop =>{
             dbscanPoints.features.push(turf.point(drop.geometry.coordinates))
         })
-        var dbscan = turf.clustersDbscan(dbscanPoints, 10)
+        var dbscan = turf.clustersDbscan(dbscanPoints, 13)
         // ****************************************************************************
         // After getting the cluster, the program will start to add to the dropoff to which cluster they belong(0, 1, 2, ..., Noise)
         // **************************************************************************** 
@@ -436,7 +438,7 @@
             }            
         })
         // ****************************************************************************
-            // List will be 0, 1, 2, 3,, ..., noise
+            // List will be 0, 1, 2, 3, ..., noise
             // this is intended to create a list to contain all cluster to then be added to the layers that wil be added later in the code
             for(var x = 0; x<maxCluster+1;x++){   
                 clusterList.push(turf.featureCollection([]));
@@ -488,13 +490,24 @@
             // Adds layer with all dropoff locations.
             // Layer that will color each cluster differently to know which color the cluster belong to.
             for(var i = 0; i<=maxCluster;i++){
-                map.addLayer({
-                  id: 'dropoffs-symbol'+i,
-                  type: 'circle',
-                  source: {data: clusterList[i],type: 'geojson'},
-                   paint: { "circle-color": Colors[i]}
-                  
-                })
+                if(i<maxCluster){
+                    map.addLayer({
+                      id: 'dropoffs-symbol'+i,
+                      type: 'circle',
+                      source: {data: clusterList[i],type: 'geojson'},
+                       paint: { "circle-color": Colors[i]}
+                      
+                    })
+                }
+                else{
+                console.log("noise")
+                   map.addLayer({
+                      id: 'dropoffs-symbol'+i,
+                      type: 'circle',
+                      source: {data: clusterList[i],type: 'geojson'},
+                       paint: { "circle-color": '#000000'}
+                    }) 
+                }
                 
             }
 
@@ -546,24 +559,27 @@
             layers.push('marked-dropoff')
             var pt = map.queryRenderedFeatures(e.point, {layers: layers});
             layers.pop()
+
             // if a marker is clicked, do the following
             if (pt.length && truckSelected != undefined){
                 // if the marker is unmarked, do the following
-                if(pt[0].layer.id=='dropoffs-symbol'){
+                for(var j = 0;j<layers.length;j++){
+                    if(pt[0].layer.id==layers[j]){
                     // looks for the clicked marker in dropoffLocations.
-                    for(var i = 0; i < dropoffLocations.features.length; i++){
+                    for(var i = 0; i < clusterList[j].features.length; i++){
                         // if the clicked marker is found, do the following.
-                        if(pt[0].properties.name == dropoffLocations.features[i].properties.name){
+                        if(pt[0].properties.name == clusterList[j].features[i].properties.name){
                             // push the dropoff to markedDropoff.
-                            truckSelected.markedDropoff.features.push(dropoffLocations.features[i]);
+                            truckSelected.markedDropoff.features.push(clusterList[j].features[i]);
                             // update the truck load.
-                            truckSelected.updateLoad(dropoffLocations.features[i].properties.load);
+                            truckSelected.updateLoad(clusterList[j].features[i].properties.load);
                             // remove the dropoff from dropoffLocation, do to it now being marked.
-                            dropoffLocations.features.splice(i, 1);
+                            clusterList[j].features.splice(i, 1);
                             break;
                         }
-                        dropoffLocations.features[i].properties.weight = -1;
+                        clusterList[j].features[i].properties.weight = -1;
                     }
+                    map.getSource(layers[j]).setData(clusterList[j]);
                 }
 
                 // if the marker is marked, do the following
@@ -574,15 +590,15 @@
                         if(pt[0].properties.name == truckSelected.markedDropoff.features[i].properties.name){
                             // check if marked is already in dropoffLocations.
                             var check=0;
-                            for(var j=0; j<dropoffLocations.features.length; j++){
-                                if(pt[0].properties.name == dropoffLocations.features[j].properties.name){
+                            for(var i=0; i<clusterList[j].features.length; i++){
+                                if(pt[0].properties.name == clusterList[j].features[i].properties.name){
                                     check=1;
                                     break;
                                 }
                             }
 
                             // if the marked is not in dropoffLocations, then add it
-                            if(check==0){dropoffLocations.features.push(pt[0])};
+                            if(check==0){clusterList[j].features.push(pt[0])};
 
                             // update truckSelected
                             truckSelected.freeLoad(pt[0].properties.load);
@@ -593,6 +609,8 @@
                         }
                     }
                 }
+                }
+                
 
             }
 
@@ -603,7 +621,7 @@
                 }
             }
             // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
-            map.getSource('dropoffs-symbol').setData(dropoffLocations);
+            
             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
 
             // draw the truck route.
@@ -621,41 +639,39 @@
                 dropcoor.features.push(turf.point(mark.geometry.coordinates))
             })
 
-            var center = turf.center(dropcoor)
+            var center = turf.center(dropcoor);
+            // var RandomCluster = getRndInteger(0, maxCluster)
+            // dbscan.features.forEach(point => {
+            //     if(point.properties.cluster == RandomCluster){
+            //         new updateTruckWeight(point, truckSelected)
+            //     }
+            // })
 
-
-            var RandomCluster = getRndInteger(0, maxCluster)
-            dbscan.features.forEach(point => {
-                if(point.properties.cluster == RandomCluster){
-                    new updateTruckWeight(point, truckSelected)
-                }
-            })
-
-            
-
-            //Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
+            Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
         });
 
         // when the cursor is hovering over the marker, it will change the cursor icon
         // from the grab icon to the pointer icon & create a popup for the dropoff marker.
-        for(var i = 0; i< layers.length;i++){
+        for(var i = 0; i<layers.length;i++){
             map.on('mouseover',layers[i], e=> {
-            console.log("im in")
-            var features = map.queryRenderedFeatures(e.point, {layers: layers});
+            
+            var features = map.queryRenderedFeatures(e.point, {layers: layers[i]});
             // if cursor hovers an unmarked dropoff, do the following
                 if (features.length) {
-                    console.log("changed cursor")
+                    
                     map.getCanvas().style.cursor='pointer'; // change cursor icon from grab to pointer
                     
                     feature=features[0];
-
+                    console.log(features)
                     // if weight of dropoff is undefined, update it
                     if(feature.properties.weight == -1){
+                        console.log("here")
                         updateTruckWeight(feature, truckSelected);
                     }
 
                     // if the dropoff does not have a popup, do the following
                     else if(feature.properties.ppop == false){
+
                         feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
                         createPopup(feature);   //create popup for dropoff
                         feature.properties.ppop=true; //change ppop of dropoff
@@ -669,12 +685,12 @@
                         }
 
                         // update source of the layer 'dropoffs-symbol'.
-                        map.getSource('dropoffs-symbol').setData(dropoffLocations);
+                        map.getSource().setData(dropoffLocations);
                     }
             }
                
             });
-            map.on('mouseleave', layers[i], e=> {console.log("removing cursor");map.getCanvas().style.cursor=''});
+            map.on('mouseleave', layers[i], e=> {map.getCanvas().style.cursor=''});
         }
         // map.on('mouseover', e=> {
         //     console.log("im in")

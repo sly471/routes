@@ -153,7 +153,8 @@
             this.marker = document.createElement('div');
             this.marker.classList = 'truck';
             this.routeMile;
-            this.routeColor= {'line-color':'#'+Math.floor(Math.random()*16777215).toString(16), 'line-width':4};;
+            this.color= '#'+Math.floor(Math.random()*16777215).toString(16)
+            this.routeColor= {'line-color':this.color , 'line-width':4};;
 
             this.truckMarker = new mapboxgl.Marker(this.marker)
                                            .setLngLat(this.location)
@@ -209,7 +210,7 @@
             HTML_Table = '<table>'
              for(var i = 0; i < trucks.length ; i++){
                 HTML_Table+='<tr>'
-                HTML_Table+=    '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
+                HTML_Table+=    '<th rowspan="3" bgcolor='+trucks[i].color+' onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
                 HTML_Table+=    '<td>Current Load: '+trucks[i].currentLoad+'</td>'
                 HTML_Table+='</tr>'
                 HTML_Table+='<tr>'
@@ -227,6 +228,7 @@
             HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
             document.getElementById('pd').innerHTML = HTML_Table
             trucks.forEach(truck => {
+
                 truck.truckMarker.addTo(map)
             })
             if(trucks.length!=0){allRoute()};
@@ -286,10 +288,16 @@
         };
 
         function allRoute(){
-            trucks.forEach(truck => {map.getSource('route'+truck.id).setData(truck.markedDropoff)});
+            var allMarkedDropoff = turf.featureCollection([]);
+            trucks.forEach(truck => {
+                map.setLayoutProperty('route'+truck.id, 'visibility', "visible");
+                truck.markedDropoff.features.forEach(md  =>{
+                    allMarkedDropoff.features.push(md);
+            })
+        })
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
+            map.getSource('marked-dropoff' ).setData(allMarkedDropoff);
         }
-        
         // This functions calls the optimization api to calculate the time that will add to each dropoff 
         function updateTruckWeight(drop, truck){
             var copyMarked = truck.markedDropoff.features.slice(0);
@@ -306,7 +314,7 @@
             })
             .then(feature =>{
 
-                createPopup(feature);
+                //createPopup(feature);
                 dropoffLocations.features.forEach(function(dropoff){
                     if(dropoff.properties.name == feature.properties.name){
                         dropoff.properties.weight = feature.properties.weight
@@ -333,10 +341,15 @@
         }
         
         function SelectTruck(id){
+
             trucks.forEach(truck => {
                 truck.truckMarker.remove()
+                map.setLayoutProperty('route'+truck.id, 'visibility', 'none')
+                console.log("made route "+truck.id+ ' invisible')
             })
             truckSelected = trucks[id]
+            console.log("made route "+ truckSelected.id + "visible")
+            map.setLayoutProperty('route'+truckSelected.id, 'visibility', 'visible')
             truckSelected.truckMarker.addTo(map)
             // console.log(truckSelected);
             HTMLDirections(truckSelected, id)
@@ -484,7 +497,7 @@
                             // update the truck load.
                             truckSelected.updateLoad(dropoffLocations.features[i].properties.load);
                             // remove the dropoff from dropoffLocation, do to it now being marked.
-                            // dropoffLocations.features.splice(i, 1);
+                            dropoffLocations.features.splice(i, 1);
                             break;
                         }
                         dropoffLocations.features[i].properties.weight = -1;
@@ -537,7 +550,7 @@
 
             // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
-
+             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
             if(truckSelected!=undefined){
                 map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
                 drawRoute(truckSelected);
@@ -573,7 +586,7 @@
                 // if the dropoff does not have a popup, do the following
                 else if(feature.properties.ppop == false){
                     feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
-                    createPopup(feature);   //create popup for dropoff
+                    //createPopup(feature);   //create popup for dropoff
                     feature.properties.ppop=true; //change ppop of dropoff
 
                     // update dropoff in dropoffLocations

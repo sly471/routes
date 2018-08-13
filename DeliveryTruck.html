@@ -19,10 +19,17 @@
             width: 100%;
         }
 
-        td, th {
+        td{
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
+            cursor:context-menu;
+        }
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            cursor:pointer;
         }
 
         #map {
@@ -101,13 +108,10 @@
         // *********************************************************************
         // TODO
         // *********************************************************************
-        // - Every route should be its own layer(Right now the routes are sharing the same layer)
-        // - When User is in HTMLTable UI all route should display.
-        // - When selecting a specific route, all other route except the selected one should be hidden.(this will resolves the trouble of 
-        //   making the problem redraw everything and calling the API more than it should)
         // - Solves problem with radius that creates popups with negative times.
-        // - Add different color to each route. For visual aspect to let the user know which dropoff belong to each route.
-        
+        // - Make the UI more intituive.
+        // - Adding legend for marked dropoff, dropoff location
+        // - Make route box have a clickable pointer to help user on how the porgram works
         // *********************************************************************
         // Mapbox
         // *********************************************************************
@@ -364,7 +368,7 @@
                 // if hovering on route, create route popup
                 if (routeLocation.length){
                     var pophtml = ''
-                    pophtml+= 'Current Route Duration<br>'
+                    pophtml+= 'Route '+ tmp.id +' Duration<br>'
                     pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
                     popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
                         .setLngLat(e.lngLat)

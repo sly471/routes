@@ -340,7 +340,7 @@
             map.on('mouseover', 'route'+tmp.id, e => {
 
             // check is cursor is hovering over route
-            var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.i]});
+            var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
 
             // if hovering on route, create route popup
             if (routeLocation.length){

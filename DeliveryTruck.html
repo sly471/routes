@@ -114,7 +114,7 @@
 
         // Load initial map
         // *********************************************************************
-        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamlrYmppYWIyY2UzM2twZWJkdDJzdDlyIn0.7xKRaoS1MYm5N1edRqSBbQ';
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamtzZXlkdTcwMDF1M3FwOTExZG9xMGoyIn0.398BWLmpYMQBre0SAbIBpQ';
 
         var map = new mapboxgl.Map({
             container: 'map', // container id
@@ -287,17 +287,28 @@
             })
         };
 
+        function removeRoute(id){
+            map.removeLayer('route'+id);
+            for(var i=0; i<trucks.length; i++){
+                if(trucks[i].id==id){
+                    array.splice(i, 1)
+                    break;
+                }
+            }
+
+        }
         function allRoute(){
             var allMarkedDropoff = turf.featureCollection([]);
             trucks.forEach(truck => {
                 map.setLayoutProperty('route'+truck.id, 'visibility', "visible");
                 truck.markedDropoff.features.forEach(md  =>{
                     allMarkedDropoff.features.push(md);
+                })
             })
-        })
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
             map.getSource('marked-dropoff' ).setData(allMarkedDropoff);
         }
+
         // This functions calls the optimization api to calculate the time that will add to each dropoff 
         function updateTruckWeight(drop, truck){
             var copyMarked = truck.markedDropoff.features.slice(0);
@@ -337,27 +348,28 @@
               source:{data: blank,type: 'geojson'},
               paint: tmp.routeColor
             }, 'dropoffs-symbol');
+
             map.on('mouseover', 'route'+tmp.id, e => {
 
-            // check is cursor is hovering over route
-            var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+                // check is cursor is hovering over route
+                var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
 
-            // if hovering on route, create route popup
-            if (routeLocation.length){
-                var pophtml = ''
-                pophtml+= 'Current Route Duration<br>'
-                pophtml+= truckSelected.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                    .setLngLat(e.lngLat)
-                    .setHTML(pophtml)
-                    .addTo(map);
-            }
-        });
-
-        // when the cursor leaves the route, removes route popup.
-        map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove()});
-            HTMLTable()
-        
+                // if hovering on route, create route popup
+                if (routeLocation.length){
+                    var pophtml = ''
+                    pophtml+= 'Current Route Duration<br>'
+                    pophtml+= truckSelected.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                    popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                        .setLngLat(e.lngLat)
+                        .setHTML(pophtml)
+                        .addTo(map);
+                }
+            });
+    
+            // when the cursor leaves the route, removes route popup.
+            map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove()});
+                HTMLTable()
+        }
         
         function SelectTruck(id){
 

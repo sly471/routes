@@ -282,8 +282,7 @@
                         var id = i
                     }
                 }
-                HTMLDirections(truck, id)
-                
+                HTMLDirections(truck, id)  
             })
         };
 
@@ -307,7 +306,8 @@
         function allRoute(){
             var allMarkedDropoff = turf.featureCollection([]);
             trucks.forEach(truck => {
-                map.setLayoutProperty('route'+truck.id, 'visibility', "visible");
+                // map.setLayoutProperty('route'+truck.id, 'visibility', "visible");
+                map.setPaintProperty('route'+truck.id, 'line-opacity', 1)
                 truck.markedDropoff.features.forEach(md  =>{
                     allMarkedDropoff.features.push(md);
                 })
@@ -360,17 +360,18 @@
 
                 // check is cursor is hovering over route
                 var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-
+                console.log(tmp.id)
                 // if hovering on route, create route popup
                 if (routeLocation.length){
                     var pophtml = ''
                     pophtml+= 'Current Route Duration<br>'
-                    pophtml+= truckSelected.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                    pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
                     popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
                         .setLngLat(e.lngLat)
                         .setHTML(pophtml)
                         .addTo(map);
                 }
+                truckSelected = undefined
             });
     
             // when the cursor leaves the route, removes route popup.
@@ -381,13 +382,21 @@
         function SelectTruck(id){
 
             trucks.forEach(truck => {
+                
+                if(truck == trucks[id]){
+                    truckSelected = trucks[id]
+                    map.setPaintProperty('route'+truckSelected.id, 'line-opacity', 1)
+                }
+                else{
                 truck.truckMarker.remove()
-                map.setLayoutProperty('route'+truck.id, 'visibility', 'none')
+                // map.setLayoutProperty('route'+truck.id, 'visibility', 'none')
+                map.setPaintProperty('route'+truck.id, 'line-opacity', 0.3)
+                }
             })
-            truckSelected = trucks[id]
-            map.setLayoutProperty('route'+truckSelected.id, 'visibility', 'visible')
+            
+            // map.setLayoutProperty('route'+truckSelected.id, 'visibility', 'visible')
 
-            truckSelected.truckMarker.addTo(map)
+            //truckSelected.truckMarker.addTo(map)
             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff)
             HTMLDirections(truckSelected, id)
         }

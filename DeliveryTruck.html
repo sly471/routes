@@ -375,11 +375,11 @@
                         .setHTML(pophtml)
                         .addTo(map);
                 }
-                truckSelected = undefined
+               
             });
     
             // when the cursor leaves the route, removes route popup.
-            map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove()});
+            map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
                 HTMLTable()
         }
         
@@ -530,14 +530,12 @@
         map.on('click',e =>{
             // returns the info of the clicked dropoff marker on map.
             var pt = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol', 'marked-dropoff']});
-
+            if(trucks.length==0){alert('Please add a route first by clicking "Add Route" located on the left of the screen.')}
+            else if(truckSelected == undefined){alert('Please select a route before adding a dropoff.\nSelect the route you want to interact with by clicking the Route.')}
             // if a marker is clicked, do the following
             if (pt.length){
-                if(trucks.length==0){alert('Please first add a route.')}
-                else if(truckSelected == undefined){alert('Please select a route before adding a dropoff.')}
-                
                 // if the marker is unmarked, do the following
-                else if(pt[0].layer.id=='dropoffs-symbol'){
+                if(pt[0].layer.id=='dropoffs-symbol'){
                     // looks for the clicked marker in dropoffLocations.
                     for(var i = 0; i < dropoffLocations.features.length; i++){
                         // if the clicked marker is found, do the following.
@@ -591,8 +589,10 @@
             }
 
             // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
+
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
-             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
+
+            
             if(truckSelected!=undefined){
                 map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
                 drawRoute(truckSelected);

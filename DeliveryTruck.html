@@ -300,7 +300,7 @@
                 }
             }
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
-            map.getSource('marked-dropoff').setData(allMarkedDropoff);
+            map.getSource('marked-dropoff').setData(blank);
             HTMLTable();
         }
 
@@ -332,7 +332,7 @@
             })
             .then(feature =>{
 
-                //createPopup(feature);
+                createPopup(feature);
                 dropoffLocations.features.forEach(function(dropoff){
                     if(dropoff.properties.name == feature.properties.name){
                         dropoff.properties.weight = feature.properties.weight
@@ -383,13 +383,12 @@
             trucks.forEach(truck => {
                 truck.truckMarker.remove()
                 map.setLayoutProperty('route'+truck.id, 'visibility', 'none')
-                console.log("made route "+truck.id+ ' invisible')
             })
             truckSelected = trucks[id]
-            console.log("made route "+ truckSelected.id + "visible")
             map.setLayoutProperty('route'+truckSelected.id, 'visibility', 'visible')
+
             truckSelected.truckMarker.addTo(map)
-            // console.log(truckSelected);
+            map.getSource('marked-dropoff').setData(truckSelected.markedDropoff)
             HTMLDirections(truckSelected, id)
         }
         // Display automatically the popups of the dropoff within the Radius
@@ -578,14 +577,6 @@
                 }
             }
 
-
-            // draw the truck route.
-            // if (truckSelected.markedDropoff.features.length==0){
-            //     map.getSource('route').setData(blank);
-            //     // truckSelected.markedDropoff = turf.featureCollection([]);
-            // }
-
-
             // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
             map.getSource('dropoffs-symbol').setData(dropoffLocations);
              map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
@@ -601,7 +592,8 @@
                      dropcoor.features.push(turf.point(mark.geometry.coordinates))
                 })
                 var center = turf.center(dropcoor)
-                Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
+                // Uncomment the line below to use the radius function
+                //Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
             }
         });
 
@@ -624,7 +616,7 @@
                 // if the dropoff does not have a popup, do the following
                 else if(feature.properties.ppop == false){
                     feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
-                    //createPopup(feature);   //create popup for dropoff
+                    createPopup(feature);   //create popup for dropoff
                     feature.properties.ppop=true; //change ppop of dropoff
 
                     // update dropoff in dropoffLocations
@@ -656,28 +648,7 @@
         // when the cursor leaves the marker, change cursor icon from the pointer icon 
         // to the grab icon.
         map.on('mouseleave','marked-dropoff' , e=> {map.getCanvas().style.cursor=''});
-
-        // when the cursor is hovering over the route, display a popup with
-        // the time it takes the truck to finish the route.
-        map.on('mouseover', 'route', e => {
-
-            // check is cursor is hovering over route
-            var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route']});
-
-            // if hovering on route, create route popup
-            if (routeLocation.length){
-                var pophtml = ''
-                pophtml+= 'Current Route Duration<br>'
-                pophtml+= truckSelected.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                    .setLngLat(e.lngLat)
-                    .setHTML(pophtml)
-                    .addTo(map);
-            }
-        });
-
-        // when the cursor leaves the route, removes route popup.
-        map.on('mouseleave', 'route', e => {popuproute.remove()});
+        
     </script>
 </body>
 </html>

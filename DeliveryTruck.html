@@ -287,16 +287,23 @@
             })
         };
 
-        function removeRoute(id){
-            map.removeLayer('route'+id);
+        function removeRoute(){
+            map.removeLayer('route'+truckSelected.id);
+            while(truckSelected.route.length>0){
+                dropoffLocations.push(truckSelected.route[0]);
+                truckSelected.route.splice(0,1);
+            }
             for(var i=0; i<trucks.length; i++){
                 if(trucks[i].id==id){
-                    array.splice(i, 1)
+                    trucks.splice(i, 1);
                     break;
                 }
             }
-
+            map.getSource('dropoffs-symbol').setData(dropoffLocations);
+            map.getSource('marked-dropoff').setData(allMarkedDropoff);
+            HTMLTable();
         }
+
         function allRoute(){
             var allMarkedDropoff = turf.featureCollection([]);
             trucks.forEach(truck => {

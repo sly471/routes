@@ -340,7 +340,7 @@
             map.on('mouseover', 'route'+tmp.id, e => {
 
             // check is cursor is hovering over route
-            var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+            var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.i]});
 
             // if hovering on route, create route popup
             if (routeLocation.length){
@@ -357,7 +357,7 @@
         // when the cursor leaves the route, removes route popup.
         map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove()});
             HTMLTable()
-        }
+        
         
         function SelectTruck(id){
 

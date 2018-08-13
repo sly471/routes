@@ -337,6 +337,25 @@
               source:{data: blank,type: 'geojson'},
               paint: tmp.routeColor
             }, 'dropoffs-symbol');
+            map.on('mouseover', 'route'+tmp.id, e => {
+
+            // check is cursor is hovering over route
+            var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+
+            // if hovering on route, create route popup
+            if (routeLocation.length){
+                var pophtml = ''
+                pophtml+= 'Current Route Duration<br>'
+                pophtml+= truckSelected.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                    .setLngLat(e.lngLat)
+                    .setHTML(pophtml)
+                    .addTo(map);
+            }
+        });
+
+        // when the cursor leaves the route, removes route popup.
+        map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove()});
             HTMLTable()
         }
         

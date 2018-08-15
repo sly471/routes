@@ -146,7 +146,7 @@
         var truckSelected;
         var HTML_Table = '<table>'
         var id=1;
-        var Truck = function(_location, _maxLoad){
+        var Truck = function(_location, _maxLoad, _routeColor){
             this.id=id++;                       //id of truck
             this.location = _location;          //initial location of truck
             this.maxLoad = _maxLoad;            //maximum weight that truck can handle
@@ -157,7 +157,7 @@
             this.marker = document.createElement('div');
             this.marker.classList = 'truck';
             this.routeMile;
-            this.color= '#'+Math.floor(Math.random()*16777215).toString(16)
+            this.color= _routeColor
             this.routeColor= {'line-color':this.color , 'line-width':4};;
 
             this.truckMarker = new mapboxgl.Marker(this.marker)
@@ -229,7 +229,7 @@
                 HTML_Table+='</tr>'
             }
             HTML_Table += '</table>'
-            HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
+            HTML_Table += '<button class="button" type="button" onClick="CreateRoute()">Add Route</button>'
             document.getElementById('pd').innerHTML = HTML_Table
             trucks.forEach(truck => {
 
@@ -238,8 +238,28 @@
             if(trucks.length!=0){allRoute()};
         }
 
+        function CreateRoute(){
+            var HTML_Route_Info = '';
+            HTML_Route_Info += '<h2> Creating New Route </h2>'; 
+            HTML_Route_Info += '<div> select starting point for the truck';
+            HTML_Route_Info += '<select id="location" type="number">'
+            HTML_Route_Info += '<option value="-66.06988906860352,18.44834670293207">San Juan</option>';
+            HTML_Route_Info += '<option value="-66.61336898803711,18.011222694738315">Ponce</option>';
+            HTML_Route_Info += '<option value="-65.65635681152344,18.316070168322522">Fajardo</option>';
+            HTML_Route_Info += '<option value="-67.14088439941406,18.200326726582748">Mayaguez</option>';
+            HTML_Route_Info += '<option value="-65.95727920532227,18.381732413643864">Carolina</option>';
+            HTML_Route_Info += '<option value="-66.03469848632812,18.231307879658043">Caguas</option>';
+            HTML_Route_Info += '</select></div>';
+            HTML_Route_Info += '<div>Pick the Route Color: <input type="color" id="RouteColor" value="#'+Math.floor(Math.random()*16777215).toString(16)+'"></div>';           
+            HTML_Route_Info += '<div>Max load of the truck: <input type="number" id="MaxLoad" min="1" value=50></div>'
+            
+            HTML_Route_Info += '<button class="button" type="button" onClick="AddRoute()">Add Truck to Map</button>'
+            document.getElementById('pd').innerHTML = HTML_Route_Info
+            document.getElementById("RouteColor").innerHTML ='#'+Math.floor(Math.random()*16777215).toString(16);
+        }
+
         // This function will get the markedDropoff variable and feed it to the optimization API which will return
-        // the optimized route for the truck.
+        // the optimized route for the truck.   
         function getRouteMarked(route, truck){
 
             var destinations = [];
@@ -349,9 +369,19 @@
         // Function that is called when the Add Route Button is added. For now it adds a marker to the 
         // map within a bounding box. and create a truck object.
         function AddRoute(){
-            var x= getRndFloat(-67.13664550786771, -65.70716270963167);
-            var y= getRndFloat(17.986497494385915, 18.45869548139244);
-            var tmp= new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10);
+            var location = document.getElementById('location').value;
+            console.log(location)
+            location = location.split(",")
+
+            var x = parseFloat(location[0])
+            console.log(x)
+            var y = parseFloat(location[1])
+            console.log(y)
+            
+            var RouteColor = document.getElementById('RouteColor').value;
+            var MaxLoad = document.getElementById('MaxLoad').value;
+
+            var tmp= new Truck([x, y], MaxLoad, RouteColor);
             trucks.push(tmp);
             map.addLayer({
               id:'route'+tmp.id,

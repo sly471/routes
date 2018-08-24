@@ -120,7 +120,7 @@
 
         // Load initial map
         // *********************************************************************
-        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamlrYmppYWIyY2UzM2twZWJkdDJzdDlyIn0.7xKRaoS1MYm5N1edRqSBbQ';
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamtzZXlkdTcwMDF1M3FwOTExZG9xMGoyIn0.398BWLmpYMQBre0SAbIBpQ';
 
         var map = new mapboxgl.Map({
             container: 'map', // container id
@@ -547,7 +547,7 @@
             if(visible == 'none'){
                 visible = 'visible'
                 
-                map.setLayoutProperty('route', 'visibility', visible)
+                    map.setLayoutProperty('route', 'visibility', visible)
             }
             else {
                 visible = 'none'
@@ -692,41 +692,7 @@
             });
             map.on('mouseleave', layers[i], e=> {map.getCanvas().style.cursor=''});
         }
-        // map.on('mouseover', e=> {
-        //     console.log("im in")
-        //     var features = map.queryRenderedFeatures(e.point, {layers: layers});
-        //     // if cursor hovers an unmarked dropoff, do the following
-        //     if (features.length) {
-
-        //         map.getCanvas().style.cursor='pointer'; // change cursor icon from grab to pointer
-                
-        //         feature=features[0];
-
-        //         // if weight of dropoff is undefined, update it
-        //         if(feature.properties.weight == -1){
-        //             updateTruckWeight(feature, truckSelected);
-        //         }
-
-        //         // if the dropoff does not have a popup, do the following
-        //         else if(feature.properties.ppop == false){
-        //             feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
-        //             createPopup(feature);   //create popup for dropoff
-        //             feature.properties.ppop=true; //change ppop of dropoff
-
-        //             // update dropoff in dropoffLocations
-        //             for (var i=0; i<dropoffLocations.features.length; i++){
-        //                 if(feature.properties.name==dropoffLocations.features[i].properties.name){
-        //                     dropoffLocations.features[i]= feature;
-        //                     break
-        //                 }
-        //             }
-
-        //             // update source of the layer 'dropoffs-symbol'.
-        //             map.getSource('dropoffs-symbol').setData(dropoffLocations);
-        //         }
-        //     }
-        //     else{map.getCanvas().style.cursor='';}
-        // });
+        
 
         // when the cursor is hovering over the marker, it will change the cursor icon
         // from the grab icon to the pointer icon.

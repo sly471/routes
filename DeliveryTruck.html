@@ -7,6 +7,9 @@
     <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
+    <script type="text/javascript" src="scripts/require.js"></script>
+    <script type="text/javascript" src='auth.js'></script>
+    
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet'/>
     <style>
         body {margin: 0; padding: 0;}
@@ -184,6 +187,19 @@
             }
         };
 
+        var mysql = require('mysql');
+        var user = getUser();
+        var pw = getPassword();
+        var con = mysql.createConnection({
+          host: "localhost",
+          user: user,  
+          password: pw
+        });
+
+        con.connect(function(err) {
+          if (err) throw err;
+          console.log("Connected!");
+        });
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
@@ -390,8 +406,7 @@
                         .setLngLat(e.lngLat)
                         .setHTML(pophtml)
                         .addTo(map);
-                }
-               
+                }        
             });
     
             // when the cursor leaves the route, removes route popup.
@@ -407,8 +422,6 @@
             }
             for(var i=0; i<trucks.length; i++){
                 if(trucks[i].id==truckSelected.id){
-                    console.log("removed truck");
-                    console.log(trucks);
                     trucks[i].truckMarker.remove();
                     trucks.splice(i, 1);
                     break;
@@ -429,14 +442,9 @@
                 }
                 else{
                 truck.truckMarker.remove()
-                // map.setLayoutProperty('route'+truck.id, 'visibility', 'none')
                 map.setPaintProperty('route'+truck.id, 'line-opacity', 0.3)
                 }
             })
-            
-            // map.setLayoutProperty('route'+truckSelected.id, 'visibility', 'visible')
-
-            //truckSelected.truckMarker.addTo(map)
             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff)
             HTMLDirections(truckSelected, id)
         }
@@ -642,7 +650,7 @@
                 })
                 var center = turf.center(dropcoor)
                 // Uncomment the line below to use the radius function
-                //Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
+                Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
             }
         });
 

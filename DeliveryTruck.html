@@ -400,13 +400,13 @@
         }
         function removeRoute(){
             map.removeLayer('route'+truckSelected.id);
-            // map.removeSource('route'+truckSelected.id);
+            map.removeSource('route'+truckSelected.id);
             while(truckSelected.route.length>0){
                 dropoffLocations.push(truckSelected.route[0]);
                 truckSelected.route.splice(0,1);
             }
             for(var i=0; i<trucks.length; i++){
-                if(trucks[i].id==id){
+                if(trucks[i].id==truckSelected.id){
                     console.log("removed truck");
                     console.log(trucks);
                     trucks[i].truckMarker.remove();

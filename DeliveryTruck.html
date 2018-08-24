@@ -118,7 +118,7 @@
 
         // Load initial map
         // *********************************************************************
-        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamtzZXlkdTcwMDF1M3FwOTExZG9xMGoyIn0.398BWLmpYMQBre0SAbIBpQ';
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamtzZXlkdTcwMDF1M3FwOTExZG9xMGoyIn0.398BWLmpYMQBre0SAbIBpQ'; 
 
         var map = new mapboxgl.Map({
             container: 'map', // container id
@@ -204,7 +204,8 @@
             HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'          
             HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
             HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
-            HTML_Directions+=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
+            HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
+            HTML_Directions += '<button class="button" type="button" onClick="removeRoute()">Remove Route</button>'
             document.getElementById('pd').innerHTML = HTML_Directions
         }
         
@@ -310,23 +311,7 @@
             })
         };
 
-        function removeRoute(){
-            map.removeLayer('route'+truckSelected.id);
-            while(truckSelected.route.length>0){
-                dropoffLocations.push(truckSelected.route[0]);
-                truckSelected.route.splice(0,1);
-            }
-            for(var i=0; i<trucks.length; i++){
-                if(trucks[i].id==id){
-                    trucks.splice(i, 1);
-                    break;
-                }
-            }
-            map.getSource('dropoffs-symbol').setData(dropoffLocations);
-            map.getSource('marked-dropoff').setData(blank);
-            HTMLTable();
-        }
-
+        
         function allRoute(){
             var allMarkedDropoff = turf.featureCollection([]);
             trucks.forEach(truck => {
@@ -383,6 +368,7 @@
 
             var tmp= new Truck([x, y], MaxLoad, RouteColor);
             trucks.push(tmp);
+            console.log('route'+tmp.id)
             map.addLayer({
               id:'route'+tmp.id,
               type: 'line',
@@ -412,7 +398,27 @@
             map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
                 HTMLTable()
         }
-        
+        function removeRoute(){
+            map.removeLayer('route'+truckSelected.id);
+            // map.removeSource('route'+truckSelected.id);
+            while(truckSelected.route.length>0){
+                dropoffLocations.push(truckSelected.route[0]);
+                truckSelected.route.splice(0,1);
+            }
+            for(var i=0; i<trucks.length; i++){
+                if(trucks[i].id==id){
+                    console.log("removed truck");
+                    console.log(trucks);
+                    trucks[i].truckMarker.remove();
+                    trucks.splice(i, 1);
+                    break;
+                }
+            }
+            map.getSource('dropoffs-symbol').setData(dropoffLocations);
+            map.getSource('marked-dropoff').setData(blank);
+            HTMLTable();
+        }
+
         function SelectTruck(id){
 
             trucks.forEach(truck => {

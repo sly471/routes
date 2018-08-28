@@ -243,16 +243,15 @@
         function HTMLRemoveAuth(){
             var HTML_RemoveAuth = '';
             HTML_RemoveAuth += '<div><h3>Are you sure you want to remove the route?</h3></div>';
-            HTML_RemoveAuth += '<button style="text-align: center;background-color: #4CAF50;color: white;border: none;margin: 5px 10px;padding: 15px 32px;display: inline-block; onClick="removeRoute()"> Yes </button>';
-
-            HTML_RemoveAuth += '<button style="text-align: center;background-color: #f0f0f0;color: black;margin: 5px 0px;padding: 15px 32px;display: inline-block;"onClick="HTMLDirections(truckSelected, truckSelected.id)"> No </button>'
+            HTML_RemoveAuth += '<div><button style="text-align: center;background-color: #4CAF50;color: white;border: none;margin-left: 60px;padding: 15px 32px;display: inline-block;cursor: pointer;" onClick="removeRoute()"> Yes </button>';
+            HTML_RemoveAuth += '<button style="text-align: center;background-color: #f0f0f0;color: black;margin-left: 75px;padding: 15px 32px;display: inline-block;cursor: pointer;"onClick="HTMLDirections(truckSelected, truckSelected.id)"> No </button></div>'
             
             document.getElementById('pd').innerHTML = HTML_RemoveAuth;
         }
 
         function CreateRoute(){
             var HTML_Route_Info = '';
-            HTML_Route_Info += '<h2> Creating New Route </h2>'; 
+            HTML_Route_Info += '<h2> Creating New Route <button style="display: inline-block;background-color:#FFFFFF;color:#000000; border: none;margin-left: 130px;cursor:pointer; "onClick="HTMLTable()">&#10799;</button> </h2>'; 
             HTML_Route_Info += '<div> select starting point for the truck';
             HTML_Route_Info += '<select id="location" type="number">'
             HTML_Route_Info += '<option value="-66.06988906860352,18.44834670293207">San Juan</option>';

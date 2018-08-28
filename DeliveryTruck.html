@@ -7,9 +7,7 @@
     <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
     <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
-    <script type="text/javascript" src="scripts/require.js"></script>
-    <script type="text/javascript" src='auth.js'></script>
-    
+
     <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet'/>
     <style>
         body {margin: 0; padding: 0;}
@@ -187,19 +185,7 @@
             }
         };
 
-        var mysql = require('mysql');
-        var user = getUser();
-        var pw = getPassword();
-        var con = mysql.createConnection({
-          host: "localhost",
-          user: user,  
-          password: pw
-        });
-
-        con.connect(function(err) {
-          if (err) throw err;
-          console.log("Connected!");
-        });
+        fetch()
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
@@ -221,7 +207,7 @@
             HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
             HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
             HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
-            HTML_Directions += '<button class="button" type="button" onClick="removeRoute()">Remove Route</button>'
+            HTML_Directions += '<button class="button" type="button" onClick="HTMLRemoveAuth()">Remove Route</button>'
             document.getElementById('pd').innerHTML = HTML_Directions
         }
         
@@ -253,6 +239,15 @@
                 truck.truckMarker.addTo(map)
             })
             if(trucks.length!=0){allRoute()};
+        }
+        function HTMLRemoveAuth(){
+            var HTML_RemoveAuth = '';
+            HTML_RemoveAuth += '<div><h3>Are you sure you want to remove the route?</h3></div>';
+            HTML_RemoveAuth += '<button style="text-align: center;background-color: #4CAF50;color: white;border: none;margin: 5px 10px;padding: 15px 32px;display: inline-block; onClick="removeRoute()"> Yes </button>';
+
+            HTML_RemoveAuth += '<button style="text-align: center;background-color: #f0f0f0;color: black;margin: 5px 0px;padding: 15px 32px;display: inline-block;"onClick="HTMLDirections(truckSelected, truckSelected.id)"> No </button>'
+            
+            document.getElementById('pd').innerHTML = HTML_RemoveAuth;
         }
 
         function CreateRoute(){
@@ -302,6 +297,7 @@
 
         // This function will get the information returned from the getRoute and use it to draw the optimized
         // truck route on the map.
+        
         function drawRoute(truck){
             fetch(getRouteMarked(truck.markedDropoff, truck))
             .then(res => {

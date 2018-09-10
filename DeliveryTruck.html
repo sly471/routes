@@ -3,6 +3,7 @@
 <head>
     <meta charset='utf-8' />
     <title>Delivery truck</title>
+    <link rel="icon" href="PRoduce-logo.png">
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
     <script src='scripts/HTML_tables.js'></script>
@@ -145,7 +146,6 @@
         var trucks = [];
         var popuproute;
         var truckSelected;
-        var HTML_Table = '<table>'
         var id=1;
         var Truck = function(_location, _maxLoad, _routeColor){
             this.id=id++;                       //id of truck
@@ -185,17 +185,6 @@
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
-        
-
-
-
-        
-        // This function will get the information returned from the getRoute and use it to draw the optimized
-        // truck route on the map.
-        
-        
-
-        
         function allRoute(){
             var allMarkedDropoff = turf.featureCollection([]);
             trucks.forEach(truck => {
@@ -209,9 +198,6 @@
             map.getSource('marked-dropoff' ).setData(allMarkedDropoff);
         }
 
-        // This functions calls the optimization api to calculate the time that will add to each dropoff 
-        
-
         // Function that is called when the Add Route Button is added. For now it adds a marker to the 
         // map within a bounding box. and create a truck object.
         function AddRoute(){
@@ -220,9 +206,7 @@
             location = location.split(",")
 
             var x = parseFloat(location[0])
-            console.log(x)
             var y = parseFloat(location[1])
-            console.log(y)
             
             var RouteColor = document.getElementById('RouteColor').value;
             var MaxLoad = document.getElementById('MaxLoad').value;

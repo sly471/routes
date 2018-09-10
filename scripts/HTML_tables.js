@@ -23,7 +23,7 @@
 // On the main menu of the ui, this HTML will be displayed
 function HTMLTable(trucks, map){
     truckSelected=undefined;
-    HTML_Table = '<table>'
+    var HTML_Table = '<table>'
     var parameter = trucks +','+ map;
      for(var i = 0; i < trucks.length ; i++){
         HTML_Table+='<tr>'

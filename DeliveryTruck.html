@@ -2,8 +2,9 @@
 <html>
 <head>
     <meta charset='utf-8' />
-    <title>Delivery truck</title>
     <link rel="icon" href="PRoduce-logo.png">
+    <title>Delivery truck</title>
+
     <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
     <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
     <script src='scripts/HTML_tables.js'></script>
@@ -113,7 +114,10 @@
         // *********************************************************************
         // TODO
         // *********************************************************************
+        // - Solves problem with radius that creates popups with negative times.
+        // - Make the UI more intituive.
         // - Adding legend for marked dropoff, dropoff location
+        // - Make route box have a clickable pointer to help user on how the porgram works
         // *********************************************************************
         // Mapbox
         // *********************************************************************
@@ -146,6 +150,7 @@
         var trucks = [];
         var popuproute;
         var truckSelected;
+        var HTML_Table = '<table>'
         var id=1;
         var Truck = function(_location, _maxLoad, _routeColor){
             this.id=id++;                       //id of truck
@@ -163,11 +168,14 @@
 
             this.truckMarker = new mapboxgl.Marker(this.marker)
                                            .setLngLat(this.location)
+                                           //.setPopup(new mapboxgl.Popup({ offset: 25 })
+                                            //                     .setHTML('Max Load: '+this.maxLoad +'<br>' +'currentLoad: ' + this.currentLoad +'<br>'+'Route Duration: ' + Math.floor(this.routeWeight/60)+':'+(Math.floor(this.routeWeight%60)<10?'0':'')+Math.floor(this.routeWeight%60)+'</div> '))
                                            .addTo(map);
 
             this.updateLoad = load => {
                 if((this.currentLoad - load) >= 0){
                     this.currentLoad = this.currentLoad - load;
+
                 }
                 else{
                     alert('Not enought load in truck');
@@ -185,6 +193,18 @@
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
+        
+        // When Selecting a truck, this will be the menu that will display. It displays information about the route that was selected(soon directions of the route)
+
+
+
+        
+        // This function will get the information returned from the getRoute and use it to draw the optimized
+        // truck route on the map.
+        
+        
+
+        
         function allRoute(){
             var allMarkedDropoff = turf.featureCollection([]);
             trucks.forEach(truck => {
@@ -198,6 +218,32 @@
             map.getSource('marked-dropoff' ).setData(allMarkedDropoff);
         }
 
+        // This functions calls the optimization api to calculate the time that will add to each dropoff 
+        function updateTruckWeight(drop, truck){
+            var copyMarked = truck.markedDropoff.features.slice(0);
+            copyMarked.push(drop)
+            fetch(getRouteWeight(copyMarked, truck, mapboxgl.accessToken))
+            .then(res =>{
+                return res.json();
+            })
+            .then(data =>{
+                var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight;
+                drop.properties.weight = newWeight;
+                drop.properties.color = colorCalculator(drop.properties)
+                return drop
+            })
+            .then(feature =>{
+
+                createPopup(feature);
+                dropoffLocations.features.forEach(function(dropoff){
+                    if(dropoff.properties.name == feature.properties.name){
+                        dropoff.properties.weight = feature.properties.weight
+                    }
+                map.getSource('dropoffs-symbol').setData(dropoffLocations)
+                })
+            })
+        };
+
         // Function that is called when the Add Route Button is added. For now it adds a marker to the 
         // map within a bounding box. and create a truck object.
         function AddRoute(){
@@ -206,7 +252,9 @@
             location = location.split(",")
 
             var x = parseFloat(location[0])
+            console.log(x)
             var y = parseFloat(location[1])
+            console.log(y)
             
             var RouteColor = document.getElementById('RouteColor').value;
             var MaxLoad = document.getElementById('MaxLoad').value;
@@ -287,27 +335,33 @@
                 var dy = centerPoint.y - pointLocation.y;
                 if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
                     dropoffPopup.features.push(point)
-                    new updateTruckWeight(point, truck, mapboxgl.accessToken, dropoffLocations)
+                    new updateTruckWeight(point, truck)
                 }
             })
         };
 
         // if feature.weight == -1 || feature.weight < dropoff.weight
         // Creates a popup for every dropoff in dropoffLocations.
-
+        function createPopup(feature){
+            html= ''
+            html+= feature.properties.load+' palletes<br>'
+            html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
+            html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
+            html+= '+'+feature.properties.weight+ ' min'
+            var popup = new mapboxgl.Popup({ offset: [0, 0], closeButton:false})
+                //.setLngLat(feature.geometry.coordinates)
+                .setHTML(html)
+                .setLngLat(feature.geometry.coordinates)
+                .addTo(map);
+        };
 
         // This function when given a point, it will check its weight(minutes it takes to drive to the point),
         // and assign it a color depending on its weight. red if the weight is greater than 20, yellow
         // if its between 10 and 19, and green if its less or equal than 10.
-
+        
 
         // Empty list which will hold all the dropoff locations that were marked on the map.
-        for (var i=0; i<50; i++){
-            x= getRndFloat(-67.13664550786771, -65.70716270963167)
-            y= getRndFloat(17.986497494385915, 18.45869548139244)
-            l= getRndInteger(1, 10);
-            dropoffLocations.features.push(turf.point([x, y],{name: i, load: l, weight: -1, ppop:false}));
-        }
+        
 
         // function animate(truck){
         //     var route= truck.APIData.trips[0].geometry
@@ -363,7 +417,7 @@
             });
         });
         HTMLTable(trucks, map);
-
+        createRndDropoff(dropoffLocations);
         // *********************************************************************
         // Events/Listeners
         
@@ -437,7 +491,7 @@
             
             if(truckSelected!=undefined){
                 map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
-                drawRoute(truckSelected, mapboxgl.accessToken, map, trucks);
+                drawRoute(truckSelected, trucks, map, mapboxgl.accessToken);
 
                 //update the weight of the dropoff points in dropoffLocations.
                 dropcoor.features.length = 0
@@ -465,13 +519,13 @@
 
                 // if weight of dropoff is undefined, update it
                 if(feature.properties.weight == -1){
-                    updateTruckWeight(feature, truckSelected, mapboxgl.accessToken, dropoffLocations);
+                    updateTruckWeight(feature, truckSelected);
                 }
 
                 // if the dropoff does not have a popup, do the following
                 else if(feature.properties.ppop == false){
                     feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
-                    createPopup(feature, map);   //create popup for dropoff
+                    createPopup(feature);   //create popup for dropoff
                     feature.properties.ppop=true; //change ppop of dropoff
 
                     // update dropoff in dropoffLocations

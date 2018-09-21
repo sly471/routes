@@ -286,20 +286,15 @@
             // map within a bounding box. and create a truck object.
             function AddRoute(){
                 var location = document.getElementById('location').value;
-                console.log(location)
                 location = location.split(",")
-
                 var x = parseFloat(location[0])
-                console.log(x)
                 var y = parseFloat(location[1])
-                console.log(y)
                 
                 var RouteColor = document.getElementById('RouteColor').value;
                 var MaxLoad = document.getElementById('MaxLoad').value;
 
                 var tmp= new Truck([x, y], MaxLoad, RouteColor);
                 trucks.push(tmp);
-                console.log('route'+tmp.id)
                 map.addLayer({
                   id:'route'+tmp.id,
                   type: 'line',
@@ -311,7 +306,6 @@
 
                     // check is cursor is hovering over route
                     var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                    console.log(tmp.id)
                     // if hovering on route, create route popup
                     if (routeLocation.length){
                         var pophtml = ''
@@ -596,7 +590,7 @@
             });
             map.on('mouseleave', 'dropoffs-symbol', e=> {
                 hoverPopup.remove();
-                console.log("removed")
+                
             })
 
             // when the cursor is hovering over the marker, it will change the cursor icon

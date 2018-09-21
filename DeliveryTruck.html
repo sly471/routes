@@ -193,6 +193,7 @@
             var trucks = [];
             var popuproute;
             var truckSelected;
+            var hoverPopup = new mapboxgl.Popup({ offset: [-1, -7], closeButton:false});
             var HTML_Table = '<table>'
             var id=1;
             var Truck = function(_location, _maxLoad, _routeColor){
@@ -387,7 +388,7 @@
                 html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
                 html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
                 html+= '+'+feature.properties.weight+ ' min'
-                var popup = new mapboxgl.Popup({ offset: [0, 0], closeButton:false})
+                var popup = new mapboxgl.Popup({ offset: [-1, -7], closeButton:false})
                     //.setLngLat(feature.geometry.coordinates)
                     .setHTML(html)
                     .setLngLat(feature.geometry.coordinates)
@@ -549,6 +550,7 @@
 
             // when the cursor is hovering over the marker, it will change the cursor icon
             // from the grab icon to the pointer icon & create a popup for the dropoff marker.
+
             map.on('mouseover', 'dropoffs-symbol', e=> {
                 var features = map.queryRenderedFeatures(e.point, {layers: ['dropoffs-symbol']});
                 // if cursor hovers an unmarked dropoff, do the following
@@ -564,10 +566,21 @@
                     }
 
                     // if the dropoff does not have a popup, do the following
-                    else if(feature.properties.ppop == false){
+                    else {
                         feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
-                        createPopup(feature);   //create popup for dropoff
-                        feature.properties.ppop=true; //change ppop of dropoff
+                        html= ''
+                        html+= feature.properties.load+' palletes<br>'
+                        html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
+                        html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
+                        html+= '+'+feature.properties.weight+ ' min'
+                        
+                    //.setLngLat(feature.geometry.coordinates)
+                        hoverPopup.setHTML(html)
+                        .setLngLat(feature.geometry.coordinates)
+                        .addTo(map);
+                
+                        //createPopup(feature);   //create popup for dropoff
+                        //feature.properties.ppop=true; //change ppop of dropoff
 
                         // update dropoff in dropoffLocations
                         for (var i=0; i<dropoffLocations.features.length; i++){
@@ -581,8 +594,12 @@
                         map.getSource('dropoffs-symbol').setData(dropoffLocations);
                     }
                 }
-                else if(features.length){map.getCanvas().style.cursor='pointer'};
+                if(features.length){map.getCanvas().style.cursor='pointer'};
             });
+            map.on('mouseleave', 'dropoffs-symbol', e=> {
+                hoverPopup.remove();
+                console.log("removed")
+            })
 
             // when the cursor is hovering over the marker, it will change the cursor icon
             // from the grab icon to the pointer icon.

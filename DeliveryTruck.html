@@ -144,7 +144,7 @@
             <h4>Markers</h4>
             <div><span><svg width="10" height="10"><rect width="10" height="10" style="fill:#735139" /></svg></span>Unmarked Dropoff</div>
             <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#735139"  /></svg></span>Marked Dropoff</div>
-            <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#3887BE"  /></svg></span>Truck</div>
+            <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#FF0000"  /></svg></span>Truck</div>
 
         </div>
         <div id='map' class='contain'> </div>
@@ -575,18 +575,9 @@
                     // if the dropoff does not have a popup, do the following
                     else {
                         feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
-                        html= ''
-                        html+= feature.properties.load+' palletes<br>'
-                        html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
-                        html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
-                        html+= '+'+feature.properties.weight+ ' min'
                         
-                    //.setLngLat(feature.geometry.coordinates)
-                        hoverPopup.setHTML(html)
-                        .setLngLat(feature.geometry.coordinates)
-                        .addTo(map);
                 
-                        //createPopup(feature);   //create popup for dropoff
+                        createPopup(feature, true);   //create popup for dropoff
                         //feature.properties.ppop=true; //change ppop of dropoff
 
                         // update dropoff in dropoffLocations

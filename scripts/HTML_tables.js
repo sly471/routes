@@ -14,7 +14,7 @@ function HTMLDirections(truck, id, trucks, map){
     HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
     HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
     HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
-    HTML_Directions += '<button class="button" type="button" onClick="HTMLRemoveAuth()">Remove Route</button>'
+    HTML_Directions += '<button class="button" type="button" style="background-color:#FF0000" onClick="HTMLRemoveAuth()">Remove Route</button>'
     document.getElementById('pd').innerHTML = HTML_Directions
 }
 
@@ -41,7 +41,7 @@ function HTMLTable(trucks, map){
         HTML_Table+= '</tr>';
     }
     HTML_Table += '</table>'
-    HTML_Table += '<button class="button" type="button" onClick="CreateRoute(trucks, map)">Add Route</button>'
+    HTML_Table += '<button class="button" type="button" style="background-color:#4CAF50" onClick="CreateRoute(trucks, map)">Add Route</button>'
     document.getElementById('pd').innerHTML = HTML_Table
     trucks.forEach(truck => {
 
@@ -53,7 +53,7 @@ function HTMLTable(trucks, map){
 function HTMLRemoveAuth(){
     var HTML_RemoveAuth = '';
     HTML_RemoveAuth += '<div><h3>Are you sure you want to remove the route?</h3></div>';
-    HTML_RemoveAuth += '<div><button style="text-align: center;background-color: #4CAF50;color: white;border: none;margin-left: 60px;padding: 15px 32px;display: inline-block;cursor: pointer;" onClick="removeRoute()"> Yes </button>';
+    HTML_RemoveAuth += '<div><button style="text-align: center;background-color: #FF0000;color: white;border: none;margin-left: 60px;padding: 15px 32px;display: inline-block;cursor: pointer;" onClick="removeRoute()"> Yes </button>';
     HTML_RemoveAuth += '<button style="text-align: center;background-color: #f0f0f0;color: black;margin-left: 75px;padding: 15px 32px;display: inline-block;cursor: pointer;"onClick="HTMLDirections(truckSelected, truckSelected.id)"> No </button></div>'
     
     document.getElementById('pd').innerHTML = HTML_RemoveAuth;
@@ -74,7 +74,7 @@ function CreateRoute(trucks, map){
     HTML_Route_Info += '<div>Pick the Route Color: <input type="color" id="RouteColor" value="#'+Math.floor(Math.random()*16777215).toString(16)+'"></div>';           
     HTML_Route_Info += '<div>Max load of the truck: <input type="number" id="MaxLoad" min="1" value=50></div>'
     
-    HTML_Route_Info += '<button class="button" type="button" onClick="AddRoute()">Add Truck to Map</button>'
+    HTML_Route_Info += '<button class="button" type="button" style="background-color:#4CAF50" onClick="AddRoute()">Add Truck to Map</button>'
     document.getElementById('pd').innerHTML = HTML_Route_Info
     document.getElementById("RouteColor").innerHTML ='#'+Math.floor(Math.random()*16777215).toString(16);
 }

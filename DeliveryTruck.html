@@ -257,7 +257,7 @@
             }
 
             // This functions calls the optimization api to calculate the time that will add to each dropoff 
-            function updateTruckWeight(drop, truck){
+            function updateTruckWeight(drop, truck, hover){
                 var copyMarked = truck.markedDropoff.features.slice(0);
                 copyMarked.push(drop)
                 fetch(getRouteWeight(copyMarked, truck, mapboxgl.accessToken))
@@ -272,7 +272,7 @@
                 })
                 .then(feature =>{
 
-                    createPopup(feature);
+                    createPopup(feature, hover);
                     dropoffLocations.features.forEach(function(dropoff){
                         if(dropoff.properties.name == feature.properties.name){
                             dropoff.properties.weight = feature.properties.weight
@@ -375,24 +375,31 @@
                     var dy = centerPoint.y - pointLocation.y;
                     if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
                         dropoffPopup.features.push(point)
-                        new updateTruckWeight(point, truck)
+                        new updateTruckWeight(point, truck, false)
                     }
                 })
             };
 
             // if feature.weight == -1 || feature.weight < dropoff.weight
             // Creates a popup for every dropoff in dropoffLocations.
-            function createPopup(feature){
+            function createPopup(feature, hover){
                 html= ''
                 html+= feature.properties.load+' palletes<br>'
                 html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
                 html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
                 html+= '+'+feature.properties.weight+ ' min'
-                var popup = new mapboxgl.Popup({ offset: [-1, -7], closeButton:false})
-                    //.setLngLat(feature.geometry.coordinates)
-                    .setHTML(html)
+                if(hover){
+                    hoverPopup.setHTML(html)
                     .setLngLat(feature.geometry.coordinates)
                     .addTo(map);
+                }
+                else{
+                    var popup = new mapboxgl.Popup({ offset: [-1, -7], closeButton:false})
+                        //.setLngLat(feature.geometry.coordinates)
+                        .setHTML(html)
+                        .setLngLat(feature.geometry.coordinates)
+                        .addTo(map);
+                }
             };
 
             // This function when given a point, it will check its weight(minutes it takes to drive to the point),
@@ -562,7 +569,7 @@
 
                     // if weight of dropoff is undefined, update it
                     if(feature.properties.weight == -1){
-                        updateTruckWeight(feature, truckSelected);
+                        updateTruckWeight(feature, truckSelected, true);
                     }
 
                     // if the dropoff does not have a popup, do the following

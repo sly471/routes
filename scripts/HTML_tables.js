@@ -12,7 +12,7 @@ function HTMLDirections(truck, id, trucks, map){
     HTML_Directions += '<div> Current Load: ' + truck.currentLoad + '</div>'      
     HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'          
     HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
-    HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
+    HTML_Directions +=                   Math.floor(truck.routeWeight%60)+' hrs</div> '
     HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
     HTML_Directions += '<button class="button" type="button" style="background-color:#FF0000" onClick="HTMLRemoveAuth()">Remove Route</button>'
     document.getElementById('pd').innerHTML = HTML_Directions
@@ -33,7 +33,7 @@ function HTMLTable(trucks, map){
         HTML_Table+=    '<td>'
         HTML_Table+=        'ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
         HTML_Table+=        (Math.floor(trucks[i].routeWeight%60)<10?'0':'')
-        HTML_Table+=        Math.floor(trucks[i].routeWeight%60) 
+        HTML_Table+=        Math.floor(trucks[i].routeWeight%60)+' hrs'
         HTML_Table+=    '</td>'
         HTML_Table+='</tr>'
         HTML_Table+='<tr>'

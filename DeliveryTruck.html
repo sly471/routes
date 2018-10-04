@@ -368,6 +368,7 @@
                     var dx = centerPoint.x - pointLocation.x;
                     var dy = centerPoint.y - pointLocation.y;
                     if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
+                        console.log(point.properties);
                         dropoffPopup.features.push(point)
                         new updateTruckWeight(point, truck, false)
                     }
@@ -378,7 +379,8 @@
             // Creates a popup for every dropoff in dropoffLocations.
             function createPopup(feature, hover){
                 html= ''
-                html+= feature.properties.load+' palletes<br>'
+                // html+= feature.properties.load+' palletes<br>'
+                html+= feature.properties.name+'<br>'
                 html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
                 html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
                 html+= '+'+feature.properties.weight+ ' min'
@@ -426,7 +428,14 @@
             //     if (j<route.coordinates.length) {setTimeout(function(){tick( route, marker,j+1)},100)};
             // }
 
-
+            dropoffLocations.features.push(turf.point([-66.068322, 18.456546],{name: 'Marta Marques', load: 1, weight: -1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.060915, 18.302800],{name: 'Mabel Varela', load: 1, weight: -1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.193257, 18.438364],{name: 'Janet Villanueva', load: 1, weight: -1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.066515, 18.428002],{name: 'Tamara Sabalier', load: 1, weight: -1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.057971, 18.409043],{name: 'Francisco Tirado', load: 1, weight: -1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.002994, 18.254485],{name: 'Sandra Catalá', load: 1, weight: -1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.125240, 18.368986],{name: 'Alan Wagner', load: 1, weight: -1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.072782, 18.450207],{name: 'Edward Betancourt', load: 1, weight: -1, ppop:false}));
             // *********************************************************************
             // Mapbox
             // *********************************************************************
@@ -459,7 +468,7 @@
             });
             
             HTMLTable(trucks, map);
-            createRndDropoff(dropoffLocations);
+            // createRndDropoff(dropoffLocations);
 
             // *********************************************************************
             // Events/Listeners
@@ -589,8 +598,7 @@
                 if(features.length){map.getCanvas().style.cursor='pointer'};
             });
             map.on('mouseleave', 'dropoffs-symbol', e=> {
-                hoverPopup.remove();
-                
+                setTimeout(function(){ hoverPopup.remove(); }, 3000);                
             })
 
             // when the cursor is hovering over the marker, it will change the cursor icon

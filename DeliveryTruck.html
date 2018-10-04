@@ -395,6 +395,7 @@
                         .setHTML(html)
                         .setLngLat(feature.geometry.coordinates)
                         .addTo(map);
+                        setTimeout(function(){ popup.remove(); }, 5000);
                 }
             };
 

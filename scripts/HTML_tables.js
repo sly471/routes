@@ -14,10 +14,15 @@ function HTMLDirections(truck, id, trucks, map){
     HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
     HTML_Directions +=                   Math.floor(truck.routeWeight%60)+' hrs</div> '
     HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
+    waypoints = 'https://www.google.com/maps/dir/'
+    truck.waypoints.forEach(location=> {waypoints += location[1] +','+ location[0] +'/'})
+    if (truck.waypoints.length){waypoints += truck.waypoints[0][1] +','+ truck.waypoints[0][0] +'/'}
+    HTML_Directions += '<div><a class="button" href='+waypoints+' target="_blank">Navigate</Navigate></a></div>'
     HTML_Directions += '<button class="button" type="button" style="background-color:#FF0000" onClick="HTMLRemoveAuth()">Remove Route</button>'
+
     document.getElementById('pd').innerHTML = HTML_Directions
 }
-
+// https://www.google.com/maps/dir/
 // On the main menu of the ui, this HTML will be displayed
 function HTMLTable(trucks, map){
     // HTMLegend(map);

@@ -98,21 +98,6 @@
     <div class='map-overlay' id='features'>
     <div id='pd'></div></div>
     <script type="text/javascript">
-        // *********************************************************************
-        // TODO
-        // *********************************************************************
-        // - Every route should be its own layer(Right now the routes are sharing the same layer)
-        // - When User is in HTMLTable UI all route should display.
-        // - When selecting a specific route, all other route except the selected one should be hidden.(this will resolves the trouble of making the problem
-        //   redraw everything and calling the API more than it should)
-        // - Solves problem with radius that creates popups with negative times.
-        // - Add different color to each route. For visual aspect to let the user know which dropoff belong to each route.
-        // - when 
-        
-        // *********************************************************************
-        // In Development
-        // *********************************************************************
-        //  DBSCAN(Eddie) new file
 
         // *********************************************************************
         // Mapbox
@@ -120,7 +105,7 @@
 
         // Load initial map
         // *********************************************************************
-        mapboxgl.accessToken = 'pk.eyJ1IjoiZWNhYnJlcmEwNyIsImEiOiJjamtzZXlkdTcwMDF1M3FwOTExZG9xMGoyIn0.398BWLmpYMQBre0SAbIBpQ';
+        mapboxgl.accessToken = 'pk.eyJ1IjoibXZ2ZWoxIiwiYSI6ImNqbHMzbmNycTBieGEzd3Qybnp0NDY5MjIifQ.-6--7tEk9Ud4Z-QNq06rvw';
 
         var map = new mapboxgl.Map({
             container: 'map', // container id
@@ -148,53 +133,54 @@
         var truckSelected;
         var HTML_Table = '<table>'
         var maxCluster = 0
-        var Colors = ['#ff0000', '#00ff00', '#0000ff', '#008000', '#800000', '#FFFF00', '#808080', '#00ffFF', '#FFFFFF', '#800080', '#008080', '#000080']
+        var Colors = ['#ff0000', '#00ff00', '#0000ff', '#008000', '#800000', '#FFFF00',
+                      '#808080', '#00ffFF', '#FFFFFF', '#800080', '#008080', '#000080']
         var clusterList=[]
+        var id=1;
         // *********************************************************************
         // Objects
         // *********************************************************************
 
         // initialize an object for the truck.
-        var Truck = function(_location, _maxLoad){
+        var Truck = function(_location, _maxLoad, _routeColor){
+            this.id=id++
             this.location = _location;          //initial location of truck
             this.maxLoad = _maxLoad;            //maximum weight that truck can handle
             this.currentLoad = _maxLoad;        //current weight that truck is handling
             this.routeWeight = 0;    //time it takes the route to complete
             this.markedDropoff = turf.featureCollection([]);
-            this.APIData;
+            this.waypoints= [];
+            this.route= [];
             this.marker = document.createElement('div');
             this.marker.classList = 'truck';
             this.routeMile;
+            this.color= _routeColor;
+            this.routeColor= {'line-color':this.color , 'line-width':4};
 
             this.truckMarker = new mapboxgl.Marker(this.marker)
-                                           .setLngLat(this.location)
-                                           //.setPopup(new mapboxgl.Popup({ offset: 25 })
-                                            //                     .setHTML('Max Load: '+this.maxLoad +'<br>' +'currentLoad: ' + this.currentLoad +'<br>'+'Route Duration: ' + Math.floor(this.routeWeight/60)+':'+(Math.floor(this.routeWeight%60)<10?'0':'')+Math.floor(this.routeWeight%60)+'</div> '))
-                                           .addTo(map);
+                .setLngLat(this.location)
+                .addTo(map);
 
             this.updateLoad = load => {
-                if((this.currentLoad - load) >= 0){
-                    this.currentLoad = this.currentLoad - load;
-
-                }
-                else{
-                    alert('Not enought load in truck');
-                }
+                if((this.currentLoad - load) >= 0){this.currentLoad = this.currentLoad - load;}
+                else{alert('Not enought load in truck');}
             };
 
             this.freeLoad= load =>{this.currentLoad= this.currentLoad + load;}
-
             this.updateRouteWeight = function(routeDurability){
-                this.routeWeight = Math.round(routeDurability/60) //routeDurability will contain data.trips[0].duration which contains
-                                                                  // the time expected in seconds
+                // routeDurability will contain data.trips[0].duration which contains
+                // the time expected in seconds
+                this.routeWeight = Math.round(routeDurability/60)
             }
         };
-        HTMLTable()
+
+        HTMLTable();
 
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
-        // When Selecting a truck, this will be the menu that will display. It displays information about the route that was selected(soon directions of the route)
+        // When Selecting a truck, this will be the menu that will display. It displays information
+        // about the route that was selected(soon directions of the route)
         function HTMLDirections(truck, id){
             var HTML_Directions = '';
             HTML_Directions += '<button style="display:inline-block;'
@@ -213,6 +199,7 @@
             HTML_Directions+=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
             document.getElementById('pd').innerHTML = HTML_Directions
         }
+
         // On the main menu of the ui, this HTML will be displayed
         function HTMLTable(){
             truckSelected=undefined;
@@ -241,8 +228,8 @@
             })
         }
 
-        // This function will get the markedDropoff variable and feed it to the optimization API which will return
-        // the optimized route for the truck.
+        // This function will get the markedDropoff variable and feed it to the optimization API 
+        // which will return the optimized route for the truck.
         function getRouteMarked(route, truck){
 
             var destinations = [];
@@ -253,7 +240,9 @@
                     + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
                     + mapboxgl.accessToken;
         };
-        // This functions creates the URL to updates the dropoff locations with the time that will take to be added to the route.
+
+        // This functions creates the URL to update the dropoff locations with the time that will
+        // take to be added to the route.
         function getRouteWeight(route, truck){
 
             var destinations = [];
@@ -265,13 +254,11 @@
                     + mapboxgl.accessToken;
         };
 
-        // This function will get the information returned from the getRoute and use it to draw the optimized
-        // truck route on the map.
+        // This function will get the information returned from the getRoute and use it to draw
+        // the optimized truck route on the map.
         function drawRoute(truck){
             fetch(getRouteMarked(truck.markedDropoff, truck))
-            .then(res => {
-                return res.json()
-            })
+            .then(res => {return res.json()})
             .then(data => {
                 var route = (data.trips[0].geometry);
                 truck.APIData= data;
@@ -292,52 +279,53 @@
                 
             })
         };
+
         // This functions calls the optimization api to calculate the time that will add to each dropoff 
         function updateTruckWeight(drop, truck){
             var copyMarked = truck.markedDropoff.features.slice(0);
             copyMarked.push(drop)
             fetch(getRouteWeight(copyMarked, truck))
-            .then(res =>{
-                return res.json();
-            })
+            .then(res =>{return res.json();})
+            
             .then(data =>{
                 var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight;
                 drop.properties.weight = newWeight;
-                drop.properties.color = colorCalculator(drop.properties)
-                return drop
+                drop.properties.color = colorCalculator(drop.properties);
+                return drop;
             })
+            
             .then(feature =>{
-
                 createPopup(feature);
                 dropoffLocations.features.forEach(function(dropoff){
                     if(dropoff.properties.name == feature.properties.name){
-                        dropoff.properties.weight = feature.properties.weight
+                        dropoff.properties.weight = feature.properties.weight;
                     }
-                map.getSource('dropoffs-symbol').setData(dropoffLocations)
+                map.getSource('unmarked-dropoff').setData(dropoffLocations);
                 })
             })
         };
-        // Function that is called when the Add Route Button is added. For now it adds a marker to the map within a bounding box. and create a truck object.
+
+        // Function that is called when the Add Route Button is added. For now it adds a marker
+        // to the map within a bounding box. and create a truck object.
         function AddRoute(){
             var x= getRndFloat(-67.13664550786771, -65.70716270963167);
             var y= getRndFloat(17.986497494385915, 18.45869548139244);
             var tmp= Math.random().toString(36).substring(7);
-            
             trucks.push(new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10))
             HTMLTable()
         }
+
+
         function SelectTruck(id){
-            trucks.forEach(truck => {
-                truck.truckMarker.remove()
-            })
+            trucks.forEach(truck => {truck.truckMarker.remove()})
             truckSelected = trucks[id]
             truckSelected.truckMarker.addTo(map)
 
             HTMLDirections(truckSelected, id)
         }
+
         // Display automatically the popups of the dropoff within the Radius
         function Radius(_x, _y, truck){
-            console.log("im in")
             var centerPoint = {radius:0.16093, x:_x, y:_y}
             dropoffLocations.features.forEach(point =>{
                 var pointLocation = {radius: 0.00001, x:point.geometry.coordinates[0], y:point.geometry.coordinates[1]}
@@ -345,12 +333,13 @@
                 var dy = centerPoint.y - pointLocation.y;
                 if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
                     dropoffPopup.features.push(point)
-                    console.log("creating popup")
                     new updateTruckWeight(point, truck)
                 }
             })
         };
-        // This will look for the  clusters that are closest to the truck and create the popup. it could display multiple cluster if the truck is between 2 or more cluster
+
+        // This will look for the clusters that are closest to the truck and create the popup.
+        // it could display multiple cluster if the truck is between 2 or more cluster
         function DBScanRadius(truck, points){
             var clusters =[]
             var centerPoint = {radius:0.16093, x:truck.location[0], y:truck.location[1]}
@@ -358,12 +347,13 @@
                 var pointLocation = {radius: 0.00001, x:point.geometry.coordinates[0], y:point.geometry.coordinates[1]}
                 var dx = centerPoint.x - pointLocation.x;
                 var dy = centerPoint.y - pointLocation.y;
-                if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
-                    // display only te cluster close to the truck(intended function)
-                }
+                // if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
+                //     // display only the cluster close to the truck(intended function)
+                // }
         
             })
         };
+
         // if feature.weight == -1 || feature.weight < dropoff.weight
         // Creates a popup for every dropoff in dropoffLocations.
         function createPopup(feature){
@@ -373,13 +363,12 @@
             html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
             html+= '+'+feature.properties.weight+ ' min'
             var popup = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                //.setLngLat(feature.geometry.coordinates)
                 .setHTML(html)
                 .setLngLat(feature.geometry.coordinates)
                 .addTo(map);
         };
 
-        // This function when given a point, it will check its weight(minutes it takes to drive to the point),
+        // This function when given a point, it will check its weight(minutes it takes to drive to the point,
         // and assign it a color depending on its weight. red if the weight is greater than 20, yellow
         // if its between 10 and 19, and green if its less or equal than 10.
         function colorCalculator(dropoff){
@@ -409,8 +398,11 @@
             x= getRndFloat(-67.13664550786771, -65.70716270963167)
             y= getRndFloat(17.986497494385915, 18.45869548139244)
             l= getRndInteger(1, 10);
-            dropoffLocations.features.push(turf.point([x, y],{name: i, load: l, weight: -1, ppop:false, cluster: null, color: ''}));
+            dropoffLocations.features.push(
+                turf.point([x, y],
+                {name: i, load: l, weight: -1, ppop:false, cluster: null, color: ''}));
         }
+
         // After the points are created, this will divide them in clusters using DBScan
         // ****************************************************************************
         var dbscanPoints = turf.featureCollection([]);
@@ -418,8 +410,10 @@
             dbscanPoints.features.push(turf.point(drop.geometry.coordinates))
         })
         var dbscan = turf.clustersDbscan(dbscanPoints, 13)
+
         // ****************************************************************************
-        // After getting the cluster, the program will start to add to the dropoff to which cluster they belong(0, 1, 2, ..., Noise)
+        // After getting the cluster, the program will start to add to the dropoff to which cluster
+        // they belong(0, 1, 2, ..., Noise)
         // **************************************************************************** 
         dbscan.features.forEach(point => {
             if(point.properties.cluster > maxCluster){
@@ -437,47 +431,21 @@
                 }
             }            
         })
+
         // ****************************************************************************
-            // List will be 0, 1, 2, 3, ..., noise
-            // this is intended to create a list to contain all cluster to then be added to the layers that wil be added later in the code
-            for(var x = 0; x<maxCluster+1;x++){   
-                clusterList.push(turf.featureCollection([]));
-            }
-            // adds the drop to their respective clusters
-            dropoffLocations.features.forEach(drop => {
-                if(drop.properties.cluster == 'Noise'){
-                    clusterList[clusterList.length-1].features.push(drop)
-                }
-                else{
-                    clusterList[drop.properties.cluster].features.push(drop)
-                }
-            })
-            var layers = []
-            for (var i = 0; i<=maxCluster;i++){
-                layers.push('dropoffs-symbol'+i)
-            }    
-        function animate(truck){
-            var route= truck.APIData.trips[0].geometry
-            var start= route.coordinates[0];
-            var j=0;
+        // List will be 0, 1, 2, 3, ..., noise
+        // this is intended to create a list to contain all cluster to then be added to the layers
+        // that wil be added later in the code
+        for(var x = 0; x<maxCluster+1;x++){clusterList.push(turf.featureCollection([]));}
 
-            var tm = document.createElement('div');
-            tm.classList = 'truck';
+        // adds the drop to their respective clusters
+        dropoffLocations.features.forEach(drop => {
+            if(drop.properties.cluster == 'Noise'){clusterList[clusterList.length-1].features.push(drop)}
+            else{clusterList[drop.properties.cluster].features.push(drop)}
+        })
 
-            marker= new mapboxgl.Marker()
-                .setLngLat(start)
-                .addTo(map);
-
-            tick(route, marker, j);
-        }
-
-        function tick(route, marker, j){
-            marker.remove()
-                .setLngLat(route.coordinates[j])
-                .addTo(map);
-            if (j<route.coordinates.length) {setTimeout(function(){tick( route, marker,j+1)},100)};
-        }
-
+        var layers = []
+        for (var i = 0; i<=maxCluster;i++){layers.push('unmarked-dropoff'+i)} 
 
         // *********************************************************************
         // Mapbox
@@ -492,19 +460,18 @@
             for(var i = 0; i<=maxCluster;i++){
                 if(i<maxCluster){
                     map.addLayer({
-                      id: 'dropoffs-symbol'+i,
+                      id: 'unmarked-dropoff'+i,
                       type: 'circle',
-                      source: {data: clusterList[i],type: 'geojson'},
+                      source: {data: clusterList[i], type: 'geojson'},
                        paint: { "circle-color": Colors[i]}
                       
                     })
                 }
                 else{
-                console.log("noise")
                    map.addLayer({
-                      id: 'dropoffs-symbol'+i,
+                      id: 'unmarked-dropoff'+i,
                       type: 'circle',
-                      source: {data: clusterList[i],type: 'geojson'},
+                      source: {data: clusterList[i], type: 'geojson'},
                        paint: { "circle-color": '#000000'}
                     }) 
                 }
@@ -515,7 +482,7 @@
             map.addLayer({
               id: 'marked-dropoff',
               type: 'symbol',
-              source: {data: blank,type: 'geojson'}, // Think of how to display all MarkedDropoff. prob function with an array of all truck
+              source: {data: blank, type: 'geojson'},
               layout: {
                 'icon-allow-overlap': true,
                 'icon-ignore-placement': true,
@@ -542,8 +509,8 @@
         // then change that marker from unmarked to marked or vice-versa.
         var visible = 'none'
         map.on('click',e =>{
-            // map.removeLayer('dropoffs-symbol')
-            // map.addLayer('dropoffs-symbol')
+            // map.removeLayer('unmarked-dropoff')
+            // map.addLayer('unmarked-dropoff')
             if(visible == 'none'){
                 visible = 'visible'
                 
@@ -555,7 +522,6 @@
                 map.setLayoutProperty('route', 'visibility', visible)
             }
             // returns the info of the clicked dropoff marker on map.
-            console.log(layers)
             layers.push('marked-dropoff')
             var pt = map.queryRenderedFeatures(e.point, {layers: layers});
             layers.pop()
@@ -620,7 +586,7 @@
                     dropoffLocations.features[i].properties.ppop=false;
                 }
             }
-            // update the sources of the layers: 'dropoffs-symbol' & 'marked-dropoff'.
+            // update the sources of the layers: 'unmarked-dropoff' & 'marked-dropoff'.
             
             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
 
@@ -662,10 +628,8 @@
                     map.getCanvas().style.cursor='pointer'; // change cursor icon from grab to pointer
                     
                     feature=features[0];
-                    console.log(features)
                     // if weight of dropoff is undefined, update it
                     if(feature.properties.weight == -1){
-                        console.log("here")
                         updateTruckWeight(feature, truckSelected);
                     }
 
@@ -684,7 +648,7 @@
                             }
                         }
 
-                        // update source of the layer 'dropoffs-symbol'.
+                        // update source of the layer 'unmarked-dropoff'.
                         map.getSource().setData(dropoffLocations);
                     }
             }

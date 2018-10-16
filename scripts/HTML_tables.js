@@ -22,6 +22,7 @@ function HTMLDirections(truck, id, trucks, map){
 
     document.getElementById('pd').innerHTML = HTML_Directions
 }
+
 // https://www.google.com/maps/dir/
 // On the main menu of the ui, this HTML will be displayed
 function HTMLTable(trucks, map){
@@ -83,7 +84,3 @@ function CreateRoute(trucks, map){
     document.getElementById('pd').innerHTML = HTML_Route_Info
     document.getElementById("RouteColor").innerHTML ='#'+Math.floor(Math.random()*16777215).toString(16);
 }
-
-// function HTMLegend(map){
-//     map.legendControl.addLegend('testing');
-// }

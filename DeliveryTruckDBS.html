@@ -19,10 +19,17 @@
             width: 100%;
         }
 
-        td, th {
+        td{
             border: 1px solid #dddddd;
             text-align: left;
             padding: 8px;
+            cursor:context-menu;
+        }
+        th {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+            cursor:pointer;
         }
 
         #map {
@@ -39,7 +46,7 @@
             height: 20px;
             border: 2px solid #fff;
             border-radius: 50%;
-            background: #3887be;
+            background: #3887BE;
             cursor: pointer;
         }
         
@@ -90,10 +97,48 @@
             background-color: #f1f1f1;
             color: black;
         }
+
+        .dot {
+            height: 10px;
+            width: 10px;
+            background-color: #735139;
+            border-radius: 50%;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
+    <style>
+        .legend {
+            background-color: #fff;
+            border-radius: 3px;
+            bottom: 30px;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+            font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+            padding: 10px;
+            position: absolute;
+            right: 10px;
+            z-index: 1;
+        }
 
+        .legend h4 {margin: 0 0 10px;}
+
+        .legend div span {
+            border-radius: 50%;
+            display: inline-block;
+            height: 15px;
+            margin-right: 5px;
+            width: 15px;
+        }
+    </style>
+    
+    <div id='marker-legend' class='legend'>
+        <h4>Markers</h4>
+        <div><span><svg width="10" height="10"><rect width="10" height="10" style="fill:#735139" /></svg></span>Unmarked Dropoff</div>
+        <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#735139"  /></svg></span>Marked Dropoff</div>
+        <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#3887BE"  /></svg></span>Truck</div>
+    </div>
+    
     <div id='map' class='contain'> </div>
     <div class='map-overlay' id='features'>
     <div id='pd'></div></div>
@@ -174,14 +219,45 @@
             }
         };
 
-        HTMLTable();
-
         // *********************************************************************
         // Functions Declaration
         // *********************************************************************
+        function allRoute(){
+            var allMarkedDropoff = turf.featureCollection([]);
+            trucks.forEach(truck => {
+                map.setPaintProperty('route'+truck.id, 'line-opacity', 1)
+                truck.markedDropoff.features.forEach(md  =>{
+                    allMarkedDropoff.features.push(md);
+                })
+            })
+
+            for(var i = 0; i<=maxCluster;i++){map.getSource('unmarked-dropoff'+i).setData(clusterList[i]);}
+            map.getSource('marked-dropoff').setData(allMarkedDropoff);
+        }
+
+        function CreateRoute(trucks, map){
+            var HTML_Route_Info = '';
+            HTML_Route_Info += '<h2> Creating New Route <button style="display: inline-block;background-color:#FFFFFF;color:#000000; border: none;margin-left: 130px;cursor:pointer; "onClick="HTMLTable(trucks, map)">&#10799;</button> </h2>'; 
+            HTML_Route_Info += '<div> select starting point for the truck';
+            HTML_Route_Info += '<select id="location" type="number">'
+            HTML_Route_Info += '<option value="-66.06988906860352,18.44834670293207">San Juan</option>';
+            HTML_Route_Info += '<option value="-66.61336898803711,18.011222694738315">Ponce</option>';
+            HTML_Route_Info += '<option value="-65.65635681152344,18.316070168322522">Fajardo</option>';
+            HTML_Route_Info += '<option value="-67.14088439941406,18.200326726582748">Mayaguez</option>';
+            HTML_Route_Info += '<option value="-65.95727920532227,18.381732413643864">Carolina</option>';
+            HTML_Route_Info += '<option value="-66.03469848632812,18.231307879658043">Caguas</option>';
+            HTML_Route_Info += '</select></div>';
+            HTML_Route_Info += '<div>Pick the Route Color: <input type="color" id="RouteColor" value="#'+Math.floor(Math.random()*16777215).toString(16)+'"></div>';           
+            HTML_Route_Info += '<div>Max load of the truck: <input type="number" id="MaxLoad" min="1" value=50></div>'
+            
+            HTML_Route_Info += '<button class="button" type="button" style="background-color:#4CAF50" onClick="AddRoute()">Add Truck to Map</button>'
+            document.getElementById('pd').innerHTML = HTML_Route_Info
+            document.getElementById("RouteColor").innerHTML ='#'+Math.floor(Math.random()*16777215).toString(16);
+        }
+
         // When Selecting a truck, this will be the menu that will display. It displays information
         // about the route that was selected(soon directions of the route)
-        function HTMLDirections(truck, id){
+        function HTMLDirections(truck, id, trucks, map){
             var HTML_Directions = '';
             HTML_Directions += '<button style="display:inline-block;'
             HTML_Directions +=' vertical-align: middle;'
@@ -190,42 +266,52 @@
             HTML_Directions +=' border: none;'
             HTML_Directions +=' background: none;'
             HTML_Directions +=' font-size : 50px"'
-            HTML_Directions +=' type="button" onclick="HTMLTable()" class="previous">&#8249; </button>'
+            HTML_Directions +=' type="button" onclick="HTMLTable(trucks, map)" class="previous">&#8249; </button>'
             HTML_Directions +=' <h3 style="display:inline-block; vertical-align: middle; margin:0px 130px">  Route '+(id+1) +'</h3>' 
             HTML_Directions += '<div> Current Load: ' + truck.currentLoad + '</div>'      
             HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'          
             HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
-            HTML_Directions +=                   Math.floor(truck.routeWeight%60)+'</div> '
-            HTML_Directions+=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
+            HTML_Directions +=                   Math.floor(truck.routeWeight%60)+' hrs</div> '
+            HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
+            waypoints = 'https://www.google.com/maps/dir/'
+            truck.waypoints.forEach(location=> {waypoints += location[1] +','+ location[0] +'/'})
+            if (truck.waypoints.length){waypoints += truck.waypoints[0][1] +','+ truck.waypoints[0][0] +'/'}
+            HTML_Directions += '<div><a class="button" href='+waypoints+' target="_blank">Navigate</Navigate></a></div>'
+            HTML_Directions += '<button class="button" type="button" style="background-color:#FF0000" onClick="HTMLRemoveAuth()">Remove Route</button>'
+
             document.getElementById('pd').innerHTML = HTML_Directions
         }
 
         // On the main menu of the ui, this HTML will be displayed
-        function HTMLTable(){
+        function HTMLTable(trucks, map){
+            // HTMLegend(map);
             truckSelected=undefined;
             HTML_Table = '<table>'
+            var parameter = trucks +','+ map;
              for(var i = 0; i < trucks.length ; i++){
                 HTML_Table+='<tr>'
-                HTML_Table+=    '<th rowspan="3" onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
+                HTML_Table+=    '<th rowspan="3" bgcolor='+trucks[i].color+' onclick="SelectTruck('+i+')">Route '+ (i+1) +'</th>'
                 HTML_Table+=    '<td>Current Load: '+trucks[i].currentLoad+'</td>'
                 HTML_Table+='</tr>'
                 HTML_Table+='<tr>'
                 HTML_Table+=    '<td>'
                 HTML_Table+=        'ETA: '+Math.floor(trucks[i].routeWeight/60)+':'
                 HTML_Table+=        (Math.floor(trucks[i].routeWeight%60)<10?'0':'')
-                HTML_Table+=        Math.floor(trucks[i].routeWeight%60) 
+                HTML_Table+=        Math.floor(trucks[i].routeWeight%60)+' hrs'
                 HTML_Table+=    '</td>'
                 HTML_Table+='</tr>'
                 HTML_Table+='<tr>'
                 HTML_Table+=    '<td>Stops: '+ trucks[i].markedDropoff.features.length +'</td>'
-                HTML_Table+='</tr>'
+                HTML_Table+= '</tr>';
             }
             HTML_Table += '</table>'
-            HTML_Table += '<button class="button" type="button" onClick="AddRoute()">Add Route</button>'
+            HTML_Table += '<button class="button" type="button" style="background-color:#4CAF50" onClick="CreateRoute(trucks, map)">Add Route</button>'
             document.getElementById('pd').innerHTML = HTML_Table
             trucks.forEach(truck => {
+
                 truck.truckMarker.addTo(map)
             })
+            if(trucks.length!=0){allRoute()};
         }
 
         // This function will get the markedDropoff variable and feed it to the optimization API 
@@ -308,12 +394,43 @@
         // Function that is called when the Add Route Button is added. For now it adds a marker
         // to the map within a bounding box. and create a truck object.
         function AddRoute(){
-            var x= getRndFloat(-67.13664550786771, -65.70716270963167);
-            var y= getRndFloat(17.986497494385915, 18.45869548139244);
-            var tmp= Math.random().toString(36).substring(7);
-            trucks.push(new Truck([x, y], Math.floor(Math.random() * (100 - 10) ) + 10))
-            HTMLTable()
-        }
+                var location = document.getElementById('location').value;
+                location = location.split(",")
+                var x = parseFloat(location[0])
+                var y = parseFloat(location[1])
+                
+                var RouteColor = document.getElementById('RouteColor').value;
+                var MaxLoad = document.getElementById('MaxLoad').value;
+
+                var tmp= new Truck([x, y], MaxLoad, RouteColor);
+                trucks.push(tmp);
+                map.addLayer({
+                  id:'route'+tmp.id,
+                  type: 'line',
+                  source:{data: blank,type: 'geojson'},
+                  paint: tmp.routeColor
+                }, 'marked-dropoff'); // change from 'unmarked-dropoff' to 'marked-dropoff'
+
+                map.on('mouseover', 'route'+tmp.id, e => {
+
+                    // check is cursor is hovering over route
+                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+                    // if hovering on route, create route popup
+                    if (routeLocation.length){
+                        var pophtml = ''
+                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
+                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                            .setLngLat(e.lngLat)
+                            .setHTML(pophtml)
+                            .addTo(map);
+                    }        
+                });
+        
+                // when the cursor leaves the route, removes route popup.
+                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
+                HTMLTable(trucks, map);
+            }
 
 
         function SelectTruck(id){
@@ -468,7 +585,7 @@
                     })
                 }
                 else{
-                   map.addLayer({
+                    map.addLayer({
                       id: 'unmarked-dropoff'+i,
                       type: 'circle',
                       source: {data: clusterList[i], type: 'geojson'},
@@ -501,6 +618,7 @@
               }
             });
         });
+        HTMLTable(trucks, map);
 
         // Events/Listeners
         // *********************************************************************

@@ -19,6 +19,7 @@ function getRndInteger(min, max) {
 function getRndFloat(min, max) {
     return Math.random() * (max - min)  + min;
 };
+
 function createRndDropoff(dropoffLocations){
     for (var i=0; i<50; i++){
         x= getRndFloat(-67.13664550786771, -65.70716270963167)

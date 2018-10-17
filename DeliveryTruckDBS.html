@@ -386,7 +386,7 @@
                     if(dropoff.properties.name == feature.properties.name){
                         dropoff.properties.weight = feature.properties.weight;
                     }
-                map.getSource('unmarked-dropoff').setData(dropoffLocations);
+                map.getSource(drop.layer.source).setData(dropoffLocations);
                 })
             })
         };
@@ -767,7 +767,7 @@
                         }
 
                         // update source of the layer 'unmarked-dropoff'.
-                        map.getSource().setData(dropoffLocations);
+                       // map.getSource().setData(dropoffLocations);
                     }
             }
                

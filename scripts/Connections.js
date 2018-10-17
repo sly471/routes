@@ -37,10 +37,10 @@ function drawRoute(truck, trucks, map, accessToken){
         truck.route= route;
 
         truck.waypoints = [];
-        // data.waypoints.forEach(waypoint=>{
-        //     console.log(waypoint.waypoint_index);
-        //     truck.waypoints[waypoint.waypoint_index]=(waypoint.location);
-        // })
+        data.waypoints.forEach(waypoint=>{
+            console.log(waypoint.waypoint_index);
+            truck.waypoints[waypoint.waypoint_index]=(waypoint.location);
+        })
         // console.log("maybe")
         // console.log(truck.waypoints)
         truck.routeMile= data.trips[0].distance/1609.344;

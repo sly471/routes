@@ -32,10 +32,17 @@ function drawRoute(truck, trucks, map, accessToken){
         var route = (data.trips[0].geometry);
         truck.route= route;
 
+        data.waypoints[0].location.push("Start")
+        console.log
+        for(i=1;i<=truck.markedDropoff.features.length;i++){
+            data.waypoints[i].location.push(truck.markedDropoff.features[i-1].properties.name)   
+        }
+        
         truck.waypoints = [];
         data.waypoints.forEach(waypoint=>{
             truck.waypoints[waypoint.waypoint_index]=(waypoint.location);
         })
+        console.log(truck.waypoints)
         truck.routeMile= data.trips[0].distance/1609.344;
         truck.updateRouteWeight(data.trips[0].duration);
         map.getSource('route'+truck.id).setData(truck.route);

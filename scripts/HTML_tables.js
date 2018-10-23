@@ -14,11 +14,24 @@ function HTMLDirections(truck, id, trucks, map){
     HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
     HTML_Directions +=                   Math.floor(truck.routeWeight%60)+' hrs</div> '
     HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
-    HTML_Directions += '<ol>' 
-    for(var i=0;i<truck.waypoints.length;i++){
-        HTML_Directions += '<li>'+ truck.waypoints[i][2] + '</li>'
+   
+    if(truck.waypoints.length>0){
+        HTML_Directions += '<ol>'
+        for(var i=0;i<truck.waypoints.length;i++){
+            if(truck.waypoints[i][2]=='Start'){HTML_Directions += '<li>'+ truck.waypoints[i][2] +'</li>'}
+            else{HTML_Directions += '<li>'+ truck.waypoints[i][2] + ' ('+ truck.waypoints[i][3] +')</li>'}
+        }
+        HTML_Directions += '</ol>'
     }
-    HTML_Directions += '</ol>'
+
+    // for(var i=0;i<truck.waypoints.length;i++){console.log(truck.waypoints[i][2])}
+    // HTML_Directions += '<ol>'
+    // HTML_Directions += '<li>'+ truck.waypoints[0][2] +'<li>'
+    // for(var i=0;i<truck.waypoints.length;i++){
+    //     HTML_Directions += '<li>'+ truck.waypoints[i][2] + ' ('+ truck.waypoints[i][3] +')</li>'
+    // }
+    // HTML_Directions += '</ol>'
+
     waypoints = 'https://www.google.com/maps/dir/'
     truck.waypoints.forEach(location=> {waypoints += location[1] +','+ location[0] +'/'})
     if (truck.waypoints.length){waypoints += truck.waypoints[0][1] +','+ truck.waypoints[0][0] +'/'}

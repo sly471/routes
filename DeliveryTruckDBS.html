@@ -646,7 +646,7 @@
         dropoffLocations.features.forEach(drop =>{
             dbscanPoints.features.push(turf.point(drop.geometry.coordinates))
         })
-        var dbscan = turf.clustersDbscan(dbscanPoints, 13)
+        var dbscan = turf.clustersKmeans(dbscanPoints)
 
         // ****************************************************************************
         // After getting the cluster, the program will start to add to the dropoff to which cluster
@@ -666,8 +666,9 @@
                     }
                     break  
                 }
-            }            
-        })
+            } 
+
+        }) 
 
         // ****************************************************************************
         // List will be 0, 1, 2, 3, ..., noise
@@ -682,6 +683,7 @@
         })
 
         var layers = []
+
         for (var i = 0; i<=maxCluster;i++){layers.push('unmarked-dropoff'+i)} 
 
         // *********************************************************************
@@ -695,7 +697,7 @@
             // Adds layer with all dropoff locations.
             // Layer that will color each cluster differently to know which color the cluster belong to.
             for(var i = 0; i<=maxCluster;i++){
-                if(i<maxCluster){
+                if(i<=maxCluster){ // if(i<=maxCluster){ // for DBScan
                     map.addLayer({
                       id: 'unmarked-dropoff'+i,
                       type: 'circle',
@@ -739,7 +741,7 @@
             });
         });
         HTMLTable(trucks, map);
-
+        console.log(layers)
         // Events/Listeners
         // *********************************************************************
         

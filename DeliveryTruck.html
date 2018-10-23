@@ -379,6 +379,7 @@
                 html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
                 html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
                 html+= '+'+feature.properties.weight+ ' min'
+                html+= '<div> Cluster: ' + feature.properties.cluster + '<div>'
                 if(hover){
                     hoverPopup.setHTML(html)
                     .setLngLat(feature.geometry.coordinates)
@@ -512,7 +513,26 @@
 
             dropoffLocations.features.push(turf.point(
                 [-66.1233880, 18.3774160],
-                {name: 'Merari Cruz-Loubriel ', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));            
+                {name: 'Merari Cruz-Loubriel ', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));   
+
+
+            var KmeansPoints = turf.featureCollection([]);
+            dropoffLocations.features.forEach(drop =>{
+                KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
+            })
+            var Kmeans = turf.clustersKmeans(KmeansPoints) 
+
+            Kmeans.features.forEach(point => {
+            for(var i = 0; i < dropoffLocations.features.length; i++){
+                if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] && point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){ 
+                        dropoffLocations.features[i].properties.cluster = point.properties.cluster
+                    
+                        break; 
+                }
+            } 
+
+        })         
+
             // *********************************************************************
             // Mapbox
             // *********************************************************************

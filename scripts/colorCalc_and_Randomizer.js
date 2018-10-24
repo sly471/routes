@@ -11,14 +11,10 @@ function colorCalculator(dropoff){
 };
 
 // Returns an integer between min(included) & max(excluded)
-function getRndInteger(min, max) {
-    return Math.floor(Math.random() * (max - min) ) + min;
-};
+function getRndInteger(min, max) {return Math.floor(Math.random() * (max - min) ) + min;};
 
 // Returns a float between min(included) & max(excluded)
-function getRndFloat(min, max) {
-    return Math.random() * (max - min)  + min;
-};
+function getRndFloat(min, max) {return Math.random() * (max - min)  + min;};
 
 function createRndDropoff(dropoffLocations){
     for (var i=0; i<50; i++){

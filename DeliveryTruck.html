@@ -31,6 +31,7 @@
                 padding: 8px;
                 cursor:context-menu;
             }
+
             th {
                 border: 1px solid #dddddd;
                 text-align: left;
@@ -184,6 +185,9 @@
             // *********************************************************************
 
             // List which holds all the known dropoff locations on the map.
+            // var numberOfRoutes= prompt("Please enter the number of routes to be made", 3);
+            // while(numberOfRoutes<1){numberOfRoutes= prompt("Please enter the number of routes to be made", 1);}
+            var numberOfRoutes= 5;
             var dropcoor = turf.featureCollection([]);
             var dropoffLocations= turf.featureCollection([]);
             var dropoffPopup = turf.featureCollection([]);
@@ -195,6 +199,10 @@
             var hoverPopup = new mapboxgl.Popup({ offset: [-1, -7], closeButton:false});
             var HTML_Table = '<table>'
             var id=1;
+            var AutoColors= ['#ff0000', '#ff8000', '#ffff00',
+                             '#00ff00', '#00ffff', '#0000ff',
+                             '#ff00ff', '#808080', '#99004c'];
+
             var Truck = function(_location, _maxLoad, _routeColor){
                 this.id=id++;                       //id of truck
                 this.location = _location;          //initial location of truck
@@ -318,6 +326,46 @@
                 HTMLTable(trucks, map);
             }
 
+            function AutoAddRoute(){
+                // var location = document.getElementById('location').value;
+                // location = location.split(",");
+                var location= [-66.06988906860352, 18.44834670293207];
+                var x = parseFloat(location[0]);
+                var y = parseFloat(location[1]);
+                
+                var RouteColor = AutoColors.shift();
+                var MaxLoad = 200;
+
+                var tmp= new Truck([x, y], MaxLoad, RouteColor);
+                trucks.push(tmp);
+                map.addLayer({
+                  id:'route'+tmp.id,
+                  type: 'line',
+                  source:{data: blank,type: 'geojson'},
+                  paint: tmp.routeColor
+                }, 'unmarked-dropoff');
+
+                map.on('mouseover', 'route'+tmp.id, e => {
+
+                    // check is cursor is hovering over route
+                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+                    // if hovering on route, create route popup
+                    if (routeLocation.length){
+                        var pophtml = ''
+                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
+                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                            .setLngLat(e.lngLat)
+                            .setHTML(pophtml)
+                            .addTo(map);
+                    }        
+                });
+        
+                // when the cursor leaves the route, removes route popup.
+                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
+                HTMLTable(trucks, map);
+            }
+
             function removeRoute(){
                 map.removeLayer('route'+truckSelected.id);
                 map.removeSource('route'+truckSelected.id);
@@ -395,124 +443,152 @@
                 }
             };     
 
-            dropoffLocations.features.push(turf.point(
-                [-66.2352920, 18.4230130],
+            function AutoAddRoute(){
+                // var location = document.getElementById('location').value;
+                // location = location.split(",");
+                var location= [-66.06988906860352, 18.44834670293207];
+                var x = parseFloat(location[0]);
+                var y = parseFloat(location[1]);
+                
+                var RouteColor = AutoColors.shift();
+                var MaxLoad = 200;
+
+                var tmp= new Truck([x, y], MaxLoad, RouteColor);
+                trucks.push(tmp);
+                map.addLayer({
+                  id:'route'+tmp.id,
+                  type: 'line',
+                  source:{data: blank,type: 'geojson'},
+                  paint: tmp.routeColor
+                }, 'unmarked-dropoff');
+
+                map.on('mouseover', 'route'+tmp.id, e => {
+
+                    // check is cursor is hovering over route
+                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+                    // if hovering on route, create route popup
+                    if (routeLocation.length){
+                        var pophtml = ''
+                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
+                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                            .setLngLat(e.lngLat)
+                            .setHTML(pophtml)
+                            .addTo(map);
+                    }        
+                });
+        
+                // when the cursor leaves the route, removes route popup.
+                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
+                HTMLTable(trucks, map);
+            }
+
+            function AutoSelectTruck(id){
+
+                trucks.forEach(truck => {
+                    
+                    if(truck == trucks[id]){
+                        truckSelected = trucks[id]
+                        map.setPaintProperty('route'+truckSelected.id, 'line-opacity', 1)
+                    }
+                    else{
+                    truck.truckMarker.remove()
+                    map.setPaintProperty('route'+truck.id, 'line-opacity', 0.3)
+                    }
+                })
+                // map.getSource('marked-dropoff').setData(truckSelected.markedDropoff)
+                // HTMLDirections(truckSelected, id, trucks, map)
+                // Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
+            }
+
+            dropoffLocations.features.push(turf.point([-66.2352920, 18.4230130],
                 {name: 'Luz N Marrero', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1717805, 18.4368114],
+            dropoffLocations.features.push(turf.point([-66.1717805, 18.4368114],
                 {name: 'Betty Rodriguez', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1932570, 18.4383640],
+            dropoffLocations.features.push(turf.point([-66.1932570, 18.4383640],
                 {name: 'Janet Villanueva', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0738060, 18.4503860],
+            dropoffLocations.features.push(turf.point([-66.0738060, 18.4503860],
                 {name: 'Marie Custodio', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1119410, 18.3727270],
+            dropoffLocations.features.push(turf.point([-66.1119410, 18.3727270],
                 {name: 'Odalys Rodriguez Matta', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1252400, 18.3689860],
+            dropoffLocations.features.push(turf.point([-66.1252400, 18.3689860],
                 {name: 'Alan Wagner', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1279900, 18.3675350],
+            dropoffLocations.features.push(turf.point([-66.1279900, 18.3675350],
                 {name: 'Michelle Coll', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1189290, 18.3623420],
+            dropoffLocations.features.push(turf.point([-66.1189290, 18.3623420],
                 {name: 'Roberto C. Rodríguez', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0609150, 18.3028000],
+            dropoffLocations.features.push(turf.point([-66.0609150, 18.3028000],
                 {name: 'Mabel Varela', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0029940, 18.2544850],
+            dropoffLocations.features.push(turf.point([-66.0029940, 18.2544850],
                 {name: 'Sandra Catalá', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0727820, 18.4502070],
+            dropoffLocations.features.push(turf.point([-66.0727820, 18.4502070],
                 {name: 'Edward Betancourt', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0825860, 18.4534550],
+            dropoffLocations.features.push(turf.point([-66.0825860, 18.4534550],
                 {name: 'Vivianna ramirez de arellano', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0158750, 18.4453900],
+            dropoffLocations.features.push(turf.point([-66.0158750, 18.4453900],
                 {name: 'Gabriela de la Vega', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0665150, 18.4280020],
+            dropoffLocations.features.push(turf.point([-66.0665150, 18.4280020],
                 {name: 'Tamara Sabalier', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0644510, 18.4053200],
+            dropoffLocations.features.push(turf.point([-66.0644510, 18.4053200],
                 {name: 'Mila Bravo', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0689100, 18.3755410],
+            dropoffLocations.features.push(turf.point([-66.0689100, 18.3755410],
                 {name: 'Liz Figueroa', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0641530, 18.3838110],
+            dropoffLocations.features.push(turf.point([-66.0641530, 18.3838110],
                 {name: 'Doriliana Rivera', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0639040, 18.3486540],
+            dropoffLocations.features.push(turf.point([-66.0639040, 18.3486540],
                 {name: 'Roxanna Santiago', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.2703290, 18.4750180],
+            dropoffLocations.features.push(turf.point([-66.2703290, 18.4750180],
                 {name: 'Valerie Alvarado', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0624190, 18.4543770],
+            dropoffLocations.features.push(turf.point([-66.0624190, 18.4543770],
                 {name: 'Johanna Torres', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0543710, 18.4060870],
+            dropoffLocations.features.push(turf.point([-66.0543710, 18.4060870],
                 {name: 'Lourdes Orona', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0751680, 18.4576040],
+            dropoffLocations.features.push(turf.point([-66.0751680, 18.4576040],
                 {name: 'Maria Bartlett', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0640460, 18.4499250],
+            dropoffLocations.features.push(turf.point([-66.0640460, 18.4499250],
                 {name: 'Tyler Martin', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0252040, 18.4438230],
+            dropoffLocations.features.push(turf.point([-66.0252040, 18.4438230],
                 {name: 'Melisa Martinez Marti', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1094300, 18.3814910],
+            dropoffLocations.features.push(turf.point([-66.1094300, 18.3814910],
                 {name: 'Idabelle Diaz', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0580070, 18.4091790],
+            dropoffLocations.features.push(turf.point([-66.0580070, 18.4091790],
                 {name: 'Francisco Tirado', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1144110, 18.3901280],
+            dropoffLocations.features.push(turf.point([-66.1144110, 18.3901280],
                 {name: 'Carmil S Castro', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0776170, 18.4002420],
+            dropoffLocations.features.push(turf.point([-66.0776170, 18.4002420],
                 {name: 'Myrnaliz Villafañe ', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.0655610, 18.4462110],
+            dropoffLocations.features.push(turf.point([-66.0655610, 18.4462110],
                 {name: 'Nicolette Rae Johnson', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));
 
-            dropoffLocations.features.push(turf.point(
-                [-66.1233880, 18.3774160],
+            dropoffLocations.features.push(turf.point([-66.1233880, 18.3774160],
                 {name: 'Merari Cruz-Loubriel ', load: 1, phone: 'Phone: Home', weight: -1, ppop:false}));   
 
 
@@ -520,18 +596,18 @@
             dropoffLocations.features.forEach(drop =>{
                 KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
             })
-            var Kmeans = turf.clustersKmeans(KmeansPoints) 
+            // var options = {numberOfClusters: 7};
+            var Kmeans = turf.clustersKmeans(KmeansPoints, {numberOfClusters: numberOfRoutes})  // , {numberOfClusters: numberOfRoutes}) 
 
             Kmeans.features.forEach(point => {
-            for(var i = 0; i < dropoffLocations.features.length; i++){
-                if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] && point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){ 
-                        dropoffLocations.features[i].properties.cluster = point.properties.cluster
-                    
-                        break; 
-                }
-            } 
-
-        })         
+                for(var i = 0; i < dropoffLocations.features.length; i++){
+                    if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] &&
+                       point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){ 
+                            dropoffLocations.features[i].properties.cluster = point.properties.cluster
+                            break; 
+                    }
+                } 
+            })         
 
             // *********************************************************************
             // Mapbox
@@ -562,12 +638,31 @@
                     'icon-image': 'circle-15',
                   }
                 });
-
-
+                // dropoffLocations.features.forEach(foo=> {
+                //     console.log(foo.properties);
+                // })
+                for(var i=0; i<numberOfRoutes; i++){
+                    AutoAddRoute();
+                    AutoSelectTruck(i);
+                    for (var j=0; j<dropoffLocations.features.length; j++){
+                        if (dropoffLocations.features[j].properties.cluster == i){
+                            truckSelected.markedDropoff.features.push(dropoffLocations.features[j]);
+                            truckSelected.updateLoad(dropoffLocations.features[j].properties.load);
+                            dropoffLocations.features.splice(j, 1);
+                            j=j-1;
+                        }
+                    }
+                    // AutoDrawRoute(truckSelected, trucks, map, mapboxgl.accessToken);
+                }
+                HTMLTable(trucks, map);
 
             });
             
-            HTMLTable(trucks, map);
+            // HTMLTable(trucks, map);
+            // dropoffLocations.features.forEach(foo=> {
+            //     console.log(foo.properties);
+            // })
+            // for(var i=0; i<5; i++){AutoAddRoute();}
             // *********************************************************************
             // Events/Listeners
             
@@ -576,10 +671,10 @@
             map.on('click',e =>{
                 // returns the info of the clicked dropoff marker on map.
                 var pt = map.queryRenderedFeatures(e.point, {layers: ['unmarked-dropoff', 'marked-dropoff']});
-                if(trucks.length==0){
+                if(pt.length && trucks.length==0){
                     alert('Please add a route first by clicking "Add Route" located on the left of the screen.')
                 }
-                else if(truckSelected == undefined){
+                else if(pt.length && truckSelected == undefined){
                     alert('Please select a route before adding a dropoff.\nSelect the route you want to interact with by clicking the Route.')
                 }
                 // if a marker is clicked, do the following
@@ -700,6 +795,7 @@
                 }
                 if(features.length){map.getCanvas().style.cursor='pointer'};
             });
+
             map.on('mouseleave', 'unmarked-dropoff', e=> {
                 setTimeout(function(){ hoverPopup.remove(); }, 3000);                
             })

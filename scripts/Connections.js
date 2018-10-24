@@ -60,3 +60,41 @@ function drawRoute(truck, trucks, map, accessToken){
         HTMLDirections(truck, id, trucks, map)  
     })
 };
+
+function AutoDrawRoute(truck, trucks, map, accessToken){
+    fetch(getRouteMarked(truck.markedDropoff, truck, accessToken))
+    .then(res => {
+        return res.json()
+    })
+    .then(data => {
+        var route = (data.trips[0].geometry);
+        truck.route= route;
+
+        data.waypoints[0].location.push("Start")
+        console.log
+        for(i=1;i<=truck.markedDropoff.features.length;i++){
+            data.waypoints[i].location.push(truck.markedDropoff.features[i-1].properties.name);  
+            data.waypoints[i].location.push(truck.markedDropoff.features[i-1].properties.phone);  
+        }
+        
+        truck.waypoints = [];
+        data.waypoints.forEach(waypoint=>{
+            truck.waypoints[waypoint.waypoint_index]=(waypoint.location);
+        })
+        console.log(truck.waypoints)
+        truck.routeMile= data.trips[0].distance/1609.344;
+        truck.updateRouteWeight(data.trips[0].duration);
+        map.getSource('route'+truck.id).setData(truck.route);
+        
+    })
+    // .then(nothing => {
+       
+    //     var id;
+    //     for(var i =0; i< trucks.length;i++){
+    //         if(trucks[i]==truckSelected){
+    //             var id = i
+    //         }
+    //     }
+    //     HTMLDirections(truck, id, trucks, map)  
+    // })
+};

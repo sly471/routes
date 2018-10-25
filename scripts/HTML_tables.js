@@ -24,7 +24,6 @@ function HTMLDirections(truck, id, trucks, map){
         HTML_Directions += '</ol>'
     }
 
-    // for(var i=0;i<truck.waypoints.length;i++){console.log(truck.waypoints[i][2])}
     // HTML_Directions += '<ol>'
     // HTML_Directions += '<li>'+ truck.waypoints[0][2] +'<li>'
     // for(var i=0;i<truck.waypoints.length;i++){

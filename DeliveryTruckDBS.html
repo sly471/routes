@@ -12,7 +12,7 @@
         body {margin: 0; padding: 0;}
 
         tr:nth-child(even) {background-color: #dddddd;}
-        
+
         table {
             font-family: arial, sans-serif;
             border-collapse: collapse;
@@ -39,7 +39,7 @@
             right: 0;
             left: 0;
         }
-        
+
         .truck {
             margin: -10px -10px;
             width: 20px;
@@ -49,7 +49,7 @@
             background: #3887BE;
             cursor: pointer;
         }
-        
+
         .button {
            background-color: #4CAF50;
            border: none;
@@ -62,21 +62,21 @@
            margin: 4px 2px;
            cursor: pointer;
         }
-        
+
         .back {
             font-family: arial;
             border-collapse: collapse;
             width: 100%;
-            padding: 20px 40px; 
+            padding: 20px 40px;
         }
-        
+
         .mapboxgl-popup {max-width: 200px;}
 
         .mapboxgl-popup-content {
           text-align: center;
           font-family: 'Open Sans', sans-serif;
         }
-        
+
         .map-overlay {
           position: absolute;
           bottom: 0;
@@ -92,7 +92,7 @@
           top: 0;
           height: 640px;
         }
-        
+
         .previous {
             background-color: #f1f1f1;
             color: black;
@@ -131,14 +131,14 @@
             width: 15px;
         }
     </style>
-    
+
     <div id='marker-legend' class='legend'>
         <h4>Markers</h4>
         <div><span><svg width="10" height="10"><rect width="10" height="10" style="fill:#735139" /></svg></span>Unmarked Dropoff</div>
         <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#735139"  /></svg></span>Marked Dropoff</div>
         <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#3887BE"  /></svg></span>Truck</div>
     </div>
-    
+
     <div id='map' class='contain'> </div>
     <div class='map-overlay' id='features'>
     <div id='pd'></div></div>
@@ -237,7 +237,7 @@
 
         function CreateRoute(trucks, map){
             var HTML_Route_Info = '';
-            HTML_Route_Info += '<h2> Creating New Route <button style="display: inline-block;background-color:#FFFFFF;color:#000000; border: none;margin-left: 130px;cursor:pointer; "onClick="HTMLTable(trucks, map)">&#10799;</button> </h2>'; 
+            HTML_Route_Info += '<h2> Creating New Route <button style="display: inline-block;background-color:#FFFFFF;color:#000000; border: none;margin-left: 130px;cursor:pointer; "onClick="HTMLTable(trucks, map)">&#10799;</button> </h2>';
             HTML_Route_Info += '<div> select starting point for the truck';
             HTML_Route_Info += '<select id="location" type="number">'
             HTML_Route_Info += '<option value="-66.06988906860352,18.44834670293207">San Juan</option>';
@@ -247,9 +247,9 @@
             HTML_Route_Info += '<option value="-65.95727920532227,18.381732413643864">Carolina</option>';
             HTML_Route_Info += '<option value="-66.03469848632812,18.231307879658043">Caguas</option>';
             HTML_Route_Info += '</select></div>';
-            HTML_Route_Info += '<div>Pick the Route Color: <input type="color" id="RouteColor" value="#'+Math.floor(Math.random()*16777215).toString(16)+'"></div>';           
+            HTML_Route_Info += '<div>Pick the Route Color: <input type="color" id="RouteColor" value="#'+Math.floor(Math.random()*16777215).toString(16)+'"></div>';
             HTML_Route_Info += '<div>Max load of the truck: <input type="number" id="MaxLoad" min="1" value=50></div>'
-            
+
             HTML_Route_Info += '<button class="button" type="button" style="background-color:#4CAF50" onClick="AddRoute()">Add Truck to Map</button>'
             document.getElementById('pd').innerHTML = HTML_Route_Info
             document.getElementById("RouteColor").innerHTML ='#'+Math.floor(Math.random()*16777215).toString(16);
@@ -267,9 +267,9 @@
             HTML_Directions +=' background: none;'
             HTML_Directions +=' font-size : 50px"'
             HTML_Directions +=' type="button" onclick="HTMLTable(trucks, map)" class="previous">&#8249; </button>'
-            HTML_Directions +=' <h3 style="display:inline-block; vertical-align: middle; margin:0px 130px">  Route '+(id+1) +'</h3>' 
-            HTML_Directions += '<div> Current Load: ' + truck.currentLoad + '</div>'      
-            HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'          
+            HTML_Directions +=' <h3 style="display:inline-block; vertical-align: middle; margin:0px 130px">  Route '+(id+1) +'</h3>'
+            HTML_Directions += '<div> Current Load: ' + truck.currentLoad + '</div>'
+            HTML_Directions += '<div> '+ 'ETA: '+Math.floor(truck.routeWeight/60)+':'
             HTML_Directions +=                  (Math.floor(truck.routeWeight%60)<10?'0':'')
             HTML_Directions +=                   Math.floor(truck.routeWeight%60)+' hrs</div> '
             HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
@@ -314,7 +314,7 @@
             if(trucks.length!=0){allRoute()};
         }
 
-        // This function will get the markedDropoff variable and feed it to the optimization API 
+        // This function will get the markedDropoff variable and feed it to the optimization API
         // which will return the optimized route for the truck.
         function getRouteMarked(route, truck){
 
@@ -351,10 +351,10 @@
                 truck.routeMile= data.trips[0].distance/1609.344;
                 truck.updateRouteWeight(data.trips[0].duration);
                 map.getSource('route').setData(route);
-                
+
             })
             .then(nothing => {
-               
+
                 var id;
                 for(var i =0; i< trucks.length;i++){
                     if(trucks[i]==truckSelected){
@@ -362,24 +362,24 @@
                     }
                 }
                 HTMLDirections(truck, id)
-                
+
             })
         };
 
-        // This functions calls the optimization api to calculate the time that will add to each dropoff 
+        // This functions calls the optimization api to calculate the time that will add to each dropoff
         function updateTruckWeight(drop, truck){
             var copyMarked = truck.markedDropoff.features.slice(0);
             copyMarked.push(drop)
             fetch(getRouteWeight(copyMarked, truck))
             .then(res =>{return res.json();})
-            
+
             .then(data =>{
                 var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight;
                 drop.properties.weight = newWeight;
                 drop.properties.color = colorCalculator(drop.properties);
                 return drop;
             })
-            
+
             .then(feature =>{
                 createPopup(feature);
                 dropoffLocations.features.forEach(function(dropoff){
@@ -398,7 +398,7 @@
                 location = location.split(",")
                 var x = parseFloat(location[0])
                 var y = parseFloat(location[1])
-                
+
                 var RouteColor = document.getElementById('RouteColor').value;
                 var MaxLoad = document.getElementById('MaxLoad').value;
 
@@ -424,9 +424,9 @@
                             .setLngLat(e.lngLat)
                             .setHTML(pophtml)
                             .addTo(map);
-                    }        
+                    }
                 });
-        
+
                 // when the cursor leaves the route, removes route popup.
                 map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
                 HTMLTable(trucks, map);
@@ -467,7 +467,7 @@
                 // if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
                 //     // display only the cluster close to the truck(intended function)
                 // }
-        
+
             })
         };
 
@@ -520,125 +520,106 @@
         //         {name: i, load: l, weight: -1, ppop:false, cluster: null, color: ''}));
         // }
 
-        dropoffLocations.features.push(turf.point(
-            [-66.2352920, 18.4230130],
-            {name: 'Luz N Marrero', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
+        dropoffLocations.features.push(turf.point([-66.0609150,18.3028000],
+            {name:'Mabel Varela', phone:'7875791557',
+            address:'Urb Laderas de San Juan 83 calle ortegon San Juan PR, 00926', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0029940,18.2544850],
+            {name:'Sandra Catalá', phone:'7873108152',
+            address:'23 Calle Canaria, Urb. Estancias de Santa Bárbara, Gurabo PR 00778', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0689100,18.3755410],
+            {name:'Liz Figueroa', phone:'7873595006',
+            address:'1687 Calle Amarillo, San Juan, Puerto Rico 00926 Condominio Los Cedros B401', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0670414,18.3821390],
+            {name:'Doriliana Rivera', phone:'7874101017',
+            address:'140 Calle Guadalquivir, Urb. El Paraiso, San Juan PR 00926', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1252400,18.3689860],
+            {name:'Alan Wagner', phone:'7872369366',
+            address:'39 Calle Raphis, Urbanización Palma Real, Guaynabo, 00969, Puerto Rico', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1279900,18.3675350],
+            {name:'Michelle Coll', phone:'7879141037',
+            address:'83 Viajera, Palma Real, Guaynabo, PR 00969', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1030312,18.3726112],
+            {name:'Roberto C. Rodríguez', phone:'7875167960',
+            address:'39 Calle Escarlata, Guaynabo, Puerto Rico', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1294229,18.3883327],
+            {name:'Idabelle Diaz', phone:'7872325500',
+            address:'139 Carr. 177 cond. Santa Maria Apt. 605, Guaynabo, Puerto Rico ', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1144110,18.3901280],
+            {name:'Carmil S Castro', phone:'9397179702',
+            address:'Torrimar - 17-13 Alhambra, Guaynabo 00966', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1065740,18.3980080],
+            {name:'Marie Custodio', phone:'7875121045',
+            address:'Urb. Altamira calle Sirio 512 San Juan, Puerto Rico 00920 ', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.2353010,18.4229090],
+            {name:'Luz N Marrero ', phone:'7876889061',
+            address:'Urb. Valparaiso Calle 3 K 48, Toa Baja , PR', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1709810,18.4357410],
+            {name:'Betty Rodriguez', phone:'7876668705',
+            address:'Hg 19 Monsita Ferrer 7ma secc Levittown Toa Baja, Puerto Rico 00949', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0727820,18.4502070],
+            {name:'Edward Betancourt', phone:'6173085742',
+            address:'305 Calle Villamil, Apt 1807, San Juan PR', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0825860,18.4534550],
+            {name:'Vivianna ramirez de arellano', phone:'7873990621',
+            address:'655 Calle La Paz, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0158750,18.4453900],
+            {name:'Gabriela de la Vega', phone:'7876459537',
+            address:'14 Calle Amapola Apt 1201 Carolina, PR 00979', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0624190,18.4543770],
+            {name:'Johanna Torres ', phone:'7874557305',
+            address:'1510 Ashford Avenues, Ashford Plaza, Apt 2E, San Juan, Puerto Rico ', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0640460,18.4497010],
+            {name:'Tyler Martin', phone:'4152187667',
+            address:'1554 Calle Lopez Landron Apt PH504', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0655610,18.4462110],
+            {name:'Nicolette Rae Johnson', phone:'6513320441',
+            address:'352 Calle del Parque #610, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0665150,18.4280020],
+            {name:'Tamara Sabalier', phone:'7876382471',
+            address:'apt 601 New Center Plaza , 210 calle Jose Oliver', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0644090,18.4050350],
+            {name:'Mila Bravo', phone:'7873068375',
+            address:'271 Calle Georgetown University Gardens San Juan PR 00927', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0776170,18.4002420],
+            {name:'Myrnaliz Villafañe ', phone:'7876073723',
+            address:'Reparto Metropolitano 955 calle 31 SE San Juan PR 00921', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0595970,18.4095900],
+            {name:'Francisco Tirado', phone:'7874251555',
+            address:'145 Ave. Hostos Apt. G405 San Juan PR 00918', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0676670,18.4534800],
+            {name:'Jorge Gonzalez', phone:'7875091270',
+            address:'1373 Calle Luchetti, Apt 302, San Juan, Puerto Rico 00907', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0933670,18.3836150],
+            {name:'Primitivo Perez Beniquez', phone:'7879484787',
+            address:'1800 Calle San Gregorio Apt 210, San Juan, Puerto Rico 00921', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.7644300,18.4290660],
+            {name:'Delmaris Santiago Sierra', phone:'7872352823',
+            address:'hacienda toledo casa g286 Arecibo 00612', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1416500,18.3866400],
+            {name:'Zayrah Silva', phone:'Personal: 7872424120/ Trabajo: 7877635050',
+            address:'31-35 Ave. Main Urb Santa Rosa Bayamon, Puerto Rico 00959', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0556450,18.4025000],
+            {name:'Iris Cosme Gomez', phone:'7876276552',
+            address:'Cond Santa Rita 997 calle Córdova Dávila Apto A-803 San Juan, PR 00925', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0580340,18.3661600],
+            {name:'Marta Figueroa', phone:'7876473509',
+            address:'Calle 7 C1 Sierra del Río San Juan, Puerto Rico 00926', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0647510,18.4550210],
+            {name:'Myrna Santana', phone:'7877610338',
+            address:'Torre del Mar 6-A, Ashford Avenue, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0685520,18.4198740],
+            {name:'Leticia Diaz', phone:'7873604488',
+            address:'Calle Soldado Ulises Arrigoitia 466, San Juan, Puerto Rico Urb Roosevelt 00918', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.1235000,18.3917600],
+            {name:'Zayra Lopez', phone:'7873963333',
+            address:'Valles de Torrimar Apto. i-109 Guaynabo, Puerto Rico 00966', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.0596260,18.4096960],
+            {name:'Jacqueline lugo murillo' , phone:'7876404939',
+            address:'180 Ave Hostos Cond Monte Sur Apt b116 Hato Rey Puerto Rico 00918', weight:-1, load:1, ppop:false}));
+        dropoffLocations.features.push(turf.point([-66.091035,18.410858],
+            {name:'Carolyn Ferrandino' , phone:'7876176685',
+            address:'419 Calle Darién, San Juan, Puerto Rico 00920', weight:-1, load:1, ppop:false}));
 
-        dropoffLocations.features.push(turf.point(
-            [-66.1717805, 18.4368114],
-            {name: 'Betty Rodriguez', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.1932570, 18.4383640],
-            {name: 'Janet Villanueva', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0738060, 18.4503860],
-            {name: 'Marie Custodio', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.1119410, 18.3727270],
-            {name: 'Odalys Rodriguez Matta', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.1252400, 18.3689860],
-            {name: 'Alan Wagner', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.1279900, 18.3675350],
-            {name: 'Michelle Coll', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.1189290, 18.3623420],
-            {name: 'Roberto C. Rodríguez', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0609150, 18.3028000],
-            {name: 'Mabel Varela', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0029940, 18.2544850],
-            {name: 'Sandra Catalá', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0727820, 18.4502070],
-            {name: 'Edward Betancourt', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0825860, 18.4534550],
-            {name: 'Vivianna ramirez de arellano', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0158750, 18.4453900],
-            {name: 'Gabriela de la Vega', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0665150, 18.4280020],
-            {name: 'Tamara Sabalier', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0644510, 18.4053200],
-            {name: 'Mila Bravo', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0689100, 18.3755410],
-            {name: 'Liz Figueroa', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0641530, 18.3838110],
-            {name: 'Doriliana Rivera', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0639040, 18.3486540],
-            {name: 'Roxanna Santiago', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.2703290, 18.4750180],
-            {name: 'Valerie Alvarado', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0624190, 18.4543770],
-            {name: 'Johanna Torres', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0543710, 18.4060870],
-            {name: 'Lourdes Orona', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0751680, 18.4576040],
-            {name: 'Maria Bartlett', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0640460, 18.4499250],
-            {name: 'Tyler Martin', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0252040, 18.4438230],
-            {name: 'Melisa Martinez Marti', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.1094300, 18.3814910],
-            {name: 'Idabelle Diaz', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0580070, 18.4091790],
-            {name: 'Francisco Tirado', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.1144110, 18.3901280],
-            {name: 'Carmil S Castro', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0776170, 18.4002420],
-            {name: 'Myrnaliz Villafañe ', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.0655610, 18.4462110],
-            {name: 'Nicolette Rae Johnson', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
-
-        dropoffLocations.features.push(turf.point(
-            [-66.1233880, 18.3774160],
-            {name: 'Merari Cruz-Loubriel ', load: 1, weight: -1, ppop:false, cluster: null, color: ''}));
 
         // After the points are created, this will divide them in clusters using DBScan
         // ****************************************************************************
@@ -651,24 +632,24 @@
         // ****************************************************************************
         // After getting the cluster, the program will start to add to the dropoff to which cluster
         // they belong(0, 1, 2, ..., Noise)
-        // **************************************************************************** 
+        // ****************************************************************************
         dbscan.features.forEach(point => {
             if(point.properties.cluster > maxCluster){
                 maxCluster = point.properties.cluster
             }
             for(var i = 0; i < dropoffLocations.features.length; i++){
-                if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] && point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){ 
+                if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] && point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){
                     if(point.properties.dbscan == 'noise'){
                         dropoffLocations.features[i].properties.cluster = 'Noise'
                     }
                     else{
                         dropoffLocations.features[i].properties.cluster = point.properties.cluster
                     }
-                    break  
+                    break
                 }
-            } 
+            }
 
-        }) 
+        })
 
         // ****************************************************************************
         // List will be 0, 1, 2, 3, ..., noise
@@ -684,7 +665,7 @@
 
         var layers = []
 
-        for (var i = 0; i<=maxCluster;i++){layers.push('unmarked-dropoff'+i)} 
+        for (var i = 0; i<=maxCluster;i++){layers.push('unmarked-dropoff'+i)}
 
         // *********************************************************************
         // Mapbox
@@ -703,7 +684,7 @@
                       type: 'circle',
                       source: {data: clusterList[i], type: 'geojson'},
                        paint: { "circle-color": Colors[i]}
-                      
+
                     })
                 }
                 else{
@@ -712,9 +693,9 @@
                       type: 'circle',
                       source: {data: clusterList[i], type: 'geojson'},
                        paint: { "circle-color": '#000000'}
-                    }) 
+                    })
                 }
-                
+
             }
 
             // Adds layer with all marked dropoff locations.
@@ -744,7 +725,7 @@
         console.log(layers)
         // Events/Listeners
         // *********************************************************************
-        
+
         // when the clicks on the map, checks if a marker was clicked and if true,
         // then change that marker from unmarked to marked or vice-versa.
         var visible = 'none'
@@ -753,12 +734,12 @@
             // map.addLayer('unmarked-dropoff')
             if(visible == 'none'){
                 visible = 'visible'
-                
+
                     map.setLayoutProperty('route', 'visibility', visible)
             }
             else {
                 visible = 'none'
-                
+
                 map.setLayoutProperty('route', 'visibility', visible)
             }
             // returns the info of the clicked dropoff marker on map.
@@ -816,7 +797,7 @@
                     }
                 }
                 }
-                
+
 
             }
 
@@ -827,7 +808,7 @@
                 }
             }
             // update the sources of the layers: 'unmarked-dropoff' & 'marked-dropoff'.
-            
+
             map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
 
             // draw the truck route.
@@ -860,13 +841,13 @@
         // from the grab icon to the pointer icon & create a popup for the dropoff marker.
         for(var i = 0; i<layers.length;i++){
             map.on('mouseover',layers[i], e=> {
-            
+
             var features = map.queryRenderedFeatures(e.point, {layers: layers[i]});
             // if cursor hovers an unmarked dropoff, do the following
                 if (features.length) {
-                    
+
                     map.getCanvas().style.cursor='pointer'; // change cursor icon from grab to pointer
-                    
+
                     feature=features[0];
                     // if weight of dropoff is undefined, update it
                     if(feature.properties.weight == -1){
@@ -892,11 +873,11 @@
                        map.getSource('unmarked-dropoff'+i).setData(dropoffLocations);
                     }
             }
-               
+
             });
             map.on('mouseleave', layers[i], e=> {map.getCanvas().style.cursor=''});
         }
-        
+
 
         // when the cursor is hovering over the marker, it will change the cursor icon
         // from the grab icon to the pointer icon.
@@ -905,11 +886,11 @@
             if(features.length){map.getCanvas().style.cursor='pointer'};
         })
 
-        // when the cursor leaves the marker, change cursor icon from the pointer icon 
+        // when the cursor leaves the marker, change cursor icon from the pointer icon
         // to the grab icon.
         map.on('mouseleave', e=> {map.getCanvas().style.cursor=''});
-        
-        // when the cursor leaves the marker, change cursor icon from the pointer icon 
+
+        // when the cursor leaves the marker, change cursor icon from the pointer icon
         // to the grab icon.
         map.on('mouseleave','marked-dropoff' , e=> {map.getCanvas().style.cursor=''});
 

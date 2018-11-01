@@ -28,6 +28,9 @@
     	.media {
     		height: 180px
     	}
+    	.media-box {
+    		margin-left: 10px
+    	}
     </style>
 </head>
 <body>
@@ -44,6 +47,21 @@
 
 <script type="text/javascript">
   $(function () {	
+
+  	var getUrlParameter = function getUrlParameter(sParam) {
+	    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
+	        sURLVariables = sPageURL.split('&'),
+	        sParameterName,
+	        i;
+
+	    for (i = 0; i < sURLVariables.length; i++) {
+	        sParameterName = sURLVariables[i].split('=');
+
+	        if (sParameterName[0] === sParam) {
+	            return sParameterName[1] === undefined ? true : sParameterName[1];
+	        }
+	    }
+	};
   	
   	var routes = [
   		{
@@ -526,7 +544,9 @@
 
   	$('#dropoffs').html("");
 
-  	_.each([routes[0]], function(route) {
+	
+
+  	_.each([routes[parseInt(getUrlParameter("route"))]], function(route) {
 	    var i = 0;
 	    $('#title').html(route.title);
 	    _.each(route.dropoffs, function(dropoff){

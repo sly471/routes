@@ -6,7 +6,7 @@
 
     <!-- jquery -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    
+
     <!-- underscore -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
 
@@ -47,7 +47,7 @@
 
 
 <script type="text/javascript">
-  $(function () {	
+  $(function () {
 
   	var getUrlParameter = function getUrlParameter(sParam) {
 	    var sPageURL = decodeURIComponent(window.location.search.substring(1)),
@@ -63,511 +63,549 @@
 	        }
 	    }
 	};
-  	
+
   	var routes = [
   		{
-  			"title": "Route 1 Red",
+  			"title": "Route 1 Blue",
   			"dropoffs":[
-			  {
-			    "name": "Roxanna Santiago",
-			    "phone": 7876445115,
-			    "address": "53 Cll Capri, San Juan 00926, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/Zwx3sgJGi492",
-			    "latitude": 18.348654,
-			    "longitude": -66.063904,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-1"
-			  },
-			  {
-			    "name": "Marta Figueroa",
-			    "phone": 7876473509,
-			    "address": "Calle 7 C1 Sierra del Río San Juan, Puerto Rico 00926",
-			    "Pin": "https://goo.gl/maps/b6uuQg8r75K2",
-			    "latitude": 18.366149,
-			    "longitude": -66.058038,
-			    "address comments": "Por Cuper entre paseos y el señorial 176 facciola o señorial 177.  ",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-2"
-			  },
-			  {
-			    "name": "Doriliana Rivera",
-			    "phone": 7874101017,
-			    "address": "140 Calle Guadalquivir, Urb. El Paraiso, San Juan PR 00926",
-			    "Pin": "https://goo.gl/maps/uyDvt23ehvL2",
-			    "latitude": 18.383811,
-			    "longitude": -66.064153,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-3"
-			  },
-			  {
-			    "name": "Mabel Varela",
-			    "phone": 7875791557,
-			    "address": "Urb Laderas de San Juan 83 calle ortegon San Juan PR, 00926",
-			    "Pin": "https://goo.gl/maps/ZWS5VdrmGAM2",
-			    "latitude": 18.3028,
-			    "longitude": -66.060915,
-			    "address comments": "Crarretera #1 pantallas luz de motel ok voltear la mano izq marginal puma derecha ",
-			    "delivery comments": "no tiene problema de que dejen la bolsa frente a la casa",
-			    "courier week 5": "route1-red-4"
-			  },
-			  {
-			    "name": "Alan Wagner",
-			    "phone": 7872369366,
-			    "address": "39 Calle Raphis, Urbanización Palma Real, Guaynabo, 00969, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/iTTPjBXyp112",
-			    "latitude": 18.368986,
-			    "longitude": -66.12524,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-5"
-			  },
-			  {
-			    "name": "Michelle Coll",
-			    "phone": 7879141037,
-			    "address": "83 Viajera, Palma Real, Guaynabo, PR 00969",
-			    "Pin": "https://goo.gl/maps/jYmU9Vvm6kA2",
-			    "latitude": 18.367535,
-			    "longitude": -66.12799,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-6"
-			  },
-			  {
-			    "name": "Merari Cruz-Loubriel ",
-			    "phone": 7875473943,
-			    "address": "Catalina 105 La Villa de Torrimar Guaynabo PR 00969",
-			    "Pin": "https://goo.gl/maps/Hw4ntToyv9Q2",
-			    "latitude": 18.377416,
-			    "longitude": -66.123388,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-7"
-			  },
-			  {
-			    "name": "Julio Garriga",
-			    "phone": 7873645401,
-			    "address": "14 Carr 833 La Cima de Torrimar Apt 1602, Guaynabo, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/JnR1QVi4x2E2",
-			    "latitude": 18.379908,
-			    "longitude": -66.118017,
-			    "address comments": "La Cima de Torrimar",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-8"
-			  },
-			  {
-			    "name": "Marie Custodio",
-			    "phone": 7875121045,
-			    "address": "Urb. Altamira calle Sirio 512 San Juan, Puerto Rico 00920 ",
-			    "Pin": "https://goo.gl/maps/KoHyTypAj5T2",
-			    "latitude": 18.398008,
-			    "longitude": -66.106574,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-9"
-			  },
-			  {
-			    "name": "Betty Rodriguez",
-			    "phone": 7876668705,
-			    "address": "Hg 19 Monsita Ferrer 7ma secc Levittown Toa Baja, Puerto Rico 00949",
-			    "Pin": "https://goo.gl/maps/cb6AyR4gpPH2",
-			    "latitude": 18.4368114,
-			    "longitude": -66.1717805,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route1-red-10"
-			  }
+          {
+            "name": "Maria E Rodríguez ",
+            "phone": 7876678343,
+            "address": "450 Ave Constitucion Apt 11A, San Juan, PR 00901",
+            "Pin": "https://goo.gl/maps/EvnKvYP8Rg72",
+            "latitude": 18.464084,
+            "longitude": 66.093283,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-blue-01"
+          },
+          {
+            "name": "Francisco Jimenez",
+            "phone": 7873794731,
+            "address": "1155 Avenida Magdalena, San Juan, Puerto Rico",
+            "Pin": "https://goo.gl/maps/RnHrAjNND2t",
+            "latitude": 18.455672,
+            "longitude": -66.073163,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-blue-02"
+          },
+          {
+            "name": "Catherine Aguilar Ramos ",
+            "phone": 7874646729,
+            "address": "1357 Avenida Magdalena Edificio Santa Genoveva Apt 3B, San Juan, Puerto Rico",
+            "Pin": "https://goo.gl/maps/fVeD9tRs5252",
+            "latitude": 18.454421,
+            "longitude": -66.068451,
+            "address comments": "Queda por la iglesia condado, llamar cuando esten alfrente para entregar",
+            "delivery comments": "",
+            "courier week 6": "route-blue-03"
+          },
+          {
+            "name": "Jorge Gonzalez",
+            "phone": 7875091270,
+            "address": "1373 Calle Luchetti, Apt 302, San Juan, Puerto Rico 00907",
+            "Pin": "https://goo.gl/maps/Rb3kr2wv3uk",
+            "latitude": 18.453452,
+            "longitude": -66.067636,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-blue-04"
+          },
+          {
+            "name": "Myrna Santana ",
+            "phone": 7877610338,
+            "address": "Torre del Mar 6-A, Ashford Avenue, San Juan, Puerto Rico",
+            "Pin": "https://goo.gl/maps/kq56Mjv2AJS2",
+            "latitude": 18.455026,
+            "longitude": -66.064707,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-blue-05"
+          },
+          {
+            "name": "Johanna Torres ",
+            "phone": 7874557305,
+            "address": "1510 Ashford Avenues, Ashford Plaza, Apt 2E, San Juan, Puerto Rico ",
+            "Pin": "https://goo.gl/maps/B7ww94PfDoF2",
+            "latitude": 18.454377,
+            "longitude": -66.062419,
+            "address comments": "Cerca de el Parque del Indio",
+            "delivery comments": "",
+            "courier week 6": "route-blue-06"
+          },
+          {
+            "name": "Jackie Markot",
+            "phone": 6469445744,
+            "address": "76 Calle Kings Court, 504, San Juan, Puerto Rico",
+            "Pin": "https://goo.gl/maps/gJeGSaR6pXN2",
+            "latitude": 18.452898,
+            "longitude": -66.061506,
+            "address comments": "tele entry doesnt work, call client when delivery ",
+            "delivery comments": "",
+            "courier week 6": "route-blue-07"
+          },
+          {
+            "name": "Tyler Martin",
+            "phone": 4152187667,
+            "address": "1554 Calle Lopez Landron Apt PH504",
+            "Pin": "https://goo.gl/maps/sFP4yXHevHU2",
+            "latitude": 18.449925,
+            "longitude": -66.064046,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-blue-08"
+          },
+          {
+            "name": "Nicolette Rae Johnson",
+            "phone": 6513320441,
+            "address": "352 Calle del Parque #610, San Juan, Puerto Rico",
+            "Pin": "https://goo.gl/maps/QURnPg3PsV82",
+            "latitude": 18.446211,
+            "longitude": -66.065561,
+            "address comments": "edificio justo al lado de ciudadela a mano derecha por la calle del parque.  Tiene clases de salsa, estara en su casa despues de las 8:15pm, pidio dejarla para lo ultimo. No tiene guardia de seguridad. ",
+            "delivery comments": "",
+            "courier week 6": "route-blue-09"
+          },
+          {
+            "name": "Wilma Jaime",
+            "phone": 7874730299,
+            "address": "1511 Avenida Juan Ponce de León, Torre 100 Apt 127, San Juan, Puerto Rico",
+            "Pin": "https://goo.gl/maps/L98QbN4NmFp",
+            "latitude": 18.445396,
+            "longitude": -66.066946,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-blue-10"
+          },
+          {
+            "name": "Edward Betancourt",
+            "phone": 6173085742,
+            "address": "305 Calle Villamil, Apt 1807, San Juan PR",
+            "Pin": "https://goo.gl/maps/vb1gomVr3ZN2",
+            "latitude": 18.450207,
+            "longitude": -66.072782,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-blue-11"
+          },
+          {
+            "name": "Vivianna ramirez de arellano",
+            "phone": 7873990621,
+            "address": "655 Calle La Paz, San Juan, Puerto Rico",
+            "Pin": "https://goo.gl/maps/YmmfBZVD8rq",
+            "latitude": 18.453455,
+            "longitude": -66.082586,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-blue-12"
+          }
 			]
   		},
   		{
-  			"title": "Route 2 Orange",
+  			"title": "Route 2 Brown",
   			"dropoffs":[
-			  {
-			    "name": "Elisabet Rodriguez",
-			    "phone": 7873426664,
-			    "address": "1759 Calle Compostela Urbanizacion College Park San Juan PR 00921",
-			    "Pin": "https://goo.gl/maps/swBSmzEHztF2",
-			    "latitude": 18.38438,
-			    "longitude": -66.086058,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-1"
-			  },
-			  {
-			    "name": "Yomari Suarez",
-			    "phone": 7874755095,
-			    "address": "1401 Calle San Damian, Urb. Altamesa, San Juan, PR 00921",
-			    "Pin": "https://goo.gl/maps/BBBSjHxtVro",
-			    "latitude": 18.38386,
-			    "longitude": -66.094338,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-2"
-			  },
-			  {
-			    "name": "Maria del C Gonzalez",
-			    "phone": 7876460737,
-			    "address": "Buena Vista Village 450 carr. 844 apto 1871 San Juan PR 00926",
-			    "Pin": "https://goo.gl/maps/UMNoJgdTCxB2",
-			    "latitude": 18.339704,
-			    "longitude": -66.027211,
-			    "address comments": "cupey, carr 844 galeria pacifico, farmacia carraizo mano derecha, condominio izq. Tele entru #1871. Ultimo apartamento. Pueden llamar para referencias!",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-3"
-			  },
-			  {
-			    "name": "Edmaris Carazo",
-			    "phone": 7876026206,
-			    "address": "Oficina: 90 Calle San Martin  Rodval Bldg. Suite 201  Guaynabo, PR 00968-1401/ Casa: Condominio Tropical Court Calle Tereza Jordnet Apt 1104 San Juan 00926 (Codigo *87)",
-			    "Pin": "https://goo.gl/maps/qZt9sHbeZ9S2",
-			    "latitude": 18.414563,
-			    "longitude": -66.104526,
-			    "address comments": "Codigo *87 ",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-4"
-			  },
-			  {
-			    "name": "Mila Bravo",
-			    "phone": 7873068375,
-			    "address": "271 Calle Georgetown University Gardens San Juan PR 00927",
-			    "Pin": "https://goo.gl/maps/CsbJJVpciaK2",
-			    "latitude": 18.40532,
-			    "longitude": -66.064451,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-5"
-			  },
-			  {
-			    "name": "Leopoldo Czeplo",
-			    "phone": 7874752033,
-			    "address": "277 Calle Fordham, San Juan",
-			    "Pin": "https://goo.gl/maps/zhui92zXJYq",
-			    "latitude": 18.405604,
-			    "longitude": -66.064531,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-6"
-			  },
-			  {
-			    "name": "Francisco Tirado",
-			    "phone": 7874251555,
-			    "address": "145 Ave. Hostos Apt. G405 San Juan PR 00918",
-			    "Pin": "https://goo.gl/maps/2KENyh2nSLp",
-			    "latitude": 18.409179,
-			    "longitude": -66.058007,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-6"
-			  },
-			  {
-			    "name": "Celeste Rexach",
-			    "phone": 7875165335,
-			    "address": "Condominio Hato Rey Plaza Apt 18i Ave. Jesus T Piñero #200 Hato Rey 00918",
-			    "Pin": "https://goo.gl/maps/Jdi5sBvZCyJ2",
-			    "latitude": 18.408281,
-			    "longitude": -66.058294,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route5-blue-5"
-			  },
-			  {
-			    "name": "Lourdes Orona",
-			    "phone": 7873408472,
-			    "address": "Cond. Plaza Universidad 2000, Apt 1429, 839 Calle Añasco, San Juan, Puerto Rico 00925",
-			    "Pin": "https://goo.gl/maps/RQkvbsv9ze52",
-			    "latitude": 18.406087,
-			    "longitude": -66.054371,
-			    "address comments": "HOY RECIBE 1de NOV, PONE HOLD PARA LA SEMANA PROXIMA",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-7"
-			  },
-			  {
-			    "name": "Gabriela de la Vega",
-			    "phone": 7876459537,
-			    "address": "14  Calle Amapola Apt 1201 Carolina, PR 00979",
-			    "Pin": "https://goo.gl/maps/Wpu76vVLpmC2",
-			    "latitude": 18.44539,
-			    "longitude": -66.015875,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-8"
-			  },
-			  {
-			    "name": "Melisa Martinez Marti",
-			    "phone": 7876316400,
-			    "address": "Condominio Playablanca apt 201, 5245 Avenida isla verde Carolina, Puerto Rico 00979",
-			    "Pin": "https://goo.gl/maps/LymXE4Tcy2m",
-			    "latitude": 18.443823,
-			    "longitude": -66.025204,
-			    "address comments": "Se puede dejar con el guardia de ser necesario ",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-9"
-			  },
-			  {
-			    "name": "Raven J Sandifer",
-			    "phone": 3123164637,
-			    "address": "5894 Calle Jose M. Tartak Torre C Apt.508C, Carolina, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/Eq1GVayLKdz",
-			    "latitude": 18.440716,
-			    "longitude": -66.021639,
-			    "address comments": "Apt. 508C Tower C 5th floor",
-			    "delivery comments": "",
-			    "courier week 5": "route2-orange-10"
-			  }
+          {
+            "name": "Mabel Varela",
+            "phone": 7875791557,
+            "address": "Urb Laderas de San Juan 83 calle ortegon San Juan PR, 00926",
+            "Pin": "https://goo.gl/maps/ZWS5VdrmGAM2",
+            "latitude": 18.3028,
+            "longitude": -66.060915,
+            "address comments": "Crarretera #1 pantallas luz de motel ok voltear la mano izq marginal puma derecha ",
+            "delivery comments": "no tiene problema de que dejen la bolsa frente a la casa",
+            "courier week 6": "route-brown-01"
+          },
+          {
+            "name": "Juan J Figueroa",
+            "phone": 7873617442,
+            "address": "Calle albahaca 135 Ciudad jardin Gurabo PR, 00778-9666",
+            "Pin": "https://goo.gl/maps/WovhFuf5mdC2",
+            "latitude": 18.248085,
+            "longitude": -65.948351,
+            "address comments": "No tiene problema con que dejen la bolsa alfrente ",
+            "delivery comments": "",
+            "courier week 6": "route-brown-02"
+          },
+          {
+            "name": "Sandra Catalá",
+            "phone": 7873108152,
+            "address": "23 Calle Canaria, Urb. Estancias de Santa Bárbara, Gurabo PR 00778",
+            "Pin": "https://goo.gl/maps/7BdwgVqonG22",
+            "latitude": 18.254485,
+            "longitude": -66.002994,
+            "address comments": "D3",
+            "delivery comments": "",
+            "courier week 6": "route-brown-03"
+          }
 			]
   		},
   		{
-  			"title": "Route 3 Yellow",
+  			"title": "Route 3 Orange",
   			"dropoffs":[
-			  {
-			    "name": "Edward Betancourt",
-			    "phone": 6173085742,
-			    "address": "305 Calle Villamil, Apt 1807, San Juan PR",
-			    "Pin": "https://goo.gl/maps/vb1gomVr3ZN2",
-			    "latitude": 18.450207,
-			    "longitude": -66.072782,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-1"
-			  },
-			  {
-			    "name": "Maria Bartlett",
-			    "phone": 6199776752,
-			    "address": "1058 Ashford Avenue Apt 402, San Juan, Puerto Rico ",
-			    "Pin": "https://goo.gl/maps/y5aMhCYQX8H2",
-			    "latitude": 18.457604,
-			    "longitude": -66.075168,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-2"
-			  },
-			  {
-			    "name": "Johanna Torres",
-			    "phone": 7874557305,
-			    "address": "1510 Ashford Avenues, Ashford Plaza, Apt 2E, San Juan, Puerto Rico ",
-			    "Pin": "https://goo.gl/maps/B7ww94PfDoF2",
-			    "latitude": 18.454377,
-			    "longitude": -66.062419,
-			    "address comments": "Cerca de el Parque del Indio",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-3"
-			  },
-			  {
-			    "name": "Francisco Jimenez",
-			    "phone": 7873794731,
-			    "address": "1155 Avenida Magdalena, San Juan, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/RnHrAjNND2t",
-			    "latitude": 18.455672,
-			    "longitude": -66.073163,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-3"
-			  },
-			  {
-			    "name": "Giorgia Matteazzi",
-			    "phone": 7874237623,
-			    "address": "90 Calle San Martin  Rodval Bldg. Suite 201  Guaynabo, PR 00968-1401/ Calle general patton 2158 San Juan, 00913 ",
-			    "Pin": "https://goo.gl/maps/Caxd4KfiypF2",
-			    "latitude": 18.414563,
-			    "longitude": -66.104526,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-4"
-			  },
-			  {
-			    "name": "Tyler Martin",
-			    "phone": 4152187667,
-			    "address": "1554 Calle Lopez Landron Apt PH504",
-			    "Pin": "https://goo.gl/maps/sFP4yXHevHU2",
-			    "latitude": 18.449925,
-			    "longitude": -66.064046,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-5"
-			  },
-			  {
-			    "name": "Nicolette Rae Johnson",
-			    "phone": 6513320441,
-			    "address": "352 Calle del Parque #610, San Juan, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/QURnPg3PsV82",
-			    "latitude": 18.446211,
-			    "longitude": -66.065561,
-			    "address comments": "edificio justo al lado de ciudadela a mano derecha por la calle del parque.  Tiene clases de salsa, estara en su casa despues de las 8:15pm, pidio dejarla para lo ultimo. No tiene guardia de seguridad. ",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-6"
-			  },
-			  {
-			    "name": "Tamara Sabalier",
-			    "phone": 7876382471,
-			    "address": "apt 601 New Center Plaza , 210 calle Jose Oliver",
-			    "Pin": "https://goo.gl/maps/ddVJvuBjkyq",
-			    "latitude": 18.428002,
-			    "longitude": -66.066515,
-			    "address comments": "24 market hato rey edificio de esquina. HOY 1 NOV RECIBE, PERO CANCELAR",
-			    "delivery comments": "No tienen problema con dejar la bolsa en la entrada, hablará con el guardia ",
-			    "courier week 5": "route3-yellow-7"
-			  },
-			  {
-			    "name": "Esther Oppenheimer",
-			    "phone": 7872397734,
-			    "address": "Villas Del Rio, Calle 15 D-29, Bayamon, Puerto Rico  ",
-			    "Pin": "https://goo.gl/maps/AVxBrLZAtV92",
-			    "latitude": 18.382643,
-			    "longitude": -66.129171,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-8"
-			  },
-			  {
-			    "name": "Christian Sobrino",
-			    "phone": 7879027310,
-			    "address": "Cond. Alta Vista II, 28 calle 1, apt 6B, Guaynabo, PR 00969",
-			    "Pin": "https://goo.gl/maps/gjGxN8L7AME2",
-			    "latitude": 18.382686,
-			    "longitude": -66.111781,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-9"
-			  },
-			  {
-			    "name": "Vivianna ramirez de arellano",
-			    "phone": 7873990621,
-			    "address": "655 Calle La Paz, San Juan, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/YmmfBZVD8rq",
-			    "latitude": 18.453455,
-			    "longitude": -66.082586,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route3-yellow-10"
-			  }
+          {
+            "name": "Laura Tirado",
+            "phone": 7873667229,
+            "address": "4745 Avenida Isla Verde, Carolina, Puerto Rico",
+            "Pin": "https://goo.gl/maps/qko767C5umt",
+            "latitude": 18.443936,
+            "longitude": -66.027473,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-orange-01"
+          },
+          {
+            "name": "Raven J Sandifer",
+            "phone": 3123164637,
+            "address": "5894 Calle Jose M. Tartak Torre C Apt.508C, Carolina, Puerto Rico",
+            "Pin": "https://goo.gl/maps/Eq1GVayLKdz",
+            "latitude": 18.440716,
+            "longitude": -66.021639,
+            "address comments": "Apt. 508C Tower C 5th floor",
+            "delivery comments": "",
+            "courier week 6": "route-orange-02"
+          },
+          {
+            "name": "Gabriela de la Vega",
+            "phone": 7876459537,
+            "address": "14  Calle Amapola Apt 1201 Carolina, PR 00979",
+            "Pin": "https://goo.gl/maps/Wpu76vVLpmC2",
+            "latitude": 18.44539,
+            "longitude": -66.015875,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-orange-03"
+          },
+          {
+            "name": "Denise Cuevas",
+            "phone": 7873603494,
+            "address": "CH-10 Calle 143, Jardines de Country Club, Carolina PR 00983",
+            "Pin": "https://goo.gl/maps/PqPNkAqjMV22",
+            "latitude": 18.425468,
+            "longitude": -65.973262,
+            "address comments": "NO COMEN CERDO, GELATINA TAMPOCO, NADA DE MARISCOS, POR TEMA RELIGIOSO",
+            "delivery comments": "",
+            "courier week 6": "route-orange-04"
+          },
+          {
+            "name": "Orlando Ruiz Rivera",
+            "phone": 7874553158,
+            "address": "Z1-6 calle 18St  MonteCarlo San Juan 00924-5828",
+            "Pin": "https://goo.gl/maps/P1iN9ZMPBaD2",
+            "latitude": 18.389541,
+            "longitude": -66.008751,
+            "address comments": "Por Monte Htaillo hacia arriba, la casa tiene una lancha grande dentro de la marquesina calle 18 el tramo corto.",
+            "delivery comments": "",
+            "courier week 6": "route-orange-05"
+          },
+          {
+            "name": "Mariana Zepeda Guerrero",
+            "phone": 7879603863,
+            "address": "Condominio Pórticos de Cupey apt H101 San Juan PR",
+            "Pin": "https://goo.gl/maps/PDmCszvG3U12",
+            "latitude": 18.373087,
+            "longitude": -66.042421,
+            "address comments": "marcar en tele entry 185 numeral ",
+            "delivery comments": "",
+            "courier week 6": "route-orange-06"
+          },
+          {
+            "name": "Milimar Landron",
+            "phone": 7874032238,
+            "address": "311 Calle Teresa Jornet Tropical Courts 1303",
+            "Pin": "https://goo.gl/maps/xCp4ze526mP2",
+            "latitude": 18.359152,
+            "longitude": -66.05278,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-orange-07"
+          },
+          {
+            "name": "Marta Figueroa",
+            "phone": 7876473509,
+            "address": "Calle 7 C1 Sierra del Río San Juan, Puerto Rico 00926",
+            "Pin": "https://goo.gl/maps/b6uuQg8r75K2",
+            "latitude": 18.366149,
+            "longitude": -66.058038,
+            "address comments": "Por Cuper entre paseos y el señorial 176 facciola o señorial 177.  ",
+            "delivery comments": "",
+            "courier week 6": "route-orange-08"
+          }
 			]
   		},
   		{
-  			"title": "Route 4 Green",
+  			"title": "Route 4 Purple",
   			"dropoffs":[
-			  {
-			    "name": "Carmen Rivera",
-			    "phone": 7875172853,
-			    "address": "Calle 3A BB13 El Cortijo Bayamon PR 00956",
-			    "Pin": "https://goo.gl/maps/89mZxa3pD342",
-			    "latitude": 18.383783,
-			    "longitude": -66.163219,
-			    "address comments": "Rexville Town Center por la expreso 5  al lado de royal town. Si no está ella, está el esposo ",
-			    "delivery comments": "",
-			    "courier week 5": "route4-green-1"
-			  },
-			  {
-			    "name": "Edsaida Arce Hernandez",
-			    "phone": 7872072822,
-			    "address": "Carr 861 km. 4.6 Bo. Bucarabones Sector La Cuerda, Mucarabones, Toa Alta, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/bww3x5eHc3y",
-			    "latitude": 18.380797,
-			    "longitude": -66.209795,
-			    "address comments": "Por la iglesia Wanda Rolon. Pueden llamar para Referencia. NO QUIERE RECIBIR LOS HUEVOS SOLO CONSUME ORGANICOS ",
-			    "delivery comments": "",
-			    "courier week 5": "route4-green-2"
-			  },
-			  {
-			    "name": "Maria Romero",
-			    "phone": 7876304417,
-			    "address": "Brisas de Montecasino, K16 calle Taino, Toa Alta, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/QfAwiwnmSky",
-			    "latitude": 18.392934,
-			    "longitude": -66.207712,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route4-green-3"
-			  },
-			  {
-			    "name": "Luz N Marrero ",
-			    "phone": 7876889061,
-			    "address": "Urb. Valparaiso Calle 3 K 48, Toa Baja , PR",
-			    "Pin": "https://goo.gl/maps/cSmjNq8TaZF2",
-			    "latitude": 18.431749,
-			    "longitude": -66.163174,
-			    "address comments": "",
-			    "delivery comments": "Cliente pidio media hora para la entrega... atendimos al proximo cliente",
-			    "courier week 5": "route4-green-4"
-			  },
-			  {
-			    "name": "Mayra Martínez ",
-			    "phone": 7874043086,
-			    "address": "308 Reparto Las Llanadas, Casa A-8,Barceloneta, PR 00617",
-			    "Pin": "https://goo.gl/maps/eCrgeV45XtB2",
-			    "latitude": 18.445637,
-			    "longitude": -66.558824,
-			    "address comments": "redondel marcar numero 044, al entrar seguir directo y la octava casa a la derecha. ",
-			    "delivery comments": "",
-			    "courier week 5": "route4-green-5"
-			  },
-			  {
-			    "name": "Margie Joubert",
-			    "phone": 7876426397,
-			    "address": "Condominio Atlantis Apt 1607 Piso 16, 404 Avenida Juan Ponce de León, San Juan, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/YvdQF41TGqL2",
-			    "latitude": 18.464366,
-			    "longitude": -66.0951,
-			    "address comments": "Ave. Juan POnce  de leon o Ave de la constitucion LO MISMO frente partido popular",
-			    "delivery comments": "",
-			    "courier week 5": "route4-green-6"
-			  }
+          {
+            "name": "Marie Custodio",
+            "phone": 7875121045,
+            "address": "Urb. Altamira calle Sirio 512 San Juan, Puerto Rico 00920 ",
+            "Pin": "https://goo.gl/maps/KoHyTypAj5T2",
+            "latitude": 18.398008,
+            "longitude": -66.106574,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-purple-01"
+          },
+          {
+            "name": "Zayra Lopez",
+            "phone": 7873963333,
+            "address": "Valles de Torrimar Apto. i-109 Guaynabo, Puerto Rico 00966",
+            "Pin": "https://goo.gl/maps/AjtasWRsyxr",
+            "latitude": 18.391821,
+            "longitude": -66.123604,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-purple-02"
+          },
+          {
+            "name": "Zayrah Silva",
+            "phone": 7872424120,
+            "address": "Casa: 55-11 Calle Boundary, Ubr Santa Rosa/ Trabajo: 31-35 Ave. Main Urb Santa Rosa Bayamon, Puerto Rico 00959",
+            "Pin": "https://goo.gl/maps/fS9wEw2jDZG2",
+            "latitude": 18.388449,
+            "longitude": -66.141324,
+            "address comments": "Entregar en el Trabajo Edificio Scientology ",
+            "delivery comments": "",
+            "courier week 6": "route-purple-03"
+          },
+          {
+            "name": "Michelle Coll",
+            "phone": 7879141037,
+            "address": "83 Viajera, Palma Real, Guaynabo, PR 00969",
+            "Pin": "https://goo.gl/maps/jYmU9Vvm6kA2",
+            "latitude": 18.367535,
+            "longitude": -66.12799,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-purple-04"
+          },
+          {
+            "name": "Alan Wagner",
+            "phone": 7872369366,
+            "address": "39 Calle Raphis, Urbanización Palma Real, Guaynabo, 00969, Puerto Rico",
+            "Pin": "https://goo.gl/maps/iTTPjBXyp112",
+            "latitude": 18.368986,
+            "longitude": -66.12524,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-purple-05"
+          },
+          {
+            "name": "Roberto C. Rodríguez",
+            "phone": 7875167960,
+            "address": "39 Calle Escarlata, Guaynabo, Puerto Rico",
+            "Pin": "https://goo.gl/maps/vpkvcsTwYns",
+            "latitude": 18.362342,
+            "longitude": -66.118929,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-purple-06"
+          },
+          {
+            "name": "Glenda Martinez ",
+            "phone": 7872257576,
+            "address": "Parkville Sur calle Cleveland f20 , Guaynabo Pr",
+            "Pin": "https://goo.gl/maps/uX9exAwt2cB2",
+            "latitude": 18.368971,
+            "longitude": -66.098426,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-purple-07"
+          },
+          {
+            "name": "Primitivo Perez Beniquez",
+            "phone": 7879484787,
+            "address": "1800 Calle San Gregorio Apt 210, San Juan, Puerto Rico 00921",
+            "Pin": "https://goo.gl/maps/Cat4cYtBwc42",
+            "latitude": 18.383579,
+            "longitude": -66.093362,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-purple-08"
+          },
+          {
+            "name": "Miriam Gonzalez",
+            "phone": 7873961672,
+            "address": "Urbanizacion Sevilla Biltmore F 41 Guaynabo, Puerto Rico ",
+            "Pin": "https://goo.gl/maps/VZ6ps97ncw12",
+            "latitude": 18.38406,
+            "longitude": -66.105204,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-purple-09"
+          }
 			]
   		},
   		{
-  			"title": "Route 5 Blue",
+  			"title": "Route 5 Red",
   			"dropoffs":[
-			  {
-			    "name": "Yaritza Matos",
-			    "phone": 7872491259,
-			    "address": "Urb. Caldas, Calle José Fidalgo Diaz 1995, San Juan PR 00926",
-			    "Pin": "https://goo.gl/maps/H7mkvdGSM3z",
-			    "latitude": 18.363303,
-			    "longitude": -66.080269,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route5-blue-1"
-			  },
-			  {
-			    "name": "Cristina Garcia",
-			    "phone": 7873666839,
-			    "address": "35 Birdie Lane, Humacao, Puerto Rico",
-			    "Pin": "https://goo.gl/maps/nKVphpDzmP82",
-			    "latitude": 18.10117,
-			    "longitude": -65.804647,
-			    "address comments": "Plamas del Mar Plantation Casa 35 ",
-			    "delivery comments": "",
-			    "courier week 5": "route5-blue-2"
-			  },
-			  {
-			    "name": "Sandra Catalá",
-			    "phone": 7873108152,
-			    "address": "23 Calle Canaria, Urb. Estancias de Santa Bárbara, Gurabo PR 00778",
-			    "Pin": "https://goo.gl/maps/7BdwgVqonG22",
-			    "latitude": 18.254485,
-			    "longitude": -66.002994,
-			    "address comments": "D3",
-			    "delivery comments": "",
-			    "courier week 5": "route5-blue-3"
-			  },
-			  {
-			    "name": "Waldin Vázquez Pagán ",
-			    "phone": 7872354814,
-			    "address": "862 Calle Esteban González, Apt. 9-A, San Juan, Puerto Rico 00925",
-			    "Pin": "https://goo.gl/maps/3sxQEVZbjeo",
-			    "latitude": 18.405412,
-			    "longitude": -66.055716,
-			    "address comments": "",
-			    "delivery comments": "",
-			    "courier week 5": "route5-blue-4"
-			  }
+          {
+            "name": "Jose Ricardo ",
+            "phone": 7876141847,
+            "address": "151 calle cesar gonzalez condominio plaza antillana apt 1103 ",
+            "Pin": "https://goo.gl/maps/8iqL7ghU6En",
+            "latitude": 18.431513,
+            "longitude": -66.066787,
+            "address comments": "Cliente no tiene problema en que dejen el box alfrente de la puerta, decir direccion en el guardia",
+            "delivery comments": "",
+            "courier week 6": "route-red-01"
+          },
+          {
+            "name": "Leticia Diaz ",
+            "phone": 7873604488,
+            "address": "Calle Soldado Ulises Arrigoitia 466, San Juan, Puerto Rico Urb Roosevelt 00918",
+            "Pin": "https://goo.gl/maps/qkffHPLz6q22",
+            "latitude": 18.415223,
+            "longitude": -66.067474,
+            "address comments": "Casa amarilla con verde, dejar con la vecina casa rosita Idalia 7872456198. La casa queda a mano izq. la casa de la vecina a manoi izq. Dejar con el Hijo Jann Hernandez 7879230618",
+            "delivery comments": "",
+            "courier week 6": "route-red-02"
+          },
+          {
+            "name": "Carolyn Ferrandino ",
+            "phone": 7876176685,
+            "address": "419 Calle Darién, San Juan, Puerto Rico 00920",
+            "Pin": "https://goo.gl/maps/WwZ9gq4U6Q42",
+            "latitude": 18.410858,
+            "longitude": -66.091035,
+            "address comments": "oprimir #056 Bajando por la roosevelt. Restaurante Bendinia sube por la dueru segunda a mano izq porton de acceso. Primera a mano derecha la calle darien/ Hablar español despacio entregar a John 787-617-6653",
+            "delivery comments": "",
+            "courier week 6": "route-red-03"
+          },
+          {
+            "name": "Leopoldo Czeplo",
+            "phone": 7874752033,
+            "address": "277 Calle Fordham, San Juan",
+            "Pin": "https://goo.gl/maps/zhui92zXJYq",
+            "latitude": 18.405604,
+            "longitude": -66.064531,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-red-04"
+          },
+          {
+            "name": "Brenda Ayala",
+            "phone": 7876341804,
+            "address": "145 Avenida Hostos Apt. G-613, San Juan, Puerto Rico",
+            "Pin": "https://goo.gl/maps/hUaPns1sbXK2",
+            "latitude": 18.408749,
+            "longitude": -66.05823,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-red-05"
+          },
+          {
+            "name": "Iris Cosme Gomez ",
+            "phone": 7876276552,
+            "address": "Cond Santa Rita  997  calle Córdova Dávila Apto A-803 San Juan, PR 00925",
+            "Pin": "https://goo.gl/maps/2xrYET1FGgS2",
+            "latitude": 18.402492,
+            "longitude": -66.055648,
+            "address comments": "ave. munñoz rivera como si fuera a la ave universidad en la esquina walgreens justo detras edificio mano izq. ",
+            "delivery comments": "",
+            "courier week 6": "route-red-06"
+          },
+          {
+            "name": "Doriliana Rivera",
+            "phone": 7874101017,
+            "address": "140 Calle Guadalquivir, Urb. El Paraiso, San Juan PR 00926",
+            "Pin": "https://goo.gl/maps/uyDvt23ehvL2",
+            "latitude": 18.383811,
+            "longitude": -66.064153,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-red-07"
+          }
 			]
   		},
+      {
+  			"title": "Route 6 Yellow",
+  			"dropoffs":[
+          {
+            "name": "Betty Rodriguez",
+            "phone": 7876668705,
+            "address": "Hg 19 Monsita Ferrer 7ma secc Levittown Toa Baja, Puerto Rico 00949",
+            "Pin": "https://goo.gl/maps/cb6AyR4gpPH2",
+            "latitude": 18.4368114,
+            "longitude": -66.1717805,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-yellow-01"
+          },
+          {
+            "name": "Belén Resto",
+            "phone": 7872614792,
+            "address": "Ms32 calle arcoíris mansión del sol Toa Baja pr 00949",
+            "Pin": "https://goo.gl/maps/Lji74JqdzMM2",
+            "latitude": 18.438267,
+            "longitude": -66.193278,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-yellow-02"
+          },
+          {
+            "name": "Luz N Marrero ",
+            "phone": 7876889061,
+            "address": "Urb. Valparaiso Calle 3 K 48, Cataño , PR",
+            "Pin": "https://goo.gl/maps/cSmjNq8TaZF2",
+            "latitude": 18.431749,
+            "longitude": -66.163174,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-yellow-03"
+          },
+          {
+            "name": "Delmaris Santiago Sierra",
+            "phone": 7872352823,
+            "address": "hacienda toledo casa g286 Arecibo 00612",
+            "Pin": "https://goo.gl/maps/2TnEGFbfA5w",
+            "latitude": 18.429039,
+            "longitude": -66.764401,
+            "address comments": "Seguir en la calle principal hasta el final, pasar el cartel que dice Bienvenidos Hacienda Toledo y ahí llegarás a las casas G",
+            "delivery comments": "",
+            "courier week 6": "route-yellow-04"
+          },
+          {
+            "name": "Irma Sierra",
+            "phone": 7878782450,
+            "address": "hacienda toledo casa g286 Arecibo 00612",
+            "Pin": "https://goo.gl/maps/2TnEGFbfA5w",
+            "latitude": 18.429039,
+            "longitude": -66.764401,
+            "address comments": "Seguir en la calle principal hasta el final, pasar el cartel que dice Bienvenidos Hacienda Toledo y ahí llegarás a las casas G",
+            "delivery comments": "",
+            "courier week 6": "route-yellow-04"
+          },
+          {
+            "name": "Audrey Binkowski",
+            "phone": 8458205469,
+            "address": "Carretera 441 Km 2.6 Interior Playa",
+            "Pin": "https://goo.gl/maps/9F1zuKVtCaM2",
+            "latitude": 18.399575,
+            "longitude": -67.186778,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-yellow-05"
+          },
+          {
+            "name": "Francisco Tirado",
+            "phone": 7874251555,
+            "address": "145 Ave. Hostos Apt. G405 San Juan PR 00918",
+            "Pin": "https://goo.gl/maps/2KENyh2nSLp",
+            "latitude": 18.409179,
+            "longitude": -66.058007,
+            "address comments": "",
+            "delivery comments": "",
+            "courier week 6": "route-yellow-06"
+          }
+        ]
+  		}
   	];
 
   	$('#dropoffs').html("");
 
-	
+
 
   	_.each([routes[parseInt(getUrlParameter("route"))]], function(route) {
 	    var i = 0;
@@ -584,7 +622,7 @@
 						$('<h5/>', { class: "mt-0 mb-1"}).html("<strong>"  + i + "</strong>) " + dropoff.name),
 		        		$('<a/>', { href:dropoff.Pin}).append(
 							$('<address/>').html(
-								dropoff.address + "<br><abbr title='Phone'>P:</abbr><a href='tel:+" + dropoff.phone + "'>"+ dropoff.phone +"</a>"
+								dropoff.address + "<br><abbr title='Phone'>P:</abbr><a href='tel:+1" + dropoff.phone + "'>"+ dropoff.phone +"</a>"
 							)
 						),
 						$('<p/>').html( "<small>" + dropoff["address comments"] + " " + dropoff["delivery comments"] + "</small>")

@@ -172,6 +172,7 @@
             var map = new mapboxgl.Map({
                 container: 'map', // container id
                 style: 'mapbox://styles/mapbox/streets-v10', // stylesheet location
+                // style: 'mapbox://styles/mapbox/light-v9', // stylesheet location
                 center: [-66.700, 18.2208], // starting position
                 zoom: 8.5 // starting zoom
             });
@@ -179,9 +180,6 @@
             // Navigation Control
             var nav = new mapboxgl.NavigationControl();
             map.addControl(nav, 'top-right');
-            // map.addControl(LegendControl());
-            // var leg= new mapboxgl.LegendControl();
-            // map.addControl(leg, 'bottom-right');
 
             // *********************************************************************
             // Variable & Object Declaration
@@ -403,7 +401,7 @@
                 })
                 map.getSource('marked-dropoff').setData(truckSelected.markedDropoff)
                 HTMLDirections(truckSelected, id, trucks, map)
-                Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
+                // Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
             }
 
             // Display automatically the popups of the dropoff within the Radius
@@ -504,170 +502,141 @@
                 // Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
             }
 
-            dropoffLocations.features.push(turf.point([-66.0665150, 18.428002],
-                {name:'Tamara Sabalier', phone:7876382471,
-                address:'apt 601 New Center Plaza , 210 calle Jose Oliver', weight:-1, load:1, ppop:false}));
-            
-            dropoffLocations.features.push(turf.point([-66.0727820, 18.450207],
-                {name:'Edward Betancourt', phone:'6173085742' ,
-                address:'305 Calle Villamil, Apt 1807, San Juan PR'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0825860, 18.453455],
-                {name:'Vivianna ramirez de arellano', phone:'7873990621',
-                address:'655 Calle La Paz, San Juan, Puerto Rico'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0639040, 18.348654],
-                {name:'Roxanna Santiago', phone:'7876445115',
-                address:'53 Cll Capri, San Juan 00926, Puerto Rico'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0644090, 18.405035],
-                {name:'Mila Bravo', phone:'7873068375',
-                address:'271 Calle Georgetown University Gardens San Juan PR 00927'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0595970, 18.409590],
-                {name:'Francisco Tirado',phone:'7874251555',
-                address:'145 Ave. Hostos Apt. G405 San Juan PR 00918'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0158750, 18.445390],
-                {name:'Gabriela de la Vega', phone:'7876459537',
-                address:'14  Calle Amapola Apt 1201 Carolina, PR 00979'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0624190, 18.454377],
-                {name:'Johanna Torres ', phone:'7874557305',
-                address:'1510 Ashford Avenues, Ashford Plaza, Apt 2E, San Juan, Puerto Rico '  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1233880, 18.377416],
-                {name:'Merari Cruz-Loubriel ', phone:'7875473943',
-                address:'Catalina 105 La Villa de Torrimar Guaynabo PR 00969'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0640460, 18.449701],
-                {name:'Tyler Martin', phone:'4152187667',
-                address:'1554 Calle Lopez Landron Apt PH504'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0655610, 18.446211],
-                {name:'Nicolette Rae Johnson', phone: '6513320441',
-                address:'352 Calle del Parque #610, San Juan, Puerto Rico'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0670414, 18.382139],
-                {name:'Doriliana Rivera', phone:'7874101017',
-                address:'140 Calle Guadalquivir, Urb. El Paraiso, San Juan PR 00926'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0580340, 18.366160],
-                {name:'Marta Figueroa', phone:'7876473509',
-                address:'Calle 7 C1 Sierra del Río San Juan, Puerto Rico 00926'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0751790, 18.457370],
-                {name:'Maria Bartlett', phone: '6199776752',
-                address:'1058 Ashford Avenue Apt 402, San Juan, Puerto Rico '  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0251930, 18.443477],
-                {name:'Melisa Martinez Marti', phone:'7876316400',
-                address:'Condominio Playablanca apt 201, 5245 Avenida isla verde Carolina, Puerto Rico 00979'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1065740, 18.398008],
-                {name:'Marie Custodio', phone:'7875121045',
-                address:'Urb. Altamira calle Sirio 512 San Juan, Puerto Rico 00920 '  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0543710, 18.406087],
-                {name:'Lourdes Orona', phone:'7873408472',
-                address:'Cond. Plaza Universidad 2000, Apt 1429, 839 Calle Añasco, San Juan, Puerto Rico 00925'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.2353010, 18.422909],
-                {name:'Luz N Marrero ', phone:'7876889061',
-                address:'Urb. Valparaiso Calle 3 K 48, Toa Baja , PR'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1709810, 18.435741],
-                {name:'Betty Rodriguez', phone:'7876668705',
-                address:'Hg 19 Monsita Ferrer 7ma secc Levittown Toa Baja, Puerto Rico 00949'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1252400, 18.368986],
-                {name:'Alan Wagner', phone:'7872369366',
-                address:'39 Calle Raphis, Urbanización Palma Real, Guaynabo, 00969, Puerto Rico'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1279900, 18.367535],
-                {name:'Michelle Coll', phone:'7879141037',
-                address:'83 Viajera, Palma Real, Guaynabo, PR 00969'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0029940, 18.254485],
-                {name:'Sandra Catalá', phone:'7873108152',
-                address:'23 Calle Canaria, Urb. Estancias de Santa Bárbara, Gurabo PR 00778'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0609150, 18.302800],
-                {name:'Mabel Varela', phone:'7875791557',
-                address:'Urb Laderas de San Juan 83 calle ortegon San Juan PR, 00926'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-65.8046510, 18.101173],
-                {name:'Cristina Garcia', phone:'7873666839',
-                 address:'35 Birdie Lane, Humacao, Puerto Rico'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1119630, 18.382440],
-                {name:'Julio Garriga', phone:'7873645401',
-                address:'14 Carr 833 La Cima de Torrimar Apt 1602, Guaynabo, Puerto Rico'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0467990, 18.451865],
-                {name:'Giorgia Matteazzi', phone:'7874237623',
-                address:'Calle general patton 2158 San Juan, 00913'   ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0898710, 18.385322],
-                {name:'Elisabet Rodriguez', phone:'7873426664',
-                address:'1759 Calle Compostela Urbanizacion College Park San Juan PR 00921'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1117280, 18.382582],
-                {name:'Christian Sobrino', phone:'7879027310',
-                address:'Cond. Alta Vista II, 28 calle 1, apt 6B, Guaynabo, PR 00969'  ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0216390, 18.440716],
-                {name:'Raven J Sandifer', phone:'3123164637',
-                address:'5894 Calle Jose M. Tartak Torre C Apt.508C, Carolina, Puerto Rico,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1291710, 18.382643],
-                {name:'Esther Oppenheimer', phone:'7872397734',
-                address:'Villas Del Rio, Calle 15 D-29, Bayamon, Puerto Rico  ,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.2077120, 18.392934],
-                {name:'Maria Romero', phone:'7876304417',
-                address:'Brisas de Montecasino, K16 calle Taino, Toa Alta, Puerto Rico,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0272110, 18.339704],
-                {name:'Maria del C Gonzalez', phone:'7876460737',
-                address:'Buena Vista Village 450 carr. 844 apto 1871 San Juan PR 00926,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0943380, 18.383860],
-                {name:'Yomari Suarez', phone:'7874755095',
-                address:'1401 Calle San Damian, Urb. Altamesa, San Juan, PR 00921,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0527930, 18.359164],
-                {name:'Edmaris Carazo', phone:'7876026206',
-                address:'Condominio Tropical Court Calle Tereza Jordnet Apt 1104 San Juan 00926 (Codigo *87),' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0557270, 18.405431],
-                {name:'Waldin Vázquez Pagán', phone:'7872354814',
-                address:'862 Calle Esteban González, Apt. 9-A, San Juan, Puerto Rico 00925,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0582950, 18.408331],
-                {name:'Celeste Rexach', phone:'7875165335',
-                address:'Condominio Hato Rey Plaza Apt 18i Ave. Jesus T Piñero #200 Hato Rey 00918,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0802690, 18.363303],
-                {name:'Yaritza Matos', phone:'7872491259',
-                address:'Urb. Caldas, Calle José Fidalgo Diaz 1995, San Juan PR 00926,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.2097950, 18.380797],
-                {name:'Edsaida Arce Hernandez', phone:'7872072822',
-                address:'Carr 861 km. 4.6 Bo. Bucarabones Sector La Cuerda, Mucarabones, Toa Alta, Puerto Rico,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.1632190, 18.383783],
-                {name:'Carmen Rivera', phone:'7875172853',
-                address:'Calle 3A BB13 El Cortijo Bayamon PR 00956' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.0951000, 18.464366],
-                {name:'Margie Joubert', phone:'7876426397',
-                address:'404 Avenida Juan Ponce de León, San Juan, Puerto Rico,' ,weight:-1, load:1, ppop:false}));
-
-            dropoffLocations.features.push(turf.point([-66.5588240, 18.445637],
-                {name:'Mayra Martínez', phone:'7874043086',
-                address:'308 Reparto Las Llanadas, Casa A-8,Barceloneta, PR 0061' ,weight:-1, load:1, ppop:false}));
-
+            dropoffLocations.features.push(turf.point([-66.7644010,18.429039],
+                {name:'Delmaris Santiago Sierra', telephone:'7872352823', 
+                 address:'hacienda toledo casa g286 Arecibo 00612', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0685340,18.419851],
+                {name:'Leticia Diaz', telephone:'7873604488', 
+                 address:'Calle Soldado Ulises Arrigoitia 466, San Juan, Puerto Rico Urb Roosevelt 00918', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.2703290,18.475018],
+                {name:'Valerie Alvarado', telephone:'7875254931', 
+                 address:'Villas de Golf, 21 villa este, Dorado, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0556480,18.402492],
+                {name:'Iris Cosme Gomez', telephone:'7876276552', 
+                 address:'Cond Santa Rita  997  calle Córdova Dávila Apto A-803 San Juan, PR 00925', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0933620,18.383579],
+                {name:'Primitivo Perez Beniquez', telephone:'7879484787', 
+                 address:'1800 Calle San Gregorio Apt 210, San Juan, Puerto Rico 00921', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0647070,18.455026],
+                {name:'Myrna Santana', telephone:'7877610338', 
+                 address:'Torre del Mar 6-A, Ashford Avenue, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0676360,18.453452],
+                {name:'Jorge Gonzalez', telephone:'7875091270', 
+                 address:'1373 Calle Luchetti, Apt 302, San Juan, Puerto Rico 00907', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0910350,18.410858],
+                {name:'Carolyn Ferrandino', telephone:'7876176685', 
+                 address:'419 Calle Darién, San Juan, Puerto Rico 00920', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1413240,18.388449],
+                {name:'Zayrah Silva', telephone:'7872424120 / 7877635050', 
+                 address:'55-11 Calle Boundary, Ubr Santa Rosa', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1236040,18.391821],
+                {name:'Zayra Lopez', telephone:'7873963333', 
+                 address:'Valles de Torrimar Apto. i-109 Guaynabo, Puerto Rico 00966', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0731630,18.455672],
+                {name:'Francisco Jimenez', telephone:'7873794731', 
+                 address:'1155 Avenida Magdalena, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0645310,18.405604],
+                {name:'Leopoldo Czeplo', telephone:'7874752033', 
+                 address:'277 Calle Fordham, San Juan', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-65.9483510,18.248085],
+                {name:'Juan J Figueroa', telephone:'7873617442', 
+                 address:'Calle albahaca 135 Ciudad jardin Gurabo PR, 00778-9666', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0274730,18.443936],
+                {name:'Laura Tirado', telephone:'7873667229', 
+                 address:'4745 Avenida Isla Verde, Carolina, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1932780,18.438267],
+                {name:'Belén Resto', telephone:'7872614792', 
+                 address:'Ms32 calle arcoíris mansión del sol Toa Baja pr 00949', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0424210,18.373087],
+                {name:'Mariana Zepeda Guerrero', telephone:'7879603863', 
+                 address:'Condominio Pórticos de Cupey apt H101 San Juan PR', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0527800,18.359152],
+                {name:'Milimar Landron', telephone:'7874032238', 
+                 address:'311 Calle Teresa Jornet Tropical Courts 1303', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0596180,18.409570],
+                {name:'Brenda Ayala', telephone:'7876341804', 
+                 address:'145 Avenida Hostos Apt. G-613, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1252400,18.368986],
+                {name:'Alan Wagner', telephone:'7872369366', 
+                 address:'39 Calle Raphis, Urbanización Palma Real, Guaynabo, 00969, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1709810,18.435741],
+                {name:'Betty Rodriguez', telephone:'7876668705', 
+                 address:'Hg 19 Monsita Ferrer 7ma secc Levittown Toa Baja, Puerto Rico 00949', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0670414,18.382139],
+                {name:'Doriliana Rivera', telephone:'7874101017', 
+                 address:'140 Calle Guadalquivir, Urb. El Paraiso, San Juan PR 00926', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0727820,18.450207],
+                {name:'Edward Betancourt', telephone:'6173085742', 
+                 address:'305 Calle Villamil, Apt 1807, San Juan PR', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0595970,18.409590],
+                {name:'Francisco Tirado', telephone:'7874251555', 
+                 address:'145 Ave. Hostos Apt. G405 San Juan PR 00918', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0158750,18.445390],
+                {name:'Gabriela de la Vega', telephone:'7876459537', 
+                 address:'14  Calle Amapola Apt 1201 Carolina, PR 00979', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0624190,18.454377],
+                {name:'Johanna Torres', telephone:'7874557305', 
+                 address:'1510 Ashford Avenues, Ashford Plaza, Apt 2E, San Juan, Puerto Rico ', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1024470,18.372744],
+                {name:'Roberto C. Rodríguez', telephone:'7875167960', 
+                 address:'39 Calle Escarlata, Guaynabo, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.2353010,18.422909],
+                {name:'Luz N Marrero', telephone:'7876889061', 
+                 address:'Urb. Valparaiso Calle 3 K 48, Toa Baja , PR', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0609150,18.302800],
+                {name:'Mabel Varela', telephone:'7875791557', 
+                 address:'Urb Laderas de San Juan 83 calle ortegon San Juan PR, 00926', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1065740,18.398008],
+                {name:'Marie Custodio', telephone:'7875121045', 
+                 address:'Urb. Altamira calle Sirio 512 San Juan, Puerto Rico 00920 ', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0580340,18.366160],
+                {name:'Marta Figueroa', telephone:'7876473509', 
+                 address:'Calle 7 C1 Sierra del Río San Juan, Puerto Rico 00926', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1279900,18.367535],
+                {name:'Michelle Coll', telephone:'7879141037', 
+                 address:'83 Viajera, Palma Real, Guaynabo, PR 00969', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0655610,18.446211],
+                {name:'Nicolette Rae Johnson', telephone:'6513320441', 
+                 address:'352 Calle del Parque #610, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0216390,18.440716],
+                {name:'Raven J Sandifer', telephone:'3123164637', 
+                 address:'5894 Calle Jose M. Tartak Torre C Apt.508C, Carolina, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0029940,18.254485],
+                {name:'Sandra Catalá', telephone:'7873108152', 
+                 address:'23 Calle Canaria, Urb. Estancias de Santa Bárbara, Gurabo PR 00778', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0640460,18.449701],
+                {name:'Tyler Martin', telephone:'4152187667', 
+                 address:'1554 Calle Lopez Landron Apt PH504', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0825860,18.453455],
+                {name:'Vivianna ramirez de arellano', telephone:'7873990621', 
+                 address:'655 Calle La Paz, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0557270,18.405431],
+                {name:'Waldin Vázquez Pagán', telephone:'7872354814', 
+                 address:'862 Calle Esteban González, Apt. 9-A, San Juan, Puerto Rico 00925', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.1048120,18.383766],
+                {name:'Miriam Gonzalez', telephone:'7873961672', 
+                 address:'Urbanizacion Sevilla Biltmore F 41 Guaynabo, Puerto Rico ', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-67.1867780,18.399575],
+                {name:'Audrey Binkowski', telephone:'8458205469', 
+                 address:'Carretera 441 Km 2.6 Interior Playa', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0087290,18.389582],
+                {name:'Orlando Ruiz Rivera', telephone:'7874553158', 
+                 address:'Z1-6 calle 18St  MonteCarlo San Juan 00924-5828', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-65.9732590,18.425560],
+                {name:'Denise Cuevas', telephone:'7873603494', 
+                 address:'CH-10 Calle 143, Jardines de Country Club, Carolina PR 00983', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0684340,18.454431],
+                {name:'Catherine Aguilar Ramos', telephone:'7874646729', 
+                 address:'1357 Avenida Magdalena Edificio Santa Genoveva Apt 3B, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0933300,18.464157],
+                {name:'Maria E Rodríguez', telephone:'7876678343', 
+                 address:'450 Ave Constitucion Apt 11A, San Juan, PR 00901', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0614710,18.453000],
+                {name:'Jackie Markot', telephone:'6469445744', 
+                 address:'76 Calle Kings Court, 504, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
+            dropoffLocations.features.push(turf.point([-66.0667860,18.431588],
+                {name:'Jose Ricardo', telephone:'7876141847', 
+                 address:'151 calle cesar gonzalez condominio plaza antillana apt 1103', weight:-1, load:1, ppop:false}));
 
 
             var KmeansPoints = turf.featureCollection([]);
@@ -689,6 +658,30 @@
             var clustersSize= new Array(numberOfRoutes+1).join('0').split('').map(parseFloat);
             for (var i=0; i<dropoffLocations.features.length; i++){
                 clustersSize[dropoffLocations.features[i].properties.cluster]+=1};
+
+            while(Math.max(...clustersSize)>10){
+                numberOfRoutes= numberOfRoutes+1;
+                var KmeansPoints = turf.featureCollection([]);
+                dropoffLocations.features.forEach(drop =>{
+                    KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
+                })
+                var Kmeans = turf.clustersKmeans(KmeansPoints, {numberOfClusters: numberOfRoutes});
+
+                Kmeans.features.forEach(point => {
+                    for(var i = 0; i < dropoffLocations.features.length; i++){
+                        if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] &&
+                           point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){
+                                dropoffLocations.features[i].properties.cluster = point.properties.cluster
+                                break;
+                        }
+                    }
+                })
+
+                var clustersSize= new Array(numberOfRoutes+1).join('0').split('').map(parseFloat);
+                for (var i=0; i<dropoffLocations.features.length; i++){
+                    clustersSize[dropoffLocations.features[i].properties.cluster]+=1};
+            }
+
             // *********************************************************************
             // Mapbox
             // *********************************************************************
@@ -719,50 +712,50 @@
                   }
                 });
 
-                var size=numberOfRoutes;
-                for(var i=0; i<numberOfRoutes; i++){
-                    AutoAddRoute();
-                    AutoSelectTruck(i);
-                    var cluster= clustersSize.indexOf(Math.max(...clustersSize));
-                    for (var j=0; j<dropoffLocations.features.length; j++){
-                        if (dropoffLocations.features[j].properties.cluster == cluster){
-                            truckSelected.markedDropoff.features.push(dropoffLocations.features[j]);
-                            truckSelected.updateLoad(dropoffLocations.features[j].properties.load);
-                            dropoffLocations.features.splice(j, 1);
-                            if (j>0){j=j-1;}
-                            else if(j==0 && dropoffLocations.features.length>0){j=-1;}
+                // var size=numberOfRoutes;
+                // for(var i=0; i<numberOfRoutes; i++){
+                //     AutoAddRoute();
+                //     AutoSelectTruck(i);
+                //     var cluster= clustersSize.indexOf(Math.max(...clustersSize));
+                //     for (var j=0; j<dropoffLocations.features.length; j++){
+                //         if (dropoffLocations.features[j].properties.cluster == cluster){
+                //             truckSelected.markedDropoff.features.push(dropoffLocations.features[j]);
+                //             truckSelected.updateLoad(dropoffLocations.features[j].properties.load);
+                //             dropoffLocations.features.splice(j, 1);
+                //             if (j>0){j=j-1;}
+                //             else if(j==0 && dropoffLocations.features.length>0){j=-1;}
 
-                            if(dropoffLocations.features.length==0){break;}
-                            else if(truckSelected.markedDropoff.features.length==10 || truckSelected.markedDropoff.features.length==Math.max(...clustersSize)){
+                //             if(dropoffLocations.features.length==0){break;}
+                //             else if(truckSelected.markedDropoff.features.length==10 || truckSelected.markedDropoff.features.length==Math.max(...clustersSize)){
 
-                                    KmeansPoints = turf.featureCollection([]);
-                                    dropoffLocations.features.forEach(drop =>{
-                                        KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
-                                    })
+                //                     KmeansPoints = turf.featureCollection([]);
+                //                     dropoffLocations.features.forEach(drop =>{
+                //                         KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
+                //                     })
 
-                                    if(size-1==0){size=Math.sqrt(numberOfPoints/2)}
-                                    else{size-=1;}
-                                    Kmeans = turf.clustersKmeans(KmeansPoints, {numberOfClusters: size})
-                                    Kmeans.features.forEach(point => {
-                                        for(var x = 0; x < dropoffLocations.features.length; x++){
-                                            if(point.geometry.coordinates[0] == dropoffLocations.features[x].geometry.coordinates[0] &&
-                                               point.geometry.coordinates[1] == dropoffLocations.features[x].geometry.coordinates[1]){
-                                                    dropoffLocations.features[x].properties.cluster = point.properties.cluster
-                                                    break;
-                                            }
-                                        }
-                                    })
+                //                     if(size-1==0){size=Math.sqrt(numberOfPoints/2)}
+                //                     else{size-=1;}
+                //                     Kmeans = turf.clustersKmeans(KmeansPoints, {numberOfClusters: size})
+                //                     Kmeans.features.forEach(point => {
+                //                         for(var x = 0; x < dropoffLocations.features.length; x++){
+                //                             if(point.geometry.coordinates[0] == dropoffLocations.features[x].geometry.coordinates[0] &&
+                //                                point.geometry.coordinates[1] == dropoffLocations.features[x].geometry.coordinates[1]){
+                //                                     dropoffLocations.features[x].properties.cluster = point.properties.cluster
+                //                                     break;
+                //                             }
+                //                         }
+                //                     })
 
-                                    clustersSize= new Array(size+1).join('0').split('').map(parseFloat);
-                                    for (var y=0; y<dropoffLocations.features.length; y++){
-                                        clustersSize[dropoffLocations.features[y].properties.cluster]+=1};
-                                    break;
-                            }
-                        }
+                //                     clustersSize= new Array(size+1).join('0').split('').map(parseFloat);
+                //                     for (var y=0; y<dropoffLocations.features.length; y++){
+                //                         clustersSize[dropoffLocations.features[y].properties.cluster]+=1};
+                //                     break;
+                //             }
+                //         }
 
-                    }
-                    AutoDrawRoute(truckSelected, trucks, map, mapboxgl.accessToken);
-                }
+                //     }
+                //     AutoDrawRoute(truckSelected, trucks, map, mapboxgl.accessToken);
+                // }
 
                 HTMLTable(trucks, map);
 
@@ -856,7 +849,7 @@
                     var center = turf.center(dropcoor)
 
                     // Uncomment the line below to use the radius function
-                    Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
+                    // Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
                 }
             });
 

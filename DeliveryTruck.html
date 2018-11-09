@@ -525,7 +525,7 @@
                 {name:'Carolyn Ferrandino', telephone:'(787)-617-6685', 
                  address:'419 Calle Darién, San Juan, Puerto Rico 00920', weight:-1, load:1, ppop:false}));
             dropoffLocations.features.push(turf.point([-66.1413240,18.388449],
-                {name:'Zayrah Silva', telephone:'(787)-242-4120 / 7877635050', 
+                {name:'Zayrah Silva', telephone:'(787)-242-4120 / (787)-763-5050', 
                  address:'55-11 Calle Boundary, Ubr Santa Rosa', weight:-1, load:1, ppop:false}));
             dropoffLocations.features.push(turf.point([-66.1236040,18.391821],
                 {name:'Zayra Lopez', telephone:'(787)-396-3333', 
@@ -773,9 +773,9 @@
                     alert('Please select a route before adding a dropoff.\nSelect the route you want to interact with by clicking the Route.')
                 }
                 // if a marker is clicked, do the following
-                if (pt.length){
+                if (pt.length && truckSelected.waypoints.length <=12 ){
                     // if the marker is unmarked, do the following
-                    if(pt[0].layer.id=='unmarked-dropoff'){
+                    if(pt[0].layer.id=='unmarked-dropoff' && truckSelected.waypoints.length <12){
                         // looks for the clicked marker in dropoffLocations.
                         for(var i = 0; i < dropoffLocations.features.length; i++){
                             // if the clicked marker is found, do the following.
@@ -791,7 +791,9 @@
                             dropoffLocations.features[i].properties.weight = -1;
                         }
                     }
-
+                    else if( truckSelected.waypoints.length == 12){
+                        alert("Reached Max number of stops remove a stop to be able to add another stop")
+                    }
                     // if the marker is marked, do the following
                     else{
                         // look the marker in markedDropoff of truckSelected
@@ -819,6 +821,9 @@
                             }
                         }
                     }
+                }
+                else if(truckSelected.waypoints.length >= 12){
+                    alert("Reached Max number of stops remove a stop to be able to add another stop")
                 }
 
                 // if marker not clicked, change ppop of dropoffLocations to false.

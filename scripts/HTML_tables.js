@@ -45,8 +45,9 @@ function HTMLDirections(truck, id, trucks, map){
 // On the main menu of the ui, this HTML will be displayed
 function HTMLTable(trucks, map){
     // HTMLegend(map);
+    HTML_Table = '<button class="button" type="button" style="background-color:#4CAF50" onClick="CreateRoute(trucks, map)">Add Route</button>'
     truckSelected=undefined;
-    HTML_Table = '<table>'
+    HTML_Table += '<table>'
     var parameter = trucks +','+ map;
      for(var i = 0; i < trucks.length ; i++){
         HTML_Table+='<tr>'
@@ -65,7 +66,7 @@ function HTMLTable(trucks, map){
         HTML_Table+= '</tr>';
     }
     HTML_Table += '</table>'
-    HTML_Table += '<button class="button" type="button" style="background-color:#4CAF50" onClick="CreateRoute(trucks, map)">Add Route</button>'
+    
     document.getElementById('pd').innerHTML = HTML_Table
     trucks.forEach(truck => {
 

@@ -35,7 +35,7 @@ function drawRoute(truck, trucks, map, accessToken){
         data.waypoints[0].location.push("Start")
         for(i=1;i<=truck.markedDropoff.features.length;i++){
             data.waypoints[i].location.push(truck.markedDropoff.features[i-1].properties.name);  
-            data.waypoints[i].location.push(truck.markedDropoff.features[i-1].properties.phone);  
+            data.waypoints[i].location.push(truck.markedDropoff.features[i-1].properties.telephone);  
         }
         
         truck.waypoints = [];

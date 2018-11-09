@@ -16,10 +16,11 @@ function HTMLDirections(truck, id, trucks, map){
     HTML_Directions +=  '<div> Stops: ' + truck.markedDropoff.features.length + '</div>'
    
     if(truck.waypoints.length>0){
+
         HTML_Directions += '<ol>'
-        for(var i=0;i<truck.waypoints.length;i++){
-            if(truck.waypoints[i][2]=='Start'){HTML_Directions += '<li>'+ truck.waypoints[i][2] +'</li>'}
-            else{HTML_Directions += '<li>'+ truck.waypoints[i][2] + ' ('+ truck.waypoints[i][3] +')</li>'}
+        for(var i=1;i<truck.waypoints.length;i++){
+            
+            HTML_Directions += '<li>'+ truck.waypoints[i][2] + ' | '+ truck.waypoints[i][3] +'</li>'
         }
         HTML_Directions += '</ol>'
     }

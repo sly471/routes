@@ -1,0 +1,119 @@
+body {margin: 0; padding: 0;}
+
+tr:nth-child(even) {background-color: #dddddd;}
+
+table {
+    font-family: arial, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+td{
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    cursor:context-menu;
+}
+
+th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    cursor:pointer;
+}
+
+#map {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.truck {
+    margin: -10px -10px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #3887BE;
+    cursor: pointer;
+}
+
+.button {
+   background-color: #4CAF50;
+   border: none;
+   color: white;
+   padding: 15px 135px;
+   text-align: center;
+   text-decoration: none;
+   display: inline-block;
+   font-size: 16px;
+   margin: 4px 2px;
+   cursor: pointer;
+}
+
+.back {
+    font-family: arial;
+    border-collapse: collapse;
+    width: 100%;
+    padding: 20px 40px;
+}
+
+.mapboxgl-popup {max-width: 200px;}
+
+.mapboxgl-popup-content {
+  text-align: center;
+  font-family: 'Open Sans', sans-serif;
+}
+
+.map-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: rgba(255, 255, 255, 1.0);
+  margin-left: auto;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+}
+
+#features {
+  top: 0;
+  height: 640px;
+}
+
+.previous {
+    background-color: #f1f1f1;
+    color: black;
+}
+
+.dot {
+    height: 10px;
+    width: 10px;
+    background-color: #735139;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.legend {
+    background-color: #fff;
+    border-radius: 3px;
+    bottom: 30px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.10);
+    font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
+    padding: 10px;
+    position: absolute;
+    right: 10px;
+    z-index: 1;
+}
+
+.legend h4 {margin: 0 0 10px;}
+
+.legend div span {
+    border-radius: 50%;
+    display: inline-block;
+    height: 15px;
+    margin-right: 5px;
+    width: 15px;
+}

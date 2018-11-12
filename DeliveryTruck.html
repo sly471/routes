@@ -80,7 +80,7 @@
             var trucks = [];
             var popuproute;
             var truckSelected;
-            var hoverPopup = new mapboxgl.Popup({ offset: [-1, -7], closeButton:false});
+            var hoverPopup = new mapboxgl.Popup({ offset: 20, closeButton:false});
             var HTML_Table = '<table>'
             var id=1;
             var AutoColors= ['#ff0000', '#ff8000', '#ffff00',
@@ -179,46 +179,6 @@
 
                 var RouteColor = document.getElementById('RouteColor').value;
                 var MaxLoad = document.getElementById('MaxLoad').value;
-
-                var tmp= new Truck([x, y], MaxLoad, RouteColor);
-                trucks.push(tmp);
-                map.addLayer({
-                  id:'route'+tmp.id,
-                  type: 'line',
-                  source:{data: blank,type: 'geojson'},
-                  paint: tmp.routeColor
-                }, 'unmarked-dropoff');
-
-                map.on('mouseover', 'route'+tmp.id, e => {
-
-                    // check is cursor is hovering over route
-                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                    // if hovering on route, create route popup
-                    if (routeLocation.length){
-                        var pophtml = ''
-                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
-                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                            .setLngLat(e.lngLat)
-                            .setHTML(pophtml)
-                            .addTo(map);
-                    }
-                });
-
-                // when the cursor leaves the route, removes route popup.
-                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
-                HTMLTable(trucks, map);
-            }
-
-            function AutoAddRoute(){
-                // var location = document.getElementById('location').value;
-                // location = location.split(",");
-                var location= [-66.06988906860352, 18.44834670293207];
-                var x = parseFloat(location[0]);
-                var y = parseFloat(location[1]);
-
-                var RouteColor = AutoColors.shift();
-                var MaxLoad = 200;
 
                 var tmp= new Truck([x, y], MaxLoad, RouteColor);
                 trucks.push(tmp);

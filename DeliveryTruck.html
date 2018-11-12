@@ -83,9 +83,7 @@
             var hoverPopup = new mapboxgl.Popup({ offset: 20, closeButton:false});
             var HTML_Table = '<table>'
             var id=1;
-            var AutoColors= ['#ff0000', '#ff8000', '#ffff00',
-                             '#00ff00', '#00ffff', '#0000ff',
-                             '#ff00ff', '#808080', '#99004c'];
+            var AutoColors= ['#ff0000', '#ff8000', '#ffff00','#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#808080', '#99004c'];
 
             var Truck = function(_location, _maxLoad, _routeColor){
                 this.id=id++;                       //id of truck
@@ -408,48 +406,14 @@
 
                   HTMLTable(trucks, map);
 
-                  var KmeansPoints = turf.featureCollection([]);
-                  dropoffLocations.features.forEach(drop =>{
-                      KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
-                  })
-                  var Kmeans = turf.clustersKmeans(KmeansPoints, {numberOfClusters: numberOfRoutes});
+                  // cluster through dbscan algorithm
+      						var clustered = turf.clustersDbscan(map.getSource('unmarked-dropoff')._data, 2.1, {minPoints: 2});
 
-                  Kmeans.features.forEach(point => {
-                      for(var i = 0; i < dropoffLocations.features.length; i++){
-                          if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] &&
-                             point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){
-                                  dropoffLocations.features[i].properties.cluster = point.properties.cluster
-                                  break;
-                          }
-                      }
-                  })
+      						// cluster through kmean algorithm
+      						// var clustered = turf.clustersKmeans(map.getSource('unassignedMarkers')._data);
 
-                  var clustersSize= new Array(numberOfRoutes+1).join('0').split('').map(parseFloat);
-                  for (var i=0; i<dropoffLocations.features.length; i++){
-                      clustersSize[dropoffLocations.features[i].properties.cluster]+=1};
-
-                  while(Math.max(...clustersSize)>10){
-                      numberOfRoutes= numberOfRoutes+1;
-                      var KmeansPoints = turf.featureCollection([]);
-                      dropoffLocations.features.forEach(drop =>{
-                          KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
-                      })
-                      var Kmeans = turf.clustersKmeans(KmeansPoints, {numberOfClusters: numberOfRoutes});
-
-                      Kmeans.features.forEach(point => {
-                          for(var i = 0; i < dropoffLocations.features.length; i++){
-                              if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] &&
-                                 point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){
-                                      dropoffLocations.features[i].properties.cluster = point.properties.cluster
-                                      break;
-                              }
-                          }
-                      })
-
-                      var clustersSize= new Array(numberOfRoutes+1).join('0').split('').map(parseFloat);
-                      for (var i=0; i<dropoffLocations.features.length; i++){
-                          clustersSize[dropoffLocations.features[i].properties.cluster]+=1};
-                  }
+      						// redo source, now with clustered data
+      						map.getSource('unmarked-dropoff').setData(clustered);
 
 
       					}

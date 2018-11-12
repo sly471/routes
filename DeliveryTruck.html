@@ -187,24 +187,24 @@
                   paint: tmp.routeColor
                 }, 'unmarked-dropoff');
 
-                map.on('mouseover', 'route'+tmp.id, e => {
-
-                    // check is cursor is hovering over route
-                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                    // if hovering on route, create route popup
-                    if (routeLocation.length){
-                        var pophtml = ''
-                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
-                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                            .setLngLat(e.lngLat)
-                            .setHTML(pophtml)
-                            .addTo(map);
-                    }
-                });
-
-                // when the cursor leaves the route, removes route popup.
-                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
+                // map.on('mouseover', 'route'+tmp.id, e => {
+                //
+                //     // check is cursor is hovering over route
+                //     var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+                //     // if hovering on route, create route popup
+                //     if (routeLocation.length){
+                //         var pophtml = ''
+                //         pophtml+= 'Route '+ tmp.id +' Duration<br>'
+                //         pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                //         popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                //             .setLngLat(e.lngLat)
+                //             .setHTML(pophtml)
+                //             .addTo(map);
+                //     }
+                // });
+                //
+                // // when the cursor leaves the route, removes route popup.
+                // map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
                 HTMLTable(trucks, map);
             }
 
@@ -304,24 +304,24 @@
                   paint: tmp.routeColor
                 }, 'unmarked-dropoff');
 
-                map.on('mouseover', 'route'+tmp.id, e => {
-
-                    // check is cursor is hovering over route
-                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                    // if hovering on route, create route popup
-                    if (routeLocation.length){
-                        var pophtml = ''
-                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
-                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                            .setLngLat(e.lngLat)
-                            .setHTML(pophtml)
-                            .addTo(map);
-                    }
-                });
-
-                // when the cursor leaves the route, removes route popup.
-                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
+                // map.on('mouseover', 'route'+tmp.id, e => {
+                //
+                //     // check is cursor is hovering over route
+                //     var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+                //     // if hovering on route, create route popup
+                //     if (routeLocation.length){
+                //         var pophtml = ''
+                //         pophtml+= 'Route '+ tmp.id +' Duration<br>'
+                //         pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                //         popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                //             .setLngLat(e.lngLat)
+                //             .setHTML(pophtml)
+                //             .addTo(map);
+                //     }
+                // });
+                //
+                // // when the cursor leaves the route, removes route popup.
+                // map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
                 HTMLTable(trucks, map);
             }
 
@@ -562,18 +562,10 @@
 
             // when the cursor is hovering over the marker, it will change the cursor icon
             // from the grab icon to the pointer icon.
-            map.on('mouseover', 'marked-dropoff' , e=>{
-                features= map.queryRenderedFeatures(e.point, {layers:['marked-dropoff']});
-                if(features.length && truckSelected != undefined){map.getCanvas().style.cursor='pointer'};
-            })
-
-            // when the cursor leaves the marker, change cursor icon from the pointer icon
-            // to the grab icon.
-            map.on('mouseleave','unmarked-dropoff', e=> {map.getCanvas().style.cursor=''});
-
-            // when the cursor leaves the marker, change cursor icon from the pointer icon
-            // to the grab icon.
-            map.on('mouseleave','marked-dropoff' , e=> {map.getCanvas().style.cursor=''});
+            // map.on('mouseover', 'marked-dropoff' , e=>{
+            //     features= map.queryRenderedFeatures(e.point, {layers:['marked-dropoff']});
+            //     if(features.length && truckSelected != undefined){map.getCanvas().style.cursor='pointer'};
+            // })
 
         </script>
     </body>

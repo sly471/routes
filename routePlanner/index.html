@@ -5,13 +5,13 @@
 	<title>Route Planner</title>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	
+
 	<!-- jquery -->
 	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-	
+
 	<!-- popper -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-	
+
 	<!-- bootstrap -->
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
@@ -34,195 +34,12 @@
 		<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
 	<![endif]-->
 
-	<style type="text/css">
-		body {
-			margin: 0;
-			padding: 0;
-		}
-		#map {
-			position: absolute;
-			top: 0;
-			bottom: 0;
-			right: 0;
-			left: 0;
-		}
-	</style>
+	<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<div class="container">
-	<div id="map"></div>
-</div>
-	<script type="text/javascript">
-		$(function() {
-
-			// init base map
-			mapboxgl.accessToken = 'pk.eyJ1IjoidG9ybGFuY28iLCJhIjoiY2prYmR3dmszMHVtcDNwbWl3cHdwOTl5NSJ9.NxympEZmljc0jq4DJmK5JQ';
-  			var map = new mapboxgl.Map({
-			  container: 'map',
-			  style: 'mapbox://styles/mapbox/light-v9',
-			  // style: 'mapbox://styles/mapbox/streets-v10',
-			  center: [-66.057914,18.409241],
-			  zoom: 9
-			});
-
-			// wait for map to load
-			map.on('load', function(feature) {
-
-				// load data and parse
-				Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vR3oZDnYhyhjcaL50fSW8aS7Db90WBoIfMjudpbZgm7Qn3xdpj010kdQdSdpgOIL16Vpo2zS5wy2L_G/pub?gid=0&single=true&output=csv", {
-					download: true,
-					complete: function(results) {
-						
-						// create customers array
-						var customers = [];
-						
-						// filter customers by the ones we will deliver to this week
-						customers = _.filter(results.data, function(customer){ return (customer[21] == "will deliver"); });
-
-						// format each customer as a feature
-						customers = _.map(customers, function(customer, key){ 
-							console.log([customer[8],customer[7]]);
-							console.log(customer[2]);
-							return {
-										type: 'Feature',
-										geometry: {
-											type: 'Point',
-											coordinates: [customer[8],customer[7]]
-										},
-										properties: {
-											fullName: customer[2],
-											objectId: customer[0],
-											subscriptionPlan: customer[3],
-											phone: customer[4],
-											address: customer[5],
-											navLink: customer[6],
-										}
-									}; 
-						});
-
-						map.addSource('unassignedMarkers', {
-							type: 'geojson',
-							data: {
-								type: 'FeatureCollection',
-								features: customers
-							}
-						});
-
-						map.addLayer({
-							"id": "points",
-							"type": "circle",
-							"source": "unassignedMarkers",
-							"layout": {},
-							"paint": {
-								"circle-radius": 5,
-							    "circle-color": "white",
-							    "circle-stroke-width": 10,
-							    "circle-stroke-opacity":0.25,
-								"circle-stroke-color": {
-									"property": "cluster",
-									"stops": [
-										[0, 'Fuchsia'],
-										[1, 'Purple'],
-										[2, 'Navy'],
-										[3, 'Blue'],
-										[4, 'Red'],
-										[5, 'Maroon'],
-										[6, 'Yellow'],
-										[7, 'Olive'],
-										[8, 'Lime'],
-										[9, 'Green'],
-										[10, 'Aqua'],
-										[11, 'Teal'],
-										[12, 'Black'],
-										[13, 'Gray'],
-										[14, 'White'],
-										[15, 'Silver']
-									]
-								}
-							}
-						});
-
-						// cluster through dbscan algorithm
-						var clustered = turf.clustersDbscan(map.getSource('unassignedMarkers')._data, 2.1, {minPoints: 2});
-
-						// cluster through kmean algorithm
-						// var clustered = turf.clustersKmeans(map.getSource('unassignedMarkers')._data);
-						
-						console.log(clustered);
-
-						// redo source, now with clustered data
-						map.getSource('unassignedMarkers').setData(clustered);
-
-						// test funcion that removes markers in time
-						// the purpose of this function is to show that affecting a source also affects layers that hold them
-						function removeMarkers() {
-							var keeprunning = setInterval(function(){ 
-								if(customers.length>0){
-									customers.pop();
-
-									map.getSource('unassignedMarkers').setData({
-										type: 'FeatureCollection',
-										features: customers
-									});
-
-								}else{
-									clearInterval(keeprunning);
-								}
-							}, 700);
-						}
-
-						// removeMarkers();
-
-						// Create a popup, but don't add it to the map yet.
-						var popup = new mapboxgl.Popup({
-							closeButton: false,
-							offset:20
-						});
-
-						// When a click event occurs on a feature in the places layer, open a popup at the
-						// location of the feature, with description HTML from its properties.
-						map.on('click', 'points', function (e) {
-						});
-
-						map.on('mousemove', function(e) {
-							var features = map.queryRenderedFeatures(e.point, { layers: ['points'] });
-							if (!features.length) {
-								popup.remove();
-								return;
-							}
-						
-							var feature = features[0];
-
-							popup.setLngLat(feature.geometry.coordinates)
-								.setHTML(feature.properties.fullName + " - " + feature.properties.cluster)
-								.addTo(map);
-
-							map.getCanvas().style.cursor = features.length ? 'pointer' : '';
-						});
-
-					}
-				});
-
-
-			});
-
-			// add markers to map
-			// geojson.features.forEach(function(marker) {
-
-			// 	// create a HTML element for each feature
-			// 	var el = document.createElement('div');
-			// 	el.className = 'marker';
-
-			// 	// make a marker for each feature and add to the map
-			// 	new mapboxgl.Marker(el)
-			// 		.setLngLat(marker.geometry.coordinates)
-			// 		.setPopup(new mapboxgl.Popup({ offset: 25 }) // add popups
-			// 		.setHTML('<h3>' + marker.properties.title + '</h3><p>' + marker.properties.description + '</p>'))
-			// 		.addTo(map);
-
-			// });
-
-		});
-	</script>
+	<div class="container">
+		<div id="map"></div>
+	</div>
+	<script src="app.js"></script>
 </body>
 </html>

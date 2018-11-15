@@ -68,16 +68,16 @@ $(function() {
           }
         });
 
-        map.addLayer({
-             "id": "filtered",
-             "type": "symbol",
-             "source": "allCustomers",
-             "layout": {
-                 "icon-image": "music-15",
-                 "icon-allow-overlap": true
-             },
-             "filter": ["==", "route", "route1"]
-         });
+        // map.addLayer({
+        //      "id": "filtered",
+        //      "type": "symbol",
+        //      "source": "allCustomers",
+        //      "layout": {
+        //          "icon-image": "music-15",
+        //          "icon-allow-overlap": true
+        //      },
+        //      "filter": ["==", "route", "route1"]
+        //  });
 
         // cluster through dbscan algorithm
         var clustered = turf.clustersDbscan(map.getSource('allCustomers')._data, 2.1, {minPoints: 2});

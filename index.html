@@ -12,136 +12,17 @@
         <script src='scripts/colorCalc_and_Randomizer.js'></script>
         <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
         <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
-
         <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet'/>
-        <style>
-            body {margin: 0; padding: 0;}
-
-            tr:nth-child(even) {background-color: #dddddd;}
-
-            table {
-                font-family: arial, sans-serif;
-                border-collapse: collapse;
-                width: 100%;
-            }
-
-            td{
-                border: 1px solid #dddddd;
-                text-align: left;
-                padding: 8px;
-                cursor:context-menu;
-            }
-
-            th {
-                border: 1px solid #dddddd;
-                text-align: left;
-                padding: 8px;
-                cursor:pointer;
-            }
-
-            #map {
-                position: absolute;
-                top: 0;
-                bottom: 0;
-                right: 0;
-                left: 0;
-            }
-
-            .truck {
-                margin: -10px -10px;
-                width: 20px;
-                height: 20px;
-                border: 2px solid #fff;
-                border-radius: 50%;
-                background: #3887BE;
-                cursor: pointer;
-            }
-
-            .button {
-               background-color: #4CAF50;
-               border: none;
-               color: white;
-               padding: 15px 135px;
-               text-align: center;
-               text-decoration: none;
-               display: inline-block;
-               font-size: 16px;
-               margin: 4px 2px;
-               cursor: pointer;
-            }
-
-            .back {
-                font-family: arial;
-                border-collapse: collapse;
-                width: 100%;
-                padding: 20px 40px;
-            }
-
-            .mapboxgl-popup {max-width: 200px;}
-
-            .mapboxgl-popup-content {
-              text-align: center;
-              font-family: 'Open Sans', sans-serif;
-            }
-
-            .map-overlay {
-              position: absolute;
-              bottom: 0;
-              left: 0;
-              background: rgba(255, 255, 255, 1.0);
-              margin-left: auto;
-              font-family: Arial, sans-serif;
-              overflow: auto;
-              border-radius: 3px;
-            }
-
-            #features {
-              top: 0;
-              height: 640px;
-            }
-
-            .previous {
-                background-color: #f1f1f1;
-                color: black;
-            }
-
-            .dot {
-                height: 10px;
-                width: 10px;
-                background-color: #735139;
-                border-radius: 50%;
-                display: inline-block;
-            }
-        </style>
+        <link rel="stylesheet" href="/css/style.css">
     </head>
     <body>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
-        <script type="text/javascript" src="../src/jquery.qrcode.js"></script>
-        <script type="text/javascript" src="../src/qrcode.js"></script>
-
-        <style>
-            .legend {
-                background-color: #fff;
-                border-radius: 3px;
-                bottom: 30px;
-                box-shadow: 0 1px 2px rgba(0,0,0,0.10);
-                font: 12px/20px 'Helvetica Neue', Arial, Helvetica, sans-serif;
-                padding: 10px;
-                position: absolute;
-                right: 10px;
-                z-index: 1;
-            }
-
-            .legend h4 {margin: 0 0 10px;}
-
-            .legend div span {
-                border-radius: 50%;
-                display: inline-block;
-                height: 15px;
-                margin-right: 5px;
-                width: 15px;
-            }
-        </style>
+        <!-- <script type="text/javascript" src="../src/jquery.qrcode.js"></script> -->
+        <!-- <script type="text/javascript" src="../src/qrcode.js"></script> -->
+        <!-- papaparse -->
+      	<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.1/papaparse.min.js"></script>
+        <!-- underscore -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
 
         <div id='marker-legend' class='legend'>
             <h4>Markers</h4>
@@ -152,7 +33,9 @@
 
         <div id='map' class='contain'> </div>
         <div class='map-overlay' id='features'>
-        <div id='pd'></div></div>
+          <div id='pd'></div>
+        </div>
+
         <script type="text/javascript">
             // *********************************************************************
             // TODO
@@ -172,6 +55,7 @@
             var map = new mapboxgl.Map({
                 container: 'map', // container id
                 style: 'mapbox://styles/mapbox/streets-v10', // stylesheet location
+                // style: 'mapbox://styles/mapbox/light-v9', // stylesheet location
                 center: [-66.700, 18.2208], // starting position
                 zoom: 8.5 // starting zoom
             });
@@ -179,9 +63,6 @@
             // Navigation Control
             var nav = new mapboxgl.NavigationControl();
             map.addControl(nav, 'top-right');
-            // map.addControl(LegendControl());
-            // var leg= new mapboxgl.LegendControl();
-            // map.addControl(leg, 'bottom-right');
 
             // *********************************************************************
             // Variable & Object Declaration
@@ -199,12 +80,10 @@
             var trucks = [];
             var popuproute;
             var truckSelected;
-            var hoverPopup = new mapboxgl.Popup({ offset: [-1, -7], closeButton:false});
+            var hoverPopup = new mapboxgl.Popup({ offset: 20, closeButton:false});
             var HTML_Table = '<table>'
             var id=1;
-            var AutoColors= ['#ff0000', '#ff8000', '#ffff00',
-                             '#00ff00', '#00ffff', '#0000ff',
-                             '#ff00ff', '#808080', '#99004c'];
+            var AutoColors= ['#ff0000', '#ff8000', '#ffff00','#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#808080', '#99004c'];
 
             var Truck = function(_location, _maxLoad, _routeColor){
                 this.id=id++;                       //id of truck
@@ -308,64 +187,24 @@
                   paint: tmp.routeColor
                 }, 'unmarked-dropoff');
 
-                map.on('mouseover', 'route'+tmp.id, e => {
-
-                    // check is cursor is hovering over route
-                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                    // if hovering on route, create route popup
-                    if (routeLocation.length){
-                        var pophtml = ''
-                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
-                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                            .setLngLat(e.lngLat)
-                            .setHTML(pophtml)
-                            .addTo(map);
-                    }
-                });
-
-                // when the cursor leaves the route, removes route popup.
-                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
-                HTMLTable(trucks, map);
-            }
-
-            function AutoAddRoute(){
-                // var location = document.getElementById('location').value;
-                // location = location.split(",");
-                var location= [-66.06988906860352, 18.44834670293207];
-                var x = parseFloat(location[0]);
-                var y = parseFloat(location[1]);
-
-                var RouteColor = AutoColors.shift();
-                var MaxLoad = 200;
-
-                var tmp= new Truck([x, y], MaxLoad, RouteColor);
-                trucks.push(tmp);
-                map.addLayer({
-                  id:'route'+tmp.id,
-                  type: 'line',
-                  source:{data: blank,type: 'geojson'},
-                  paint: tmp.routeColor
-                }, 'unmarked-dropoff');
-
-                map.on('mouseover', 'route'+tmp.id, e => {
-
-                    // check is cursor is hovering over route
-                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                    // if hovering on route, create route popup
-                    if (routeLocation.length){
-                        var pophtml = ''
-                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
-                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                            .setLngLat(e.lngLat)
-                            .setHTML(pophtml)
-                            .addTo(map);
-                    }
-                });
-
-                // when the cursor leaves the route, removes route popup.
-                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
+                // map.on('mouseover', 'route'+tmp.id, e => {
+                //
+                //     // check is cursor is hovering over route
+                //     var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+                //     // if hovering on route, create route popup
+                //     if (routeLocation.length){
+                //         var pophtml = ''
+                //         pophtml+= 'Route '+ tmp.id +' Duration<br>'
+                //         pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                //         popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                //             .setLngLat(e.lngLat)
+                //             .setHTML(pophtml)
+                //             .addTo(map);
+                //     }
+                // });
+                //
+                // // when the cursor leaves the route, removes route popup.
+                // map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
                 HTMLTable(trucks, map);
             }
 
@@ -403,7 +242,7 @@
                 })
                 map.getSource('marked-dropoff').setData(truckSelected.markedDropoff)
                 HTMLDirections(truckSelected, id, trucks, map)
-                Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
+                // Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
             }
 
             // Display automatically the popups of the dropoff within the Radius
@@ -465,24 +304,24 @@
                   paint: tmp.routeColor
                 }, 'unmarked-dropoff');
 
-                map.on('mouseover', 'route'+tmp.id, e => {
-
-                    // check is cursor is hovering over route
-                    var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                    // if hovering on route, create route popup
-                    if (routeLocation.length){
-                        var pophtml = ''
-                        pophtml+= 'Route '+ tmp.id +' Duration<br>'
-                        pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                        popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                            .setLngLat(e.lngLat)
-                            .setHTML(pophtml)
-                            .addTo(map);
-                    }
-                });
-
-                // when the cursor leaves the route, removes route popup.
-                map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
+                // map.on('mouseover', 'route'+tmp.id, e => {
+                //
+                //     // check is cursor is hovering over route
+                //     var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
+                //     // if hovering on route, create route popup
+                //     if (routeLocation.length){
+                //         var pophtml = ''
+                //         pophtml+= 'Route '+ tmp.id +' Duration<br>'
+                //         pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
+                //         popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
+                //             .setLngLat(e.lngLat)
+                //             .setHTML(pophtml)
+                //             .addTo(map);
+                //     }
+                // });
+                //
+                // // when the cursor leaves the route, removes route popup.
+                // map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
                 HTMLTable(trucks, map);
             }
 
@@ -504,204 +343,81 @@
                 // Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
             }
 
-            dropoffLocations.features.push(turf.point([-66.0609150,18.3028000],
-                {name:'Mabel Varela', phone:'7875791557',
-                address:'Urb Laderas de San Juan 83 calle ortegon San Juan PR, 00926', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0029940,18.2544850],
-                {name:'Sandra Catalá', phone:'7873108152',
-                address:'23 Calle Canaria, Urb. Estancias de Santa Bárbara, Gurabo PR 00778', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0689100,18.3755410],
-                {name:'Liz Figueroa', phone:'7873595006',
-                address:'1687 Calle Amarillo, San Juan, Puerto Rico 00926 Condominio Los Cedros B401', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0670414,18.3821390],
-                {name:'Doriliana Rivera', phone:'7874101017',
-                address:'140 Calle Guadalquivir, Urb. El Paraiso, San Juan PR 00926', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1252400,18.3689860],
-                {name:'Alan Wagner', phone:'7872369366',
-                address:'39 Calle Raphis, Urbanización Palma Real, Guaynabo, 00969, Puerto Rico', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1279900,18.3675350],
-                {name:'Michelle Coll', phone:'7879141037',
-                address:'83 Viajera, Palma Real, Guaynabo, PR 00969', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1030312,18.3726112],
-                {name:'Roberto C. Rodríguez', phone:'7875167960',
-                address:'39 Calle Escarlata, Guaynabo, Puerto Rico', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1294229,18.3883327],
-                {name:'Idabelle Diaz', phone:'7872325500',
-                address:'139 Carr. 177 cond. Santa Maria Apt. 605, Guaynabo, Puerto Rico ', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1144110,18.3901280],
-                {name:'Carmil S Castro', phone:'9397179702',
-                address:'Torrimar - 17-13 Alhambra, Guaynabo 00966', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1065740,18.3980080],
-                {name:'Marie Custodio', phone:'7875121045',
-                address:'Urb. Altamira calle Sirio 512 San Juan, Puerto Rico 00920 ', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.2353010,18.4229090],
-                {name:'Luz N Marrero ', phone:'7876889061',
-                address:'Urb. Valparaiso Calle 3 K 48, Toa Baja , PR', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1709810,18.4357410],
-                {name:'Betty Rodriguez', phone:'7876668705',
-                address:'Hg 19 Monsita Ferrer 7ma secc Levittown Toa Baja, Puerto Rico 00949', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0727820,18.4502070],
-                {name:'Edward Betancourt', phone:'6173085742',
-                address:'305 Calle Villamil, Apt 1807, San Juan PR', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0825860,18.4534550],
-                {name:'Vivianna ramirez de arellano', phone:'7873990621',
-                address:'655 Calle La Paz, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0158750,18.4453900],
-                {name:'Gabriela de la Vega', phone:'7876459537',
-                address:'14 Calle Amapola Apt 1201 Carolina, PR 00979', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0624190,18.4543770],
-                {name:'Johanna Torres ', phone:'7874557305',
-                address:'1510 Ashford Avenues, Ashford Plaza, Apt 2E, San Juan, Puerto Rico ', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0640460,18.4497010],
-                {name:'Tyler Martin', phone:'4152187667',
-                address:'1554 Calle Lopez Landron Apt PH504', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0655610,18.4462110],
-                {name:'Nicolette Rae Johnson', phone:'6513320441',
-                address:'352 Calle del Parque #610, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0665150,18.4280020],
-                {name:'Tamara Sabalier', phone:'7876382471',
-                address:'apt 601 New Center Plaza , 210 calle Jose Oliver', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0644090,18.4050350],
-                {name:'Mila Bravo', phone:'7873068375',
-                address:'271 Calle Georgetown University Gardens San Juan PR 00927', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0776170,18.4002420],
-                {name:'Myrnaliz Villafañe ', phone:'7876073723',
-                address:'Reparto Metropolitano 955 calle 31 SE San Juan PR 00921', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0595970,18.4095900],
-                {name:'Francisco Tirado', phone:'7874251555',
-                address:'145 Ave. Hostos Apt. G405 San Juan PR 00918', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0676670,18.4534800],
-                {name:'Jorge Gonzalez', phone:'7875091270',
-                address:'1373 Calle Luchetti, Apt 302, San Juan, Puerto Rico 00907', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0933670,18.3836150],
-                {name:'Primitivo Perez Beniquez', phone:'7879484787',
-                address:'1800 Calle San Gregorio Apt 210, San Juan, Puerto Rico 00921', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.7644300,18.4290660],
-                {name:'Delmaris Santiago Sierra', phone:'7872352823',
-                address:'hacienda toledo casa g286 Arecibo 00612', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1416500,18.3866400],
-                {name:'Zayrah Silva', phone:'Personal: 7872424120/ Trabajo: 7877635050',
-                address:'31-35 Ave. Main Urb Santa Rosa Bayamon, Puerto Rico 00959', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0556450,18.4025000],
-                {name:'Iris Cosme Gomez', phone:'7876276552',
-                address:'Cond Santa Rita 997 calle Córdova Dávila Apto A-803 San Juan, PR 00925', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0580340,18.3661600],
-                {name:'Marta Figueroa', phone:'7876473509',
-                address:'Calle 7 C1 Sierra del Río San Juan, Puerto Rico 00926', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0647510,18.4550210],
-                {name:'Myrna Santana', phone:'7877610338',
-                address:'Torre del Mar 6-A, Ashford Avenue, San Juan, Puerto Rico', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0685520,18.4198740],
-                {name:'Leticia Diaz', phone:'7873604488',
-                address:'Calle Soldado Ulises Arrigoitia 466, San Juan, Puerto Rico Urb Roosevelt 00918', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.1235000,18.3917600],
-                {name:'Zayra Lopez', phone:'7873963333',
-                address:'Valles de Torrimar Apto. i-109 Guaynabo, Puerto Rico 00966', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.0596260,18.4096960],
-                {name:'Jacqueline lugo murillo' , phone:'7876404939',
-                address:'180 Ave Hostos Cond Monte Sur Apt b116 Hato Rey Puerto Rico 00918', weight:-1, load:1, ppop:false}));
-            dropoffLocations.features.push(turf.point([-66.091035,18.410858],
-                {name:'Carolyn Ferrandino' , phone:'7876176685',
-                address:'419 Calle Darién, San Juan, Puerto Rico 00920', weight:-1, load:1, ppop:false}));
 
-
-            var KmeansPoints = turf.featureCollection([]);
-            dropoffLocations.features.forEach(drop =>{
-                KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
-            })
-            var Kmeans = turf.clustersKmeans(KmeansPoints, {numberOfClusters: numberOfRoutes});
-
-            Kmeans.features.forEach(point => {
-                for(var i = 0; i < dropoffLocations.features.length; i++){
-                    if(point.geometry.coordinates[0] == dropoffLocations.features[i].geometry.coordinates[0] &&
-                       point.geometry.coordinates[1] == dropoffLocations.features[i].geometry.coordinates[1]){
-                            dropoffLocations.features[i].properties.cluster = point.properties.cluster
-                            break;
-                    }
-                }
-            })
-
-            var clustersSize= new Array(numberOfRoutes+1).join('0').split('').map(parseFloat);
-            for (var i=0; i<dropoffLocations.features.length; i++){
-                clustersSize[dropoffLocations.features[i].properties.cluster]+=1};
             // *********************************************************************
             // Mapbox
             // *********************************************************************
             // Map Layers
             map.on('load', function(){
 
-                // Adds layer with all dropoff locations.
-                map.addLayer({
-                  id: 'unmarked-dropoff',
-                  type: 'symbol',
-                  source: {data: dropoffLocations,type: 'geojson'},
-                  layout: {
-                    'icon-allow-overlap': true,
-                    'icon-ignore-placement': true,
-                    'icon-image': 'square-15',
-                  }
-                });
+              // load data and parse
+      				Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vR3oZDnYhyhjcaL50fSW8aS7Db90WBoIfMjudpbZgm7Qn3xdpj010kdQdSdpgOIL16Vpo2zS5wy2L_G/pub?gid=0&single=true&output=csv", {
+      					download: true,
+      					complete: function(results) {
 
-                // Adds layer with all marked dropoff locations.
-                map.addLayer({
-                  id: 'marked-dropoff',
-                  type: 'symbol',
-                  source: {data: blank,type: 'geojson'},
-                  layout: {
-                    'icon-allow-overlap': true,
-                    'icon-ignore-placement': true,
-                    'icon-image': 'circle-15',
-                  }
-                });
+      						// filter customers by the ones we will deliver to this week
+      						customers = _.filter(results.data, function(customer){ return (customer[21] == "will deliver"); });
 
-                var size=numberOfRoutes;
-                for(var i=0; i<numberOfRoutes; i++){
-                    AutoAddRoute();
-                    AutoSelectTruck(i);
-                    var cluster= clustersSize.indexOf(Math.max(...clustersSize));
-                    console.log('\nroute'+(i+1));
-                    for (var j=0; j<dropoffLocations.features.length; j++){
-                        console.log(dropoffLocations.features[j].properties);
-                        if (dropoffLocations.features[j].properties.cluster == cluster){
-                            truckSelected.markedDropoff.features.push(dropoffLocations.features[j]);
-                            truckSelected.updateLoad(dropoffLocations.features[j].properties.load);
-                            dropoffLocations.features.splice(j, 1);
-                            if (j>0){j=j-1;}
-                            else if(j==0 && dropoffLocations.features.length>0){j=-1;}
+      						// format each customer as a feature
+      						dropoffLocations.features = _.map(customers, function(customer, key){
+      							return {
+      										type: 'Feature',
+      										geometry: {
+      											type: 'Point',
+      											coordinates: [customer[8],customer[7]]
+      										},
+      										properties: {
+      											fullName: customer[2],
+                            name: customer[2],
+      											objectId: customer[0],
+      											subscriptionPlan: customer[3],
+      											phone: customer[4],
+                            telephone: customer[4],
+      											address: customer[5],
+      											navLink: customer[6],
+                            weight:-1, load:1, ppop:false
+      										}
+      									};
+      						});
 
-                            if(dropoffLocations.features.length==0){break;}
-                            else if(truckSelected.markedDropoff.features.length==10 || truckSelected.markedDropoff.features.length==Math.max(...clustersSize)){
-
-                                    KmeansPoints = turf.featureCollection([]);
-                                    dropoffLocations.features.forEach(drop =>{
-                                        KmeansPoints.features.push(turf.point(drop.geometry.coordinates))
-                                    })
-
-                                    if(size-1==0){size=Math.sqrt(numberOfPoints/2)}
-                                    else{size-=1;}
-                                    Kmeans = turf.clustersKmeans(KmeansPoints, {numberOfClusters: size})
-                                    Kmeans.features.forEach(point => {
-                                        for(var x = 0; x < dropoffLocations.features.length; x++){
-                                            if(point.geometry.coordinates[0] == dropoffLocations.features[x].geometry.coordinates[0] &&
-                                               point.geometry.coordinates[1] == dropoffLocations.features[x].geometry.coordinates[1]){
-                                                    dropoffLocations.features[x].properties.cluster = point.properties.cluster
-                                                    break;
-                                            }
-                                        }
-                                    })
-
-                                    clustersSize= new Array(size+1).join('0').split('').map(parseFloat);
-                                    for (var y=0; y<dropoffLocations.features.length; y++){
-                                        clustersSize[dropoffLocations.features[y].properties.cluster]+=1};
-                                    break;
-                            }
-                        }
-
+                  // Adds layer with all dropoff locations.
+                  map.addLayer({
+                    id: 'unmarked-dropoff',
+                    type: 'symbol',
+                    source: {data: dropoffLocations,type: 'geojson'},
+                    layout: {
+                      'icon-allow-overlap': true,
+                      'icon-ignore-placement': true,
+                      'icon-image': 'square-15',
                     }
-                    AutoDrawRoute(truckSelected, trucks, map, mapboxgl.accessToken);
-                }
+                  });
 
-                HTMLTable(trucks, map);
+                  // Adds layer with all marked dropoff locations.
+                  map.addLayer({
+                    id: 'marked-dropoff',
+                    type: 'symbol',
+                    source: {data: blank,type: 'geojson'},
+                    layout: {
+                      'icon-allow-overlap': true,
+                      'icon-ignore-placement': true,
+                      'icon-image': 'circle-15',
+                    }
+                  });
+
+                  HTMLTable(trucks, map);
+
+                  // cluster through dbscan algorithm
+      						var clustered = turf.clustersDbscan(map.getSource('unmarked-dropoff')._data, 2.1, {minPoints: 2});
+
+      						// cluster through kmean algorithm
+      						// var clustered = turf.clustersKmeans(map.getSource('unassignedMarkers')._data);
+
+      						// redo source, now with clustered data
+      						map.getSource('unmarked-dropoff').setData(clustered);
+
+
+      					}
+      				});
 
             });
 
@@ -720,9 +436,9 @@
                     alert('Please select a route before adding a dropoff.\nSelect the route you want to interact with by clicking the Route.')
                 }
                 // if a marker is clicked, do the following
-                if (pt.length){
+                if (pt.length && truckSelected.waypoints.length <=12 ){
                     // if the marker is unmarked, do the following
-                    if(pt[0].layer.id=='unmarked-dropoff'){
+                    if(pt[0].layer.id=='unmarked-dropoff' && truckSelected.waypoints.length <12){
                         // looks for the clicked marker in dropoffLocations.
                         for(var i = 0; i < dropoffLocations.features.length; i++){
                             // if the clicked marker is found, do the following.
@@ -738,7 +454,9 @@
                             dropoffLocations.features[i].properties.weight = -1;
                         }
                     }
-
+                    else if( truckSelected.waypoints.length == 12){
+                        alert("Reached Max number of stops remove a stop to be able to add another stop")
+                    }
                     // if the marker is marked, do the following
                     else{
                         // look the marker in markedDropoff of truckSelected
@@ -767,6 +485,9 @@
                         }
                     }
                 }
+                else if(truckSelected.waypoints.length >= 12){
+                    alert("Reached Max number of stops remove a stop to be able to add another stop")
+                }
 
                 // if marker not clicked, change ppop of dropoffLocations to false.
                 else{
@@ -793,7 +514,7 @@
                     var center = turf.center(dropcoor)
 
                     // Uncomment the line below to use the radius function
-                    Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
+                    // Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
                 }
             });
 
@@ -841,18 +562,10 @@
 
             // when the cursor is hovering over the marker, it will change the cursor icon
             // from the grab icon to the pointer icon.
-            map.on('mouseover', 'marked-dropoff' , e=>{
-                features= map.queryRenderedFeatures(e.point, {layers:['marked-dropoff']});
-                if(features.length && truckSelected != undefined){map.getCanvas().style.cursor='pointer'};
-            })
-
-            // when the cursor leaves the marker, change cursor icon from the pointer icon
-            // to the grab icon.
-            map.on('mouseleave','unmarked-dropoff', e=> {map.getCanvas().style.cursor=''});
-
-            // when the cursor leaves the marker, change cursor icon from the pointer icon
-            // to the grab icon.
-            map.on('mouseleave','marked-dropoff' , e=> {map.getCanvas().style.cursor=''});
+            // map.on('mouseover', 'marked-dropoff' , e=>{
+            //     features= map.queryRenderedFeatures(e.point, {layers:['marked-dropoff']});
+            //     if(features.length && truckSelected != undefined){map.getCanvas().style.cursor='pointer'};
+            // })
 
         </script>
     </body>

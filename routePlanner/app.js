@@ -80,7 +80,7 @@ $(function() {
         //  });
 
         // cluster through dbscan algorithm
-        var clustered = turf.clustersDbscan(map.getSource('allCustomers')._data, 2.1, {minPoints: 2});
+        var clustered = turf.clustersDbscan(map.getSource('allCustomers')._data, 1.9, {minPoints: 3});
 
         // cluster through kmean algorithm
         // var clustered = turf.clustersKmeans(map.getSource('allCustomers')._data);

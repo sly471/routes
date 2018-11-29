@@ -356,7 +356,7 @@
       					complete: function(results) {
 
       						// filter customers by the ones we will deliver to this week
-      						customers = _.filter(results.data, function(customer){ return (customer[21] == "will deliver"); });
+      						customers = _.filter(results.data, function(customer){ return (customer[20] == "will deliver"); });
 
       						// format each customer as a feature
       						dropoffLocations.features = _.map(customers, function(customer, key){

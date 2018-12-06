@@ -354,9 +354,8 @@
       				Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vR3oZDnYhyhjcaL50fSW8aS7Db90WBoIfMjudpbZgm7Qn3xdpj010kdQdSdpgOIL16Vpo2zS5wy2L_G/pub?gid=0&single=true&output=csv", {
       					download: true,
       					complete: function(results) {
-
       						// filter customers by the ones we will deliver to this week
-      						customers = _.filter(results.data, function(customer){ return (customer[20] == "will deliver"); });
+      						customers = _.filter(results.data, function(customer){ console.log(customer); return (customer[21] == "will deliver"); });
 
       						// format each customer as a feature
       						dropoffLocations.features = _.map(customers, function(customer, key){

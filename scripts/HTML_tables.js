@@ -1,3 +1,6 @@
+// Change Overlay to the truck selected with more details
+// Input: truck Selected, id of route, array of trucks objects, map
+// Output: None
 function HTMLDirections(truck, id, trucks, map){
     var HTML_Directions = '';
     HTML_Directions += '<button style="display:inline-block;'
@@ -41,8 +44,9 @@ function HTMLDirections(truck, id, trucks, map){
     document.getElementById('pd').innerHTML = HTML_Directions
 }
 
-// https://www.google.com/maps/dir/
-// On the main menu of the ui, this HTML will be displayed
+// On the main menu of the ui, the overlay will display all the route currently created with the most important information about them
+// Input: collection of trucks, map
+// Output: None
 function HTMLTable(trucks, map){
     // HTMLegend(map);
     HTML_Table = '<button class="button" type="button" style="background-color:#4CAF50" onClick="CreateRoute(trucks, map)">Add Route</button>'
@@ -74,7 +78,9 @@ function HTMLTable(trucks, map){
     })
     if(trucks.length!=0){allRoute()};
 }
-
+// Overlay that will appear when the user click remove route, to make sure i wasnt a missclick
+// Input: None
+// Output: None
 function HTMLRemoveAuth(){
     var HTML_RemoveAuth = '';
     HTML_RemoveAuth += '<div><h3>Are you sure you want to remove the route?</h3></div>';
@@ -83,7 +89,9 @@ function HTMLRemoveAuth(){
     
     document.getElementById('pd').innerHTML = HTML_RemoveAuth;
 }
-
+// Overlay that lets the user costumized the roue color and its load
+// Input: collection of trucks, map
+// Output: None
 function CreateRoute(trucks, map){
     var HTML_Route_Info = '';
     HTML_Route_Info += '<h2> Creating New Route <button style="display: inline-block;background-color:#FFFFFF;color:#000000; border: none;margin-left: 130px;cursor:pointer; "onClick="HTMLTable(trucks, map)">&#10799;</button> </h2>'; 

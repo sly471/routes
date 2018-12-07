@@ -1,5 +1,7 @@
 // This function will get the markedDropoff variable and feed it to the optimization API which will return
-// the optimized route for the truck.   
+// the optimized route for the truck.
+// Input:
+// Output:
 function getRouteMarked(route, truck, accessToken){
 
     var destinations = [];
@@ -12,6 +14,8 @@ function getRouteMarked(route, truck, accessToken){
 };
 
 // This functions creates the URL to updates the dropoff locations with the time that will take to be added to the route.
+// Input:
+// Output:
 function getRouteWeight(route, truck, accessToken){
 
     var destinations = [];
@@ -22,7 +26,9 @@ function getRouteWeight(route, truck, accessToken){
             + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
             + accessToken;
 };
-
+//
+// Input:
+// Output:
 function drawRoute(truck, trucks, map, accessToken){
     fetch(getRouteMarked(truck.markedDropoff, truck, accessToken))
     .then(res => {
@@ -58,7 +64,9 @@ function drawRoute(truck, trucks, map, accessToken){
         HTMLDirections(truck, id, trucks, map)  
     })
 };
-
+//
+// Input:
+// Output:
 function AutoDrawRoute(truck, trucks, map, accessToken){
     fetch(getRouteMarked(truck.markedDropoff, truck, accessToken))
     .then(res => {

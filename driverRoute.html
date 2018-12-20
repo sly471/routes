@@ -103,12 +103,11 @@
 
       var routes = _.groupBy(dropoffs, function(dropoff){ return dropoff.route; });
 
-
       $('#dropoffs').html("");
 
       _.each([routes[Object.keys(routes)[parseInt(getUrlParameter("route"))]]], function(route) {
         var i = 0;
-        $('#title').html(getUrlParameter("route"));
+        $('#title').html("Route " + getUrlParameter("route"));
 
         _.each(route, function(dropoff){
 

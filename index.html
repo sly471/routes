@@ -3,568 +3,446 @@
     <head>
         <meta charset='utf-8' />
         <link rel="icon" href="PRoduce-logo.png">
-        <title>Delivery truck</title>
+        <title>Route Planner</title>
 
         <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+
+        <!-- turf js -->
         <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
-        <script src='scripts/HTML_tables.js'></script>
-        <script src='scripts/Connections.js'></script>
-        <script src='scripts/colorCalc_and_Randomizer.js'></script>
+        
+        <!-- jquery -->
         <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js'></script>
+
+        <!-- mapbox gl -->
         <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.js'></script>
         <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.2/mapbox-gl.css' rel='stylesheet'/>
-        <link rel="stylesheet" href="css/style.css">
-    </head>
-    <body>
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.5.2/jquery.min.js"></script>
-        <!-- <script type="text/javascript" src="../src/jquery.qrcode.js"></script> -->
-        <!-- <script type="text/javascript" src="../src/qrcode.js"></script> -->
+
         <!-- papaparse -->
-      	<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.1/papaparse.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/4.6.1/papaparse.min.js"></script>
+        
         <!-- underscore -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+    
+        <!-- bootstrap 4 -->
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
-        <div id='marker-legend' class='legend'>
-            <h4>Markers</h4>
-            <div><span><svg width="10" height="10"><rect width="10" height="10" style="fill:#735139" /></svg></span>Unmarked Dropoff</div>
-            <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#735139"  /></svg></span>Marked Dropoff</div>
-            <div><span><svg width="10" height="10"><circle cx="5" cy="5" r="5" style="fill:#3887BE"  /></svg></span>Truck</div>
-        </div>
+        <!-- custom styles -->
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+        
+        <div id='map'></div>
 
-        <div id='map' class='contain'> </div>
-        <div class='map-overlay' id='features'>
-          <div id='pd'></div>
+        <div class='map-overlay top'>
+            <div class='map-overlay-inner'>
+
+                <div id="navGroup" class="carousel slide" data-interval="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <h3>Select a data source:</h3>
+                            <form id="selectDataSource">
+                                <div class="form-group">
+                                    <label for="sourceInputFile"><span class="badge badge-danger">A</span> From File (not yet implemented)</label>
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input" id="sourceInputFile" name="sourceInputFile">
+                                        <label class="custom-file-label" for="sourceInputFile">Choose file</label>
+                                    </div>
+                                    <small id="fileDetails" class="form-text text-muted">4 column csv [name, address, lat, lng]</small>
+                                </div>
+                                <div class="form-group">
+                                    <label for="sourceInputUrl"><span class="badge badge-primary">B</span> From Url</label>
+                                    <input type="text" class="form-control" id="sourceInputUrl" name="sourceInputUrl" value="https://docs.google.com/spreadsheets/d/e/2PACX-1vR3oZDnYhyhjcaL50fSW8aS7Db90WBoIfMjudpbZgm7Qn3xdpj010kdQdSdpgOIL16Vpo2zS5wy2L_G/pub?gid=0&single=true&output=csv">
+                                </div>
+                                <button type="submit" class="btn btn-primary">Submit</button>
+                            </form>
+                        </div>
+                        <div class="carousel-item">
+                            <h3>Step 2:</h3>
+
+                            <ul id="route-list"></ul>
+
+                            <button onclick="addRoute()">add route</button>
+                            
+                            <hr>
+
+                            <h3>Visualize Clusters:</h3>                            
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <button type="button" class="btn btn-secondary" onclick="changeClustering('none')">None</button>
+                                <button type="button" class="btn btn-secondary" onclick="changeClustering('dbscan')">DB Scan</button>
+                                <button type="button" class="btn btn-secondary" onclick="changeClustering('kmean')">K Mean</button>
+                            </div>
+                        </div>
+                        <div class="carousel-item">
+                            <button onclick="back()">back</button>
+                            <h3 id="route-title"></h3>
+                            <ul id="route-drop-list"></ul>
+                            <button onclick="removeRouteAndClearItsDrops(selectedRouteColor)">delete</button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
         </div>
 
         <script type="text/javascript">
-            // *********************************************************************
-            // TODO
-            // *********************************************************************
-            // - Solves problem with radius that creates popups with negative times.
-            // - Make the UI more intituive.
-            // - Adding legend for marked dropoff, dropoff location
-            // - Make route box have a clickable pointer to help user on how the porgram works
-            // *********************************************************************
-            // Mapbox
-            // *********************************************************************
+
+            var palette = ['Fuchsia', 'Purple', 'Navy', 'Blue', 'Red', 'Maroon', 'Yellow', 'Olive', 'Lime', 'Green', 'Aqua', 'Teal', 'Black', 'Gray', 'White', 'Silver'];
+            var createdLayers = [];
+            var allDrops= turf.featureCollection([]);
+            var routedDrops = turf.featureCollection([]);
+            var selectedRouteColor = null;
+            var googleKey = "AIzaSyD5VVqqzGogPu9yw5MEkQR4LDpY34mGt1Y";
+            var flyToTimeOut;
+            var origin = [-66.061674, 18.451443]; // Nonna
 
             // Load initial map
-            // *********************************************************************
             mapboxgl.accessToken = 'pk.eyJ1IjoidG9ybGFuY28iLCJhIjoiY2prYmR3dmszMHVtcDNwbWl3cHdwOTl5NSJ9.NxympEZmljc0jq4DJmK5JQ';
 
             var map = new mapboxgl.Map({
-                container: 'map', // container id
-                style: 'mapbox://styles/mapbox/streets-v10', // stylesheet location
-                // style: 'mapbox://styles/mapbox/light-v9', // stylesheet location
-                center: [-66.700, 18.2208], // starting position
-                zoom: 8.5 // starting zoom
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v10',
+                center: origin,
+                zoom: 8.5
             });
 
             // Navigation Control
             var nav = new mapboxgl.NavigationControl();
             map.addControl(nav, 'top-right');
 
-            // *********************************************************************
-            // Variable & Object Declaration
-            // *********************************************************************
+            // Create a Global popup
+            var popup = new mapboxgl.Popup({ closeButton: false, offset:20 });
 
-            // List which holds all the known dropoff locations on the map.
-            // var numberOfRoutes= prompt("Please enter the number of routes to be made", 3);
-            // while(numberOfRoutes<1){numberOfRoutes= prompt("Please enter the number of routes to be made", 1);}
-            var numberOfRoutes= 5;
-            var dropcoor = turf.featureCollection([]);
-            var dropoffLocations= turf.featureCollection([]);
-            var dropoffPopup = turf.featureCollection([]);
-            var blank = turf.featureCollection([]);
-            var popups= [];
-            var trucks = [];
-            var popuproute;
-            var truckSelected;
-            var hoverPopup = new mapboxgl.Popup({ offset: 20, closeButton:false});
-            var HTML_Table = '<table>'
-            var id=1;
-            var AutoColors= ['#ff0000', '#ff8000', '#ffff00','#00ff00', '#00ffff', '#0000ff', '#ff00ff', '#808080', '#99004c'];
-
-            var Truck = function(_location, _maxLoad, _routeColor){
-                this.id=id++;                       //id of truck
-                this.location = _location;          //initial location of truck
-                this.maxLoad = _maxLoad;            //maximum weight that truck can handle
-                this.currentLoad = _maxLoad;        //current weight that truck is handling
-                this.routeWeight = 0;               //time it takes the route to complete
-                this.markedDropoff = turf.featureCollection([]);
-                this.waypoints = [];
-                this.route=[];
-                this.marker = document.createElement('div');
-                this.marker.classList = 'truck';
-                this.routeMile;
-                this.color= _routeColor
-                this.routeColor= {'line-color':this.color , 'line-width':4};;
-
-                this.truckMarker = new mapboxgl.Marker(this.marker)
-                   .setLngLat(this.location)
-                   .addTo(map);
-
-                this.updateLoad = load => {
-                    if((this.currentLoad - load) >= 0){this.currentLoad = this.currentLoad - load;}
-                    else{alert('Not enought load in truck');}
-                };
-
-                this.freeLoad= load =>{this.currentLoad= this.currentLoad + load;}
-
-                this.updateRouteWeight = function(routeDurability){
-                    // routeDurability will contain data.trips[0].duration which contains
-                    // the time expected in seconds
-                    this.routeWeight = Math.round(routeDurability/60)
-
-                }
-            };
-
-            // *********************************************************************
-            // Functions Declaration
-            // *********************************************************************
-
-            // When Selecting a truck, this will be the menu that will display. It displays information about the route that was selected(soon directions of the route)
-
-            // This function will get the information returned from the getRoute and use it to draw the optimized
-            // truck route on the map.
-
-            function allRoute(){
-                var allMarkedDropoff = turf.featureCollection([]);
-                trucks.forEach(truck => {
-                    // map.setLayoutProperty('route'+truck.id, 'visibility', "visible");
-                    map.setPaintProperty('route'+truck.id, 'line-opacity', 1)
-                    truck.markedDropoff.features.forEach(md  =>{
-                        allMarkedDropoff.features.push(md);
-                    })
-                })
-                map.getSource('unmarked-dropoff').setData(dropoffLocations);
-                map.getSource('marked-dropoff' ).setData(allMarkedDropoff);
-            }
-
-            // This functions calls the optimization api to calculate the time that will add to each dropoff
-            function updateTruckWeight(drop, truck, hover){
-                var copyMarked = truck.markedDropoff.features.slice(0);
-                copyMarked.push(drop)
-                fetch(getRouteWeight(copyMarked, truck, mapboxgl.accessToken))
-                .then(res =>{
-                    return res.json();
-                })
-                .then(data =>{
-                    var newWeight = Math.round(data.trips[0].duration/60) - truck.routeWeight;
-                    drop.properties.weight = newWeight;
-                    drop.properties.color = colorCalculator(drop.properties)
-                    return drop
-                })
-                .then(feature =>{
-
-                    createPopup(feature, hover);
-                    dropoffLocations.features.forEach(function(dropoff){
-                        if(dropoff.properties.name == feature.properties.name){
-                            dropoff.properties.weight = feature.properties.weight
-                        }
-                    map.getSource('unmarked-dropoff').setData(dropoffLocations)
-                    })
-                })
-            };
-
-            // Function that is called when the Add Route Button is added. For now it adds a marker to the
-            // map within a bounding box. and create a truck object.
-            function AddRoute(){
-                var location = document.getElementById('location').value;
-                location = location.split(",")
-                var x = parseFloat(location[0])
-                var y = parseFloat(location[1])
-
-                var RouteColor = document.getElementById('RouteColor').value;
-                var MaxLoad = document.getElementById('MaxLoad').value;
-
-                var tmp= new Truck([x, y], MaxLoad, RouteColor);
-                trucks.push(tmp);
-                map.addLayer({
-                  id:'route'+tmp.id,
-                  type: 'line',
-                  source:{data: blank,type: 'geojson'},
-                  paint: tmp.routeColor
-                }, 'unmarked-dropoff');
-
-                // map.on('mouseover', 'route'+tmp.id, e => {
-                //
-                //     // check is cursor is hovering over route
-                //     var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                //     // if hovering on route, create route popup
-                //     if (routeLocation.length){
-                //         var pophtml = ''
-                //         pophtml+= 'Route '+ tmp.id +' Duration<br>'
-                //         pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                //         popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                //             .setLngLat(e.lngLat)
-                //             .setHTML(pophtml)
-                //             .addTo(map);
-                //     }
-                // });
-                //
-                // // when the cursor leaves the route, removes route popup.
-                // map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
-                HTMLTable(trucks, map);
-            }
-
-            function removeRoute(){
-                map.removeLayer('route'+truckSelected.id);
-                map.removeSource('route'+truckSelected.id);
-                while(truckSelected.route.length>0){
-                    dropoffLocations.push(truckSelected.route[0]);
-                    truckSelected.route.splice(0,1);
-                }
-                for(var i=0; i<trucks.length; i++){
-                    if(trucks[i].id==truckSelected.id){
-                        trucks[i].truckMarker.remove();
-                        trucks.splice(i, 1);
-                        break;
-                    }
-                }
-                map.getSource('unmarked-dropoff').setData(dropoffLocations);
-                map.getSource('marked-dropoff').setData(blank);
-                HTMLTable(trucks, map);
-            }
-
-            function SelectTruck(id){
-
-                trucks.forEach(truck => {
-
-                    if(truck == trucks[id]){
-                        truckSelected = trucks[id]
-                        map.setPaintProperty('route'+truckSelected.id, 'line-opacity', 1)
-                    }
-                    else{
-                    truck.truckMarker.remove()
-                    map.setPaintProperty('route'+truck.id, 'line-opacity', 0.3)
-                    }
-                })
-                map.getSource('marked-dropoff').setData(truckSelected.markedDropoff)
-                HTMLDirections(truckSelected, id, trucks, map)
-                // Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
-            }
-
-            // Display automatically the popups of the dropoff within the Radius
-            function Radius(_x, _y, truck){
-
-                var centerPoint = {radius:0.16093, x:_x, y:_y}
-                dropoffLocations.features.forEach(point =>{
-                    var pointLocation = {radius: 0.00001, x:point.geometry.coordinates[0], y:point.geometry.coordinates[1]}
-                    var dx = centerPoint.x - pointLocation.x;
-                    var dy = centerPoint.y - pointLocation.y;
-                    if(Math.sqrt(dx*dx + dy*dy) < centerPoint.radius){
-                        dropoffPopup.features.push(point)
-                        new updateTruckWeight(point, truck, false)
-                    }
-                })
-            };
-
-            // if feature.weight == -1 || feature.weight < dropoff.weight
-            // Creates a popup for every dropoff in dropoffLocations.
-            function createPopup(feature, hover){
-                html= ''
-                // html+= feature.properties.load+' palletes<br>'
-                html+= feature.properties.name+'<br>'
-                html+= '<svg height=15 width=20 xmlns="http://www.w3.org/2000/svg" version="1.1">'
-                html+= '<circle cx="10" cy="10" r="5" fill="'+feature.properties.color+'"/></svg>'
-                html+= '+'+feature.properties.weight+ ' min'
-                html+= '<div> Cluster: ' + feature.properties.cluster + '<div>'
-                if(hover){
-                    hoverPopup.setHTML(html)
-                    .setLngLat(feature.geometry.coordinates)
-                    .addTo(map);
-                }
-                else{
-                    var popup = new mapboxgl.Popup({ offset: [-1, -7], closeButton:false})
-                        //.setLngLat(feature.geometry.coordinates)
-                        .setHTML(html)
-                        .setLngLat(feature.geometry.coordinates)
-                        .addTo(map);
-                    setTimeout(function(){popup.remove()}, 5000)
-                }
-            };
-
-            function AutoAddRoute(){
-                // var location = document.getElementById('location').value;
-                // location = location.split(",");
-                var location= [-66.06988906860352, 18.44834670293207];
-                var x = parseFloat(location[0]);
-                var y = parseFloat(location[1]);
-
-                var RouteColor = AutoColors.shift();
-                var MaxLoad = 200;
-
-                var tmp= new Truck([x, y], MaxLoad, RouteColor);
-                trucks.push(tmp);
-                map.addLayer({
-                  id:'route'+tmp.id,
-                  type: 'line',
-                  source:{data: blank,type: 'geojson'},
-                  paint: tmp.routeColor
-                }, 'unmarked-dropoff');
-
-                // map.on('mouseover', 'route'+tmp.id, e => {
-                //
-                //     // check is cursor is hovering over route
-                //     var routeLocation =  map.queryRenderedFeatures(e.point, {layers: ['route'+tmp.id]});
-                //     // if hovering on route, create route popup
-                //     if (routeLocation.length){
-                //         var pophtml = ''
-                //         pophtml+= 'Route '+ tmp.id +' Duration<br>'
-                //         pophtml+= tmp.routeWeight+ ' min' //Think of how to get the correct truck of the route selected.
-                //         popuproute = new mapboxgl.Popup({ offset: [0, -15], closeButton:false})
-                //             .setLngLat(e.lngLat)
-                //             .setHTML(pophtml)
-                //             .addTo(map);
-                //     }
-                // });
-                //
-                // // when the cursor leaves the route, removes route popup.
-                // map.on('mouseleave', 'route'+tmp.id, e => {popuproute.remove();});
-                HTMLTable(trucks, map);
-            }
-
-            function AutoSelectTruck(id){
-
-                trucks.forEach(truck => {
-
-                    if(truck == trucks[id]){
-                        truckSelected = trucks[id]
-                        map.setPaintProperty('route'+truckSelected.id, 'line-opacity', 1)
-                    }
-                    else{
-                    truck.truckMarker.remove()
-                    map.setPaintProperty('route'+truck.id, 'line-opacity', 0.3)
-                    }
-                })
-                // map.getSource('marked-dropoff').setData(truckSelected.markedDropoff)
-                // HTMLDirections(truckSelected, id, trucks, map)
-                // Radius(truckSelected.location[0],truckSelected.location[1],truckSelected)
-            }
-
-
-            // *********************************************************************
-            // Mapbox
-            // *********************************************************************
-            // Map Layers
+            // Load Data Source
             map.on('load', function(){
 
-              // load data and parse
-      				Papa.parse("https://docs.google.com/spreadsheets/d/e/2PACX-1vR3oZDnYhyhjcaL50fSW8aS7Db90WBoIfMjudpbZgm7Qn3xdpj010kdQdSdpgOIL16Vpo2zS5wy2L_G/pub?gid=0&single=true&output=csv", {
-      					download: true,
-      					complete: function(results) {
-      						// filter customers by the ones we will deliver to this week
-      						customers = _.filter(results.data, function(customer){ console.log(customer); return (customer[21] == "will deliver"); });
+                // maintain only one data source
+                map.addSource('mainDropSource', {
+                    type: 'geojson',
+                    data: allDrops
+                });
 
-      						// format each customer as a feature
-      						dropoffLocations.features = _.map(customers, function(customer, key){
-      							return {
-      										type: 'Feature',
-      										geometry: {
-      											type: 'Point',
-      											coordinates: [customer[8],customer[7]]
-      										},
-      										properties: {
-      											fullName: customer[2],
-                            name: customer[2],
-      											objectId: customer[0],
-      											subscriptionPlan: customer[3],
-      											phone: customer[4],
-                            telephone: customer[4],
-      											address: customer[5],
-      											navLink: customer[6],
-                            weight:-1, load:1, ppop:false
-      										}
-      									};
-      						});
-
-                  // Adds layer with all dropoff locations.
-                  map.addLayer({
-                    id: 'unmarked-dropoff',
+                // Layer for drops not assigned to routes
+                map.addLayer({
+                    id: 'all-drops',
+                    source: "mainDropSource",
                     type: 'symbol',
-                    source: {data: dropoffLocations,type: 'geojson'},
                     layout: {
-                      'icon-allow-overlap': true,
-                      'icon-ignore-placement': true,
-                      'icon-image': 'square-15',
+                        'icon-allow-overlap': true,
+                        'icon-ignore-placement': true,
+                        'icon-image': 'square-15',
+                    },
+                    filter: ["!has", "route"]
+                });
+
+                // Layer for drops in routes
+                map.addLayer({
+                    id: 'routed-drops',
+                    source: "mainDropSource",
+                    type: 'circle',
+                    paint: {
+                        "circle-radius": 2,
+                        "circle-color": "black"
+                    },
+                    filter: ["has", "route"]
+                });
+
+                // Layer used to visualize clusters
+                map.addLayer({
+                    id: "clusters",
+                    type: "circle",
+                    source: "mainDropSource",
+                    layout: { visibility: "none" },
+                    paint: {
+                        "circle-radius": 15,
+                        "circle-color": "transparent",
+                        "circle-stroke-width": 10,
+                        "circle-stroke-opacity":0.25,
+                        "circle-stroke-color": {
+                            property: "cluster",
+                            stops: [ [0, palette[0]],[1, palette[1]],[2, palette[2]],[3, palette[3]],[4, palette[4]],[5, palette[5]],[6, palette[6]],[7, palette[7]],[8, palette[8]],[9, palette[9]],[10, palette[10]],[11, palette[11]],[12, palette[12]],[13, palette[13]],[14, palette[14]],[15, palette[15]] ]
+                        }
                     }
-                  });
+                });
 
-                  // Adds layer with all marked dropoff locations.
-                  map.addLayer({
-                    id: 'marked-dropoff',
-                    type: 'symbol',
-                    source: {data: blank,type: 'geojson'},
-                    layout: {
-                      'icon-allow-overlap': true,
-                      'icon-ignore-placement': true,
-                      'icon-image': 'circle-15',
-                    }
-                  });
+                createdLayers = [ 'all-drops', 'clusters' ];
 
-                  HTMLTable(trucks, map);
+                // Global Map Listeners
+                map.on('click', function (e) {
+                    var features = map.queryRenderedFeatures(e.point, { layers: ['all-drops', 'routed-drops'] });
+                    
+                    if (!features.length) { return; }
+                    
+                    var feature = features[0];
+                    
+                    // iterate through source features and change the clicked one
+                    allDrops.features = _.map(map.getSource('mainDropSource')._data.features, function(sourceFeature, key){ 
+                        if(feature.properties.objectId == sourceFeature.properties.objectId){
+                            // if point has route property, remove it
+                            if(feature.properties.route){
+                                delete sourceFeature.properties.route;
+                            // if point has no route property, add it to the current route
+                            }else if(selectedRouteColor){
+                                sourceFeature.properties.route = selectedRouteColor;
+                            }
+                        }
+                        return sourceFeature; 
+                    });
 
-                  // cluster through dbscan algorithm
-      						var clustered = turf.clustersDbscan(map.getSource('unmarked-dropoff')._data, 2.1, {minPoints: 2});
+                    map.getSource('mainDropSource').setData(allDrops);
+                    
+                    updateCurrentRouteList();
+                
 
-      						// cluster through kmean algorithm
-      						// var clustered = turf.clustersKmeans(map.getSource('unassignedMarkers')._data);
+                });
 
-      						// redo source, now with clustered data
-      						map.getSource('unmarked-dropoff').setData(clustered);
+                map.on('mousemove', function(e) {
+                  var features = map.queryRenderedFeatures(e.point, { layers: ['all-drops', 'routed-drops'] });
+                  if (!features.length) {
+                    popup.remove();
+                    return;
+                  }
 
+                  var feature = features[0];
 
-      					}
-      				});
+                  popup.setLngLat(feature.geometry.coordinates)
+                    .setHTML(feature.properties.fullName + " - " + feature.properties.cluster)
+                    .addTo(map);
+
+                  map.getCanvas().style.cursor = features.length ? 'pointer' : '';
+                });
 
             });
 
-            // *********************************************************************
-            // Events/Listeners
+            // Handle select data source form submit
+            $('#selectDataSource').on('submit', function(e){
+                
+                if($('input[name=sourceInputFile]').val() != "") {
+                    // you have a file
+                }else if($('input[name=sourceInputUrl]').val()){
+                    loadDataFromUrlIntoMap($('input[name=sourceInputUrl]').val())
+                }else{
+                    alert("You must input a data source");
+                }
 
-            // when the clicks on the map, checks if a marker was clicked and if true,
-            // then change that marker from unmarked to marked or vice-versa.
-            map.on('click',e =>{
-                // returns the info of the clicked dropoff marker on map.
-                var pt = map.queryRenderedFeatures(e.point, {layers: ['unmarked-dropoff', 'marked-dropoff']});
-                if(pt.length && trucks.length==0){
-                    alert('Please add a route first by clicking "Add Route" located on the left of the screen.')
-                }
-                else if(pt.length && truckSelected == undefined){
-                    alert('Please select a route before adding a dropoff.\nSelect the route you want to interact with by clicking the Route.')
-                }
-                // if a marker is clicked, do the following
-                if (pt.length && truckSelected.waypoints.length <=12 ){
-                    // if the marker is unmarked, do the following
-                    if(pt[0].layer.id=='unmarked-dropoff' && truckSelected.waypoints.length <12){
-                        // looks for the clicked marker in dropoffLocations.
-                        for(var i = 0; i < dropoffLocations.features.length; i++){
-                            // if the clicked marker is found, do the following.
-                            if(pt[0].properties.name == dropoffLocations.features[i].properties.name){
-                                // push the dropoff to markedDropoff.
-                                truckSelected.markedDropoff.features.push(dropoffLocations.features[i]);
-                                // update the truck load.
-                                truckSelected.updateLoad(dropoffLocations.features[i].properties.load);
-                                // remove the dropoff from dropoffLocation, do to it now being marked.
-                                dropoffLocations.features.splice(i, 1);
-                                break;
-                            }
-                            dropoffLocations.features[i].properties.weight = -1;
-                        }
-                    }
-                    else if( truckSelected.waypoints.length == 12){
-                        alert("Reached Max number of stops remove a stop to be able to add another stop")
-                    }
-                    // if the marker is marked, do the following
-                    else{
-                        // look the marker in markedDropoff of truckSelected
-                        for(var i=0; i<truckSelected.markedDropoff.features.length; i++){
-                            // if found, do the following
-                            if(pt[0].properties.name == truckSelected.markedDropoff.features[i].properties.name){
-                                // check if marked is already in dropoffLocations.
-                                var check=0;
-                                for(var j=0; j<dropoffLocations.features.length; j++){
-                                    if(pt[0].properties.name == dropoffLocations.features[j].properties.name){
-                                        check=1;
-                                        break;
-                                    }
+                e.preventDefault();
+            });
+
+            // Fetch data from url and load into map
+            function loadDataFromUrlIntoMap(url){
+                
+                // example url
+                // "https://docs.google.com/spreadsheets/d/e/2PACX-1vR3oZDnYhyhjcaL50fSW8aS7Db90WBoIfMjudpbZgm7Qn3xdpj010kdQdSdpgOIL16Vpo2zS5wy2L_G/pub?gid=0&single=true&output=csv"
+
+                // load data and parse
+                Papa.parse(url, {
+                    download: true,
+                    complete: function(results) {
+                        // filter customers by the ones we will deliver to this week
+                        customers = _.filter(results.data, function(customer){ return (customer[21] == "will deliver"); });
+
+                        // format each customer as a feature
+                        allDrops.features = _.map(customers, function(customer, key){
+                            return {
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates: [customer[8],customer[7]]
+                                },
+                                properties: {
+                                    fullName: customer[2],
+                                    name: customer[2],
+                                    objectId: customer[0],
+                                    subscriptionPlan: customer[3],
+                                    phone: customer[4],
+                                    telephone: customer[4],
+                                    address: customer[5],
+                                    navLink: customer[6],
+                                    weight:-1, load:1, ppop:false
                                 }
+                            };
+                        });
 
-                                // if the marked is not in dropoffLocations, then add it
-                                if(check==0){dropoffLocations.features.push(pt[0])};
+                        map.getSource('mainDropSource').setData(allDrops);
 
-                                // update truckSelected
-                                truckSelected.freeLoad(pt[0].properties.load);
-
-                                // remove the dropoff from truckSelected.markedDropoff
-                                truckSelected.markedDropoff.features.splice(i, 1);
-                                break;
-                            }
-                        }
+                        $('#navGroup').carousel('next')
                     }
+                });
+            }
+
+            // Choose clustering method
+            function changeClustering(action){
+
+                switch(action){
+                    case 'dbscan':
+                        // cluster through dbscan algorithm
+                        var clustered = turf.clustersDbscan(map.getSource('mainDropSource')._data, 2.1, {minPoints: 2});
+
+                        // redo source, now with clustered data
+                        map.getSource('mainDropSource').setData(clustered);
+                        
+                        map.setLayoutProperty("clusters", 'visibility', 'visible');
+
+                        break;
+                    case 'kmean':
+                        // cluster through kmean algorithm
+                        var clustered = turf.clustersKmeans(map.getSource('mainDropSource')._data, {"numberOfClusters": 7, "mutate": false});
+
+                        // redo source, now with clustered data
+                        map.getSource('mainDropSource').setData(clustered);
+
+                        map.setLayoutProperty("clusters", 'visibility', 'visible');
+
+                        break;
+                    default:
+                        map.setLayoutProperty("clusters", 'visibility', 'none');
                 }
-                else if(truckSelected.waypoints.length >= 12){
-                    alert("Reached Max number of stops remove a stop to be able to add another stop")
-                }
 
-                // if marker not clicked, change ppop of dropoffLocations to false.
-                else{
-                    for (var i=0; i< dropoffLocations.features.length; i++){
-                        dropoffLocations.features[i].properties.ppop=false;
-                    }
-                }
+            }
 
-                // update the sources of the layers: 'unmarked-dropoff' & 'marked-dropoff'.
-                map.getSource('unmarked-dropoff').setData(dropoffLocations);
+            // add route
+            function addRoute(){
+                // get current route count
+                var routeCount = $('#route-list').children().length;
 
+                // create ui element for list
+                $('#route-list').append( $('<li/>', {'data-route': palette[routeCount]}).html(palette[routeCount]) );
 
-                if(truckSelected!=undefined){
-                    map.getSource('marked-dropoff').setData(truckSelected.markedDropoff);
-                    drawRoute(truckSelected, trucks, map, mapboxgl.accessToken);
+                // create layer for this route
+                map.addLayer({
+                    id: palette[routeCount],
+                    type: "circle",
+                    source: "mainDropSource",
+                    paint: {
+                        "circle-radius": 5,
+                        "circle-color": palette[routeCount]
+                    },
+                    filter: ["==", "route", palette[routeCount]]
+                });
 
-                    //update the weight of the dropoff points in dropoffLocations.
-                    dropcoor.features.length = 0
+                createdLayers.push(palette[routeCount]);
 
-                    dropcoor.features.push(turf.point([truckSelected.location[0], truckSelected.location[1]]))
-                    truckSelected.markedDropoff.features.forEach(mark => {
-                         dropcoor.features.push(turf.point(mark.geometry.coordinates))
+            }
+
+            $('#route-list').on('click', 'li', function(e){
+                selectedRouteColor = $(this).data('route');
+                $('#route-title').html("Route " + selectedRouteColor);
+                updateCurrentRouteList()
+
+                // hide irrelevant layers
+                hideLayers(_.without(createdLayers, selectedRouteColor, 'clusters', 'all-drops' ));
+
+                $('#navGroup').carousel('next')
+            });
+
+            function updateCurrentRouteList(){
+                // get drops in route filtering by rout color
+                var routeFeatures = _.filter(map.getSource('mainDropSource')._data.features, function(sourceFeature, key){ 
+                    return sourceFeature.properties.route == selectedRouteColor; 
+                });
+
+                $('#route-drop-list').html("");
+
+                var waypoints = _.map(routeFeatures, function(drop){
+                    return drop.geometry.coordinates.slice().reverse().join(',');
+                });
+
+                _.each(routeFeatures, function(drop){
+                    $('#route-drop-list').append(
+                        $('<li/>', {'data-feature': JSON.stringify(drop)}).append(
+                            drop.properties.fullName,
+                            $('<span/>',{class: 'float-right'}).html("test")
+                        )
+                    );
+                })
+
+                console.log(waypoints);
+
+                // this is a good place to optimize the route
+                // https://maps.googleapis.com/maps/api/directions/json?origin=Adelaide,SA&destination=Adelaide,SA&waypoints=optimize:true|Barossa+Valley,SA|Clare,SA|Connawarra,SA|McLaren+Vale,SA&key=YOUR_API_KEY
+                var directionsUrl = "https://maps.googleapis.com/maps/api/directions/json?" + 
+                    "origin=" + origin.slice().reverse().join(',') + 
+                    "&destination=" + origin.slice().reverse().join(',') + 
+                    "&waypoints=optimize:true|" + waypoints.join("|") + 
+                    "&mode=driving" + 
+                    "&avoid=ferries" + 
+                    "&key=" + googleKey;
+
+                console.log(directionsUrl);
+
+                $.ajax(directionsUrl)
+                    .done(function(data) {
+                        console.log( data );
                     })
-                    var center = turf.center(dropcoor)
+                    .fail(function() {
+                        alert( "error" );
+                    })
+                    .always(function() {
+                        // alert( "complete" );
+                    });
 
-                    // Uncomment the line below to use the radius function
-                    // Radius(center.geometry.coordinates[0], center.geometry.coordinates[1], truckSelected);
-                }
+            }
+
+            function back(){
+                selectedRouteColor = null;
+                $('#navGroup').carousel('prev');
+                showLayers(_.without(createdLayers, 'clusters'));
+            }
+
+            function hideLayers(layersArray){
+                _.each(layersArray, function(layer){
+                    map.setLayoutProperty(layer, 'visibility', 'none');
+                });
+            }
+
+            function showLayers(layersArray){
+                _.each(layersArray, function(layer){
+                    map.setLayoutProperty(layer, 'visibility', 'visible');
+                });
+            }
+
+            function removeRouteAndClearItsDrops(route) {
+                allDrops.features = _.map(map.getSource('mainDropSource')._data.features, function(sourceFeature, key){ 
+                    // if drop's route property matches route, remove it
+                    if(sourceFeature.properties.route == route){
+                        delete sourceFeature.properties.route;
+                    }
+                    return sourceFeature;
+                }); 
+
+                map.getSource('mainDropSource').setData(allDrops);
+
+                // remove route from UI
+                $("li[data-route='"+route+"']").remove();
+
+                // reomve route's layer
+                map.removeLayer(route);
+
+                // remove route from createdLayers array
+                createdLayers = _.without(createdLayers, route);
+
+                // return nav
+                back();
+            }
+
+            // when hovering over a route's stop, move map to stop's coords
+            $('#route-drop-list').on("mouseenter", "li", function(e) {
+                var feature = $(this).data('feature');
+                popup.setLngLat(feature.geometry.coordinates)
+                    .setHTML(feature.properties.fullName + " - " + feature.properties.cluster)
+                    .addTo(map);
+
+                flyToTimeOut = setTimeout(function(){
+                    map.flyTo({center: feature.geometry.coordinates, zoom: 12, pitch:60});
+                }, 1000);
             });
 
-            // when the cursor is hovering over the marker, it will change the cursor icon
-            // from the grab icon to the pointer icon & create a popup for the dropoff marker.
-
-            map.on('mouseover', 'unmarked-dropoff', e=> {
-                var features = map.queryRenderedFeatures(e.point, {layers: ['unmarked-dropoff']});
-                // if cursor hovers an unmarked dropoff, do the following
-                if (features.length && truckSelected!=undefined) {
-
-                    map.getCanvas().style.cursor='pointer'; // change cursor icon from grab to pointer
-
-                    feature=features[0];
-
-                    // if weight of dropoff is undefined, update it
-                    if(feature.properties.weight == -1){
-                        updateTruckWeight(feature, truckSelected, true);
-                    }
-
-                    // if the dropoff does not have a popup, do the following
-                    else {
-                        feature.properties.color= colorCalculator(feature.properties) // update color of dropoff
-
-
-                        createPopup(feature, true);   //create popup for dropoff
-                        //feature.properties.ppop=true; //change ppop of dropoff
-
-                        // update dropoff in dropoffLocations
-                        for (var i=0; i<dropoffLocations.features.length; i++){
-                            if(feature.properties.name==dropoffLocations.features[i].properties.name){
-                                dropoffLocations.features[i]= feature;
-                                break
-                            }
-                        }
-
-                        // update source of the layer 'unmarked-dropoff'.
-                        map.getSource('unmarked-dropoff').setData(dropoffLocations);
-                    }
-                }
-                if(features.length){map.getCanvas().style.cursor='pointer'};
+            $('#route-drop-list').on("mouseleave", "li", function() {
+                map.flyTo({center: origin, zoom: 8.5, pitch:0});
+                popup.remove();
+                clearTimeout(flyToTimeOut);
             });
-
-            map.on('mouseleave','unmarked-dropoff', e=> {setTimeout(function(){hoverPopup.remove();}, 3000);})
-
-            // when the cursor is hovering over the marker, it will change the cursor icon
-            // from the grab icon to the pointer icon.
-            // map.on('mouseover', 'marked-dropoff' , e=>{
-            //     features= map.queryRenderedFeatures(e.point, {layers:['marked-dropoff']});
-            //     if(features.length && truckSelected != undefined){map.getCanvas().style.cursor='pointer'};
-            // })
 
         </script>
     </body>

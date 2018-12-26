@@ -9,8 +9,8 @@ function getRouteMarked(route, truck, accessToken){
      });
     // Return the result to the page for route creation
     return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';'
-            + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
-            + accessToken;
+        + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
+        + accessToken;
 };
 
 // This functions creates the URL to updates the dropoff locations with the time that will take to be added to the route.
@@ -24,10 +24,10 @@ function getRouteWeight(route, truck, accessToken){
         destinations.push(Geometry.geometry.coordinates);
      });
 
-        // Return the result to the page for dropoff update.
-        return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';'
-            + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
-            + accessToken;
+    // Return the result to the page for dropoff update.
+    return 'https://api.mapbox.com/optimized-trips/v1/mapbox/driving/' + truck.location[0] + ',' + truck.location[1] + ';'
+        + destinations.join(';') + '?overview=full&steps=true&geometries=geojson&source=first&access_token='
+        + accessToken;
 };
 // Function that will connect to the API via fetch and returns the information for the route. With this information draw the route on map
 // the order that the API arrange. 

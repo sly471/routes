@@ -95,16 +95,29 @@
 
         <script type="text/javascript">
 
+            // a color palette that will be used to assign color/names to new routes and clusters bbut also any segmented data or analytic.
             var palette = ['Fuchsia', 'Purple', 'Navy', 'Blue', 'Red', 'Maroon', 'Yellow', 'Olive', 'Lime', 'Green', 'Aqua', 'Teal', 'Black', 'Gray', 'White', 'Silver'];
+            
+            // holds reference by name to custom layers
             var createdLayers = [];
+
+            // holds map features
             var allDrops= turf.featureCollection([]);
-            var routedDrops = turf.featureCollection([]);
+            
+            // the active route color
             var selectedRouteColor = null;
-            var googleKey = "AIzaSyD5VVqqzGogPu9yw5MEkQR4LDpY34mGt1Y";
-            var flyToTimeOut;
+
+            // reference to timeout to make
+            var timeoutStore;
+            
+            // starting coordinate for all routes and map center
             var origin = [-66.061674, 18.451443]; // Nonna
+
+            // we will use this api
             var directionsService = new google.maps.DirectionsService();
 
+            // sometimes routes will not have the same final destination as the origin
+            var finalDestinationOverrides = {};
 
             // Load initial map
             mapboxgl.accessToken = 'pk.eyJ1IjoidG9ybGFuY28iLCJhIjoiY2prYmR3dmszMHVtcDNwbWl3cHdwOTl5NSJ9.NxympEZmljc0jq4DJmK5JQ';
@@ -207,7 +220,6 @@
                     map.getSource('mainDropSource').setData(allDrops);
                     
                     updateCurrentRouteList();
-                
 
                 });
 
@@ -386,17 +398,15 @@
                     return sourceFeature.properties.route == selectedRouteColor && sourceFeature.geometry.type == "Point"; 
                 });
 
-                $('#route-drop-list').html("");
-
                 // get waypoings as google maps expects them
                 var waypoints = _.map(routeFeatures, function(drop){
                     return {location: drop.geometry.coordinates.slice().reverse().join(',')};
                 });
 
-                // getting optimized route
+                // getting optimized route from google
                 directionsService.route({
                     origin: origin.slice().reverse().join(','),
-                    destination: origin.slice().reverse().join(','),
+                    destination: finalDestinationOverrides.hasOwnProperty(selectedRouteColor) ? finalDestinationOverrides[selectedRouteColor] : origin.slice().reverse().join(','),
                     travelMode: "DRIVING",
                     waypoints: waypoints,
                     optimizeWaypoints: true
@@ -430,13 +440,15 @@
                                 return routeFeatures[order];
                             });
                         }
+                        
+                        $('#route-drop-list').html("");
 
                         // render route list to UI
                         _.each(routeFeatures, function(drop){
                             $('#route-drop-list').append(
                                 $('<li/>', {'data-feature': JSON.stringify(drop)}).append(
                                     drop.properties.fullName,
-                                    $('<span/>',{class: 'float-right'}).html("test")
+                                    $('<span/>',{class: 'float-right final-destination'}).html("end here")
                                 )
                             );
                         })
@@ -451,6 +463,8 @@
                         // render stops to UI
                         $("#route-list").find("[data-route='" + selectedRouteColor + "']").children('.dropCount').html(routeFeatures.length); 
 
+                    }else{
+                        alert(status);
                     }
                 });
 
@@ -483,6 +497,10 @@
                     return sourceFeature;
                 }); 
 
+                if(finalDestinationOverrides.hasOwnProperty(route)){
+                    delete finalDestinationOverrides[route];
+                }
+
                 map.getSource('mainDropSource').setData(allDrops);
 
                 // remove route from UI
@@ -506,7 +524,7 @@
                     .setHTML(feature.properties.fullName + " - " + feature.properties.cluster)
                     .addTo(map);
 
-                // flyToTimeOut = setTimeout(function(){
+                // timeoutStore = setTimeout(function(){
                 //     map.flyTo({center: feature.geometry.coordinates, zoom: 12, pitch:60});
                 // }, 1000);
             });
@@ -514,7 +532,13 @@
             $('#route-drop-list').on("mouseleave", "li", function() {
                 // map.flyTo({center: origin, zoom: 10.5, pitch:0});
                 popup.remove();
-                // clearTimeout(flyToTimeOut);
+                // clearTimeout(timeoutStore);
+            });
+
+            $('#route-drop-list').on("click", ".final-destination", function() {
+                finalDestinationOverrides[selectedRouteColor] = $(this).parent('li').data('feature').geometry.coordinates.slice().reverse().join(',');
+
+                updateCurrentRouteList()
             });
 
         </script>
